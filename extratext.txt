@@ -82,3 +82,21 @@ GitHub pages ----> v settings, deploy z branche
 
 
 25.8.2024
+
+GitHub Pages mít:
+vlevo: 
+    class: název proměnné - typ 
+
+vpravo:
+    to samé vygenerovat -> nepromítnou se mezery atd. 
+
+statový automat, tokeny -> projíždím text
+série: nějaké textové řetězce a pak vidím, co se děje 
+
+vlevo mezery a konce řádků nebudou promítnuty vpravo
+
+první parsování např. do JSONu
+
+
+(navíc zatím)
+pak kdyžtak vizualizace 

@@ -107,3 +107,33 @@ Co jsem zvládl od schůzky:
     -- deployment na GitHub Pages s auto-redeployment při push
     -- zároveň nerozbilo lokální testování
     -- .css v src uloženy do samostatné složky
+    -- začátek MDD (model-based engineering)
+
+-- bacha na C:\skolaMFF\AAASkola\rp24\node_modules\react\jsx-dev-runtime.js
+
+PŘIDANÉ:
+npm install @pintora/cli
+
+npm i -g @pintora/cli
+
+
+example text:
+
+
+classDiagram
+  class Person {
+
++int id
+    +String name
+    +int age
+    +String gender
+  }
+
+  class Employee {
+    +String employeeId
+    +String department
+    +double salary
+  }
+ 
+
+nice nice nice 

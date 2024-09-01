@@ -1,4 +1,50 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import './styles/index.css';
+import useAppLogic from './app.service';
+//import { render } from '@pintora/cli';
+
+const App = () => {
+  const { text1, text2, handleChangeText1, parsedDiagram } = useAppLogic();
+  const diagramContainerRef = useRef(null);
+
+  useEffect(() => {
+    /*
+    if (parsedDiagram) {
+      render({
+        code: parsedDiagram,
+        container: diagramContainerRef.current,
+      });
+    }
+    */
+  }, [parsedDiagram]);
+
+  return (
+    <div className="textarea-container">
+      <textarea
+        id="text1"
+        rows={5}
+        cols={50}
+        placeholder="Enter class definitions here..."
+        onChange={handleChangeText1}
+        value={text1} // Bind value to text1
+      />
+      <textarea
+        id="text2"
+        rows={5}
+        cols={50}
+        placeholder="Transformed text will appear here..."
+        readOnly
+        value={text2} // Bind value to text2
+      />
+      <div ref={diagramContainerRef} className="diagram-container" />
+    </div>
+  );
+};
+
+export default App;
+
+
+/*import React from 'react';
 import './styles/index.css';
 import useAppLogic from './app.service';
 
@@ -23,7 +69,7 @@ const { text1, text2, handleChangeText1 } = useAppLogic();
 };
 
 export default App;
-
+*/
 
 /* import React, { useState, useEffect } from 'react';
 import './index.css'; 

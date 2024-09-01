@@ -100,3 +100,10 @@ první parsování např. do JSONu
 
 (navíc zatím)
 pak kdyžtak vizualizace 
+
+
+
+Co jsem zvládl od schůzky:
+    -- deployment na GitHub Pages s auto-redeployment při push
+    -- zároveň nerozbilo lokální testování
+    -- .css v src uloženy do samostatné složky

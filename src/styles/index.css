@@ -120,3 +120,11 @@ button:hover {
 }
 
 
+.CodeMirror {
+  color: black; /* Set text color in CodeMirror */
+}
+
+/* Optional: Set background color if needed */
+.CodeMirror {
+  background-color: white; /* or any desired color */
+}

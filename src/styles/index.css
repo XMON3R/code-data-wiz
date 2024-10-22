@@ -5,7 +5,7 @@
   
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #242323;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,118 +13,68 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+html, body {
+  height: 100%;
+  margin: 10px;
+  padding: 0;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
   margin-top: 20px;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
   text-align: center;
 }
 
-.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  gap: 20px; 
-  width: 100%;
-  max-width: 1200px; 
-  padding: 20px;
-  box-sizing: border-box;
-}
+/* translation styling */
 
-.textarea-container {
+.translation {
   display: flex;
-  gap: 20px;
-  width: 100%;
-  box-sizing: border-box; 
+  height: 100vh;
+  flex-direction: row;
+  font-size: 20px;
 }
 
-textarea {
-  flex: 1; 
-  min-width: 300px; 
-  max-width: 500px; 
-  min-height: 300px;
-  padding: 10px;
-  font-size: 1em;
-  background-color: #333;
-  color: #fff;
-  border: 1px solid #555;
-  border-radius: 8px;
-  box-sizing: border-box;
+.ccontainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#input {
+  margin-right: 20px;
+}
+
+.CodeMirror {
+  font-size: 32px;
+  flex: 1;
   overflow: auto;
 }
 
-textarea#textLeft {
-  resize: none;
-}
+/* navbar styling */
 
-textarea#textRight {
-  resize: vertical; 
-}
-
-.container {
-  display: flex; 
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px; 
-  padding: 20px;
-  box-sizing: border-box; 
-  flex-wrap: wrap; 
-}
-
-.right-container {
+.navbar {
+  height: 50px;
   display: flex;
-  flex: 1;
+  justify-content: left;
+  align-items: center;
 }
 
-
-.button-container {
-  display: flex;
-  justify-content: center; 
-  width: 100%; 
-  /*margin-left: 300px; */
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.nav-button {
+  background-color: #555;
+  color: white;
+  padding: 10px 20px;
+  margin: 0px;
+  border: none;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.3s;
 }
 
-button:hover {
-  border-color: #646cff;
+.nav-button:hover {
+  background-color: #444;
 }
 
-
-.CodeMirror {
-  color: black; /* Set text color in CodeMirror */
-}
-
-/* Optional: Set background color if needed */
-.CodeMirror {
-  background-color: white; /* or any desired color */
+.nav-button.active {
+  background-color: #007bff;  
 }

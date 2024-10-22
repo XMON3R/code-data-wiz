@@ -7,92 +7,62 @@ import CodeMirror from '@uiw/react-codemirror';
 //import { javascript } from '@codemirror/lang-sql'; // Import a language for syntax highlighting
 
 const App: React.FC = () => {
-  const { textLeft, textRight, handleChangeTextLeft, parsedDiagram, sqlTranslation } = useAppLogic();
+  //const { textLeft, textRight, handleChangeTextLeft, parsedDiagram, sqlTranslation } = useAppLogic();
+  const { textLeft, textRight, handleChangeTextLeft, sqlTranslation } = useAppLogic();
   const [showSQL, setShowSQL] = useState(false);
+  const [editorHeight, setEditorHeight] = useState(window.innerHeight); //adjust here if needed
 
-  useEffect(() => {}, [parsedDiagram]);
+  //dynamic resizing
+  useEffect(() => {
+    const updateEditorHeight = () => {
+      const newHeight = window.innerHeight;
+      setEditorHeight(newHeight);
+    };
+
+    window.addEventListener("resize", updateEditorHeight);
+    return () => window.removeEventListener("resize", updateEditorHeight);
+  }, []);
 
   return (
-    <div className="container">
-      <CodeMirror
-        theme="dark"
-        value={textLeft}
-        width="300px"
-        height="400px"
-        //extensions={[javascript()]} // Set language or other extensions
-        onChange={(value) => handleChangeTextLeft(value)} // Directly pass the value
-      />
-      <div className="right-container">
+    <div>
+      <b>Choose Output format:</b>
+    <div className="navbar">
+        <button
+          className={`nav-button ${!showSQL ? 'active' : ''}`}
+          onClick={() => setShowSQL(false)}
+        >
+          Class Diagram
+        </button>
+        <button
+          className={`nav-button ${showSQL ? 'active' : ''}`}
+          onClick={() => setShowSQL(true)}
+        >
+          SQL Query
+        </button>
+      </div> 
+
+    <div className="translation">
+      <div className="ccontainer" id="input">
+        <CodeMirror
+          theme="dark"
+          value={textLeft}
+          width="100%"
+          height={`${editorHeight}px`}  //dynamic
+          onChange={(value) => handleChangeTextLeft(value)}
+        />
+      </div>
+      <div className="ccontainer">
         <CodeMirror
           theme="dark"
           value={showSQL ? sqlTranslation : textRight}
-          width="300px"
-          height="400px"
-          //extensions={[javascript()]} // Set language or other extensions
-          readOnly={true} // The right side is read-only
+          width="100%"
+          height={`${editorHeight}px`}  //dynamic
+          readOnly={true}
         />
       </div>
-      <div className="button-container">
-        <button className="toggle-button" onClick={() => setShowSQL(!showSQL)}>
-          {showSQL ? "Show Class Diagram" : "Show SQL"}
-        </button>
       </div>
     </div>
   );
 };
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*import React, { useEffect, ChangeEvent, useState } from "react";
-import "./styles/index.css";
-import useAppLogic from "./app.service";
-
-const App: React.FC = () => {
-  const { textLeft, textRight, handleChangeTextLeft, parsedDiagram, sqlTranslation } = useAppLogic();
-  const [showSQL, setShowSQL] = useState(false);
-
-  useEffect(() => {}, [parsedDiagram]);
-
-  return (
-    <div className="container">
-      <textarea
-        id="textLeft"
-        rows={10}
-        placeholder="Enter class definitions here..."
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleChangeTextLeft(e)}
-        value={textLeft}
-      />
-      <div className="right-container">
-        <textarea
-          id="textRight"
-          rows={10}
-          placeholder="Transformed text will appear here..."
-          readOnly
-          value={showSQL ? sqlTranslation : textRight}
-        />
-      </div>
-      <div className="button-container">
-        <button className="toggle-button" onClick={() => setShowSQL(!showSQL)}>
-          {showSQL ? "Show C-D" : "Show SQL"}
-        </button>
-      </div>
-    </div>
-  );
-
-  
-};
-
-export default App;*/

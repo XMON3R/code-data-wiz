@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./styles/index.css";
 import useAppLogic from "./app.service";
 import CodeMirror from '@uiw/react-codemirror';
-//import { HighlightStyle } from "@codemirror/language";
-//import {EditorView} from "@codemirror/view"
-//import { javascript } from '@codemirror/lang-sql'; // Import a language for syntax highlighting
+import { sql } from '@codemirror/lang-sql'; 
+//import { HighlightStyle} from "@codemirror/language";
+import { EditorView } from "@codemirror/view";
 
 const App: React.FC = () => {
   //const { textLeft, textRight, handleChangeTextLeft, parsedDiagram, sqlTranslation } = useAppLogic();
@@ -49,6 +49,10 @@ const App: React.FC = () => {
           width="100%"
           height={`${editorHeight}px`}  //dynamic
           onChange={(value) => handleChangeTextLeft(value)}
+          extensions={[
+            EditorView.lineWrapping,
+          ]}
+          
         />
       </div>
       <div className="ccontainer">
@@ -58,6 +62,10 @@ const App: React.FC = () => {
           width="100%"
           height={`${editorHeight}px`}  //dynamic
           readOnly={true}
+          extensions={[
+            EditorView.lineWrapping,
+            sql()
+          ]}
         />
       </div>
       </div>

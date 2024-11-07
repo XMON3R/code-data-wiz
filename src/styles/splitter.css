@@ -1,0 +1,25 @@
+/* splitter.css */
+
+.flex {
+    display: flex;
+  }
+  
+  .flex-row {
+    flex-direction: row;
+  }
+  
+  .splitter__divider {
+    width: 6px;  /* Width of the draggable divider */
+    cursor: ew-resize;
+    background-color: #cccccc;  /* Light grey color for visibility */
+  }
+  
+  .splitter__divider:hover {
+    background-color: #888888;  /* Darker color when hovered */
+  }
+  
+  .grow {
+    flex-grow: 1;
+    overflow: auto;  /* Allow content overflow */
+  }
+  

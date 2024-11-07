@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import ClassParser from './class.parser.tsx'; // Adjust the import path as needed
+import ClassParser from '../utils/ClassParser.tsx'; // Adjust the import path as needed
 
 const useAppLogic = () => {
   const [textLeft, setTextLeft] = useState("");  // holds the original class diagram text

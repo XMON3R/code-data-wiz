@@ -62,26 +62,34 @@ const App: React.FC = () => {
 export default App;
 */
 
-
-import React, { useState } from "react";
-import "../styles/global.css"
+import React, { useState } from 'react';
+import '../styles/global.css';
 import '../styles/translation.css';
-import useAppLogic from "../hooks/useAppLogic";
-import Navbar from "./Navbar";
-import Editor from "./Editor";
-import {VerticalSplitter} from "../utils/VerticalSplitter"; // Import the splitter component
+import useAppLogic from '../hooks/useAppLogic';
+import Navbar from './Navbar';
+import Editor from './Editor';
+import { VerticalSplitter } from '../utils/VerticalSplitter'; // Import the splitter component
 import { sql } from '@codemirror/lang-sql';
 
 const App: React.FC = () => {
-  const { textLeft, textRight, handleChangeTextLeft, sqlTranslation } = useAppLogic();
+  const { textLeft, textRight, handleChangeTextLeft, sqlTranslation } =
+    useAppLogic();
   const [showSQL, setShowSQL] = useState(false);
 
   return (
     <div>
       <Navbar showSQL={showSQL} onToggle={setShowSQL} />
       <VerticalSplitter initialSize={50} className="translation">
-        <Editor value={textLeft} onChange={handleChangeTextLeft} extensions={[]} />
-        <Editor value={showSQL ? sqlTranslation : textRight} readOnly={true} extensions={[sql()]} />
+        <Editor
+          value={textLeft}
+          onChange={handleChangeTextLeft}
+          extensions={[]}
+        />
+        <Editor
+          value={showSQL ? sqlTranslation : textRight}
+          readOnly={true}
+          extensions={[sql()]}
+        />
       </VerticalSplitter>
     </div>
   );

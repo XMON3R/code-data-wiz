@@ -1,5 +1,6 @@
 /* splitter.css */
 
+
 .flex {
   display: flex;
 }
@@ -9,16 +10,16 @@
 }
 
 .splitter__divider {
-  width: 6px; /* Width of the draggable divider */
+  width: 6px; 
   cursor: ew-resize;
-  background-color: #cccccc; /* Light grey color for visibility */
+  background-color: #cccccc;
 }
 
 .splitter__divider:hover {
-  background-color: #888888; /* Darker color when hovered */
+  background-color: #888888;
 }
 
 .grow {
   flex-grow: 1;
-  overflow: auto; /* Allow content overflow */
+  overflow: auto; 
 }

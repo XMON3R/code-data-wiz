@@ -1,23 +1,29 @@
 import React from 'react';
 //import '../styles/index.css';
-import '../styles/navbar.css';
+
+import '../styles/output.css';
+//import '../styles/navbar.css';
 
 interface NavbarProps {
   showSQL: boolean;
-  onToggle: (showSQL: boolean) => void; // Adjusted to accept a boolean argument
+  onToggle: (showSQL: boolean) => void; 
 }
 
 const Navbar: React.FC<NavbarProps> = ({ showSQL, onToggle }) => (
-  <div className="navbar">
+  <div className="h-full border-2 border-gray-200 flex">
     <button
-      className={`nav-button ${!showSQL ? 'active' : ''}`}
-      onClick={() => onToggle(false)} // Pass false to show the class diagram
+      className={`flex-1 bg-gray-600 text-white px-4 py-2 transition-colors duration-300 ${
+        !showSQL ? 'bg-blue-600' : 'hover:bg-gray-700'
+      }`}
+      onClick={() => onToggle(false)}
     >
       Class Diagram
     </button>
     <button
-      className={`nav-button ${showSQL ? 'active' : ''}`}
-      onClick={() => onToggle(true)} // Pass true to show the SQL query
+      className={`flex-1 bg-gray-600 text-white px-4 py-2 transition-colors duration-300 ${
+        showSQL ? 'bg-blue-600' : 'hover:bg-gray-700'
+      }`}
+      onClick={() => onToggle(true)}
     >
       SQL Query
     </button>
@@ -25,3 +31,4 @@ const Navbar: React.FC<NavbarProps> = ({ showSQL, onToggle }) => (
 );
 
 export default Navbar;
+

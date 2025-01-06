@@ -27,7 +27,7 @@ const useAppLogic = () => {
     }
     typingTimerRef.current = window.setTimeout(() => {
       translateText(value);
-    }, 300); // triggers translation after a delay to avoid excessive calls
+    }, 300); 
   };
 
   return {

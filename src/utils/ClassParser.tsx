@@ -1,4 +1,4 @@
-class ClassParser {
+class ClassParser2 {
   // Parses class diagram text into a structured format
   static parseClasses(text: string): string {
     const classRegex = /class (\w+)\s*\{([^}]*)\}/g;
@@ -39,7 +39,7 @@ class ClassParser {
 
       attributes.forEach((attr) => {
         const [type, name] = attr.split(' ');
-        const sqlType = ClassParser.mapTypeToSQL(type);
+        const sqlType = ClassParser2.mapTypeToSQL(type);
         sqlStatements += `  ${name} ${sqlType},\n`;
       });
 
@@ -65,4 +65,4 @@ class ClassParser {
   }
 }
 
-export default ClassParser;
+export default ClassParser2;

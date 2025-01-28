@@ -1,4 +1,4 @@
-import ParserWriter from "./parserWriter";
+import ParserWriter from "./parser-writer";
 
 class ClassParser {
     private parserWriter: ParserWriter;

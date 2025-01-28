@@ -1,8 +1,5 @@
 import React from 'react';
-//import '../styles/index.css';
-
-import '../styles/output.css';
-//import '../styles/navbar.css';
+import '../output.css';
 
 enum ViewMode {
   ClassDiagram = 'ClassDiagram',

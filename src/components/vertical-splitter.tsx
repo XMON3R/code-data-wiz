@@ -1,7 +1,7 @@
 //LOOK TO SPLITTER FOR ORIGINAL CODE, THIS IS AN EDIT
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import '../styles/splitter.css';
+import './splitter.css';
 
 interface VerticalSplitterProps {
   className?: string;

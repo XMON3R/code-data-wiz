@@ -1,4 +1,4 @@
-import ParserWriter from "./parserWriter";
+import ParserWriter from "../translation/parsers/parser-writer";
 
 class SQLParserWriter implements ParserWriter {
     parse(input: string): string {

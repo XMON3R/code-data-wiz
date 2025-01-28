@@ -1,8 +1,6 @@
 import CodeMirror from '@uiw/react-codemirror';
 import { Extension } from '@codemirror/state';
-
-//import '../styles/index.css';
-import '../styles/output.css';
+import '../output.css';
 
 interface EditorProps {
   value: string;

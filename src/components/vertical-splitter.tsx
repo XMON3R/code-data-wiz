@@ -1,4 +1,4 @@
-//LOOK TO SPLITTER FOR ORIGINAL CODE, THIS IS AN EDIT
+//LOOK TO SPLITTER FOR ORIGINAL CODE, THIS IS AN EDIT TO MATCH THIS PROJECT
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import './splitter.css';

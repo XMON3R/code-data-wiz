@@ -8,6 +8,6 @@ Buď online [zde](https://xmon3r.github.io/rp24/) či lokálně:
 
 1. naklonujte repozitář
 2. v konzoli otevřete root složku obsahující celý projekt
-3. použijte příkaz "npm run build" pro přípravu projektu
+3. použijte příkaz "npm install" pro přípravu projektu (+ případně npm audit fix při změně packagů)
 4. následně použijte příkaz "npm run dev" 
 5. projekt následně naleznete na adrese: [http://localhost:5173/rp24/](http://localhost:5173/rp24/) 

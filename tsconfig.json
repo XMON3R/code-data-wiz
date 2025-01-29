@@ -18,6 +18,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "src/features/translation/parsers/.class-parser.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

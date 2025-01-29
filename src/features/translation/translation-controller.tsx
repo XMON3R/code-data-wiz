@@ -1,35 +1,55 @@
 import { useState, useRef, useCallback } from 'react';
-//import ParserWriter from '../utils/parser-writer'; // Import the new interfaces
+import ParserWriter from './parsers/parser-writer';
 
-import ParserWriter from './parsers/parser-writer'; // Import the new interfaces
+// Define an interface for the hook's return type
+interface TranslationState {
+  textLeft: string;
+  textRight: string;
+  parsedDiagram: string;
+  generatedCode: string;
+  handleChangeTextLeft: (value: string) => void;
+}
 
-//import ClassParser from '../utils/classParser'; // Adjust the import path as needed
-//import SQLWriter from '../utils/sqlParser'; // Import SQL writer or other writers
+// Define an interface for the internal state
+interface TranslationControllerState {
+  textLeft: string;
+  textRight: string;
+  parsedDiagram: string;
+  generatedCode: string;
+}
 
-const translationController = (parserWriter: ParserWriter) => {
-  const [textLeft, setTextLeft] = useState(''); // holds the original class diagram text
-  const [textRight, setTextRight] = useState(''); // holds the translated class diagram
-  const [parsedDiagram, setParsedDiagram] = useState(''); // holds the parsed class diagram
-  const [generatedCode, setGeneratedCode] = useState(''); // holds the generated code (e.g., SQL)
+// Name follwoing React hook naming convention
+const useTranslationController = (
+  parserWriter: ParserWriter
+): TranslationState => {
+  const [state, setState] = useState<TranslationControllerState>({
+    textLeft: '',
+    textRight: '',
+    parsedDiagram: '',
+    generatedCode: '',
+  });
 
-  const typingTimerRef = useRef<number | null>(null); // ref to manage typing timeout
+  const typingTimerRef = useRef<number | null>(null);
 
   // Parses the input and generates the output using the provided ParserWriter
   const translateText = useCallback(
     (text: string) => {
-      const parsed = parserWriter.parse(text); // Parse the input text
-      setParsedDiagram(parsed); // Store the parsed diagram
-      setTextRight(parsed); // Update the translated diagram
+      const parsed = parserWriter.parse(text);
+      const generated = parserWriter.generateCode(parsed);
 
-      const generated = parserWriter.generateCode(parsed); // Generate code from the parsed diagram
-      setGeneratedCode(generated); // Store the generated code
+      setState({
+        textLeft: text,
+        textRight: parsed,
+        parsedDiagram: parsed,
+        generatedCode: generated,
+      });
     },
     [parserWriter]
   );
 
   // Handles changes to the input text (to be called via CodeMirror onChange)
   const handleChangeTextLeft = (value: string) => {
-    setTextLeft(value);
+    setState((prevState) => ({ ...prevState, textLeft: value }));
     if (typingTimerRef.current !== null) {
       clearTimeout(typingTimerRef.current);
     }
@@ -39,12 +59,9 @@ const translationController = (parserWriter: ParserWriter) => {
   };
 
   return {
-    textLeft,
-    textRight,
+    ...state,
     handleChangeTextLeft,
-    parsedDiagram,
-    generatedCode,
   };
 };
 
-export default translationController;
+export default useTranslationController;

@@ -7,7 +7,7 @@
 }
 
 .splitter__divider {
-  width: 6px; 
+  width: 6px;
   cursor: ew-resize;
   background-color: #cccccc;
 }
@@ -18,5 +18,5 @@
 
 .grow {
   flex-grow: 1;
-  overflow: auto; 
+  overflow: auto;
 }

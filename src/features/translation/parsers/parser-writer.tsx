@@ -1,6 +1,10 @@
+// Interface for implementing separate "modules" for translation
 interface ParserWriter {
-    parse(input: string): string;
-    generateCode(parsed: string): string;
-  }
-  
+  // Parse input from any language
+  parse(input: string): string;
+
+  // Generate code from parsed string created by parse method
+  generateCode(parsed: string): string;
+}
+
 export default ParserWriter;

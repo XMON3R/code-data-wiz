@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "clean-lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "clean-lint2": "eslint src/**/*.{js,ts,tsx}",
+    "clean-lint-more": "eslint src/**/*.{js,ts,tsx}",
     "p-check": "prettier . --check",
     "pretty": "prettier --write ./src",
     "preview": "vite preview",
@@ -17,23 +17,23 @@
   "dependencies": {
     "@codemirror/lang-sql": "^6.8.0",
     "@pintora/cli": "^0.7.6",
-    "@uiw/react-codemirror": "^4.23.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@uiw/react-codemirror": "^4.23.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.57.1",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.14",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.22.0",
+    "@typescript-eslint/parser": "^8.22.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
     "pretier": "0.0.1",
-    "prettier": "3.3.3",
-    "tailwindcss": "^3.4.15",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0"
+    "prettier": "3.4.2",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11"
   }
 }

@@ -19,8 +19,8 @@ interface VerticalSplitterProps {
  * Vertical Splitter component that allows resizing the left and right sections
  */
 export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const leftRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null!);
+  const leftRef = useRef<HTMLDivElement>(null!);
   const [leftWidth, setLeftWidth] = useState<number>(props.initialSize || 50); // Default to 50%
 
   // Ensure there are exactly two children passed

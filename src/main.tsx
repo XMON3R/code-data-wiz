@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './components/main-app.tsx';
+import App from './components/app.tsx';
 import './output.css';
 
 //root render

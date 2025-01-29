@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import ParserWriter from './parsers/parser-writer';
+import Config from '../shared/config';
 
 // Define an interface for the hook's return type
 interface TranslationState {
@@ -55,7 +56,7 @@ const useTranslationController = (
     }
     typingTimerRef.current = window.setTimeout(() => {
       translateText(value);
-    }, 300);
+    }, Config.textChangeDelay);   //change from an exact value to Config number
   };
 
   return {

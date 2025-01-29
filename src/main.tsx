@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './components/app';
+import App from './components/mainapp';
 import './output.css';
 
 //root render

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Navbar, { ViewMode } from './navbar';
-import Editor from './editor';
-import VerticalSplitter from './vertical-splitter';
+import Navbar, { ViewMode } from './navbar.tsx';
+import Editor from './editor.tsx';
+import VerticalSplitter from './vertical-splitter.tsx';
 import { sql } from '@codemirror/lang-sql';
 import translationController from '../features/translation/translation-controller.tsx'; // Adjusted import path
 import SQLParserWriter from '../features/sql-processing/sql-parser.tsx'; // Adjusted import path for SQL writer

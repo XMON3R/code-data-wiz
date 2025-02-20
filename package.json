@@ -11,8 +11,8 @@
     "p-check": "prettier . --check",
     "pretty": "prettier --write ./src",
     "preview": "vite preview",
-    "build:css": "npx tailwindcss -i ./src/styles/index.css -o ./src/styles/output.css",
-    "start:css": "npx tailwindcss -i ./src/styles/index.css -o ./src/styles/output.css --watch",
+    "build:css": "npx tailwindcss -i ./src/index.css -o ./src/output.css",
+    "start:css": "npx tailwindcss -i ./src/index.css -o ./src/output.css --watch",
     "test": "vitest"
   },
   "dependencies": {

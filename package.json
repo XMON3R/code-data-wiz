@@ -19,8 +19,15 @@
     "@codemirror/lang-sql": "^6.8.0",
     "@pintora/cli": "^0.7.6",
     "@uiw/react-codemirror": "^4.23.7",
+    "antlr4": "^4.13.2",
+    "js-yaml": "^4.1.0",
+    "json-schema-to-typescript": "^15.0.4",
+    "node-sql-parser": "^5.3.6",
+    "php-parser": "^3.2.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sql-parser": "^0.5.0",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/react": "^19.0.8",
@@ -36,6 +43,6 @@
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.3",
     "vite": "^6.0.11",
-    "vitest": "^3.0.4"
+    "vitest": "^3.0.7"
   }
 }

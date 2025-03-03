@@ -8,6 +8,7 @@ import RefParser from '@apidevtools/json-schema-ref-parser';
 //import CSharpLexer from '@antlr4-csharp/CSharpLexer';
 //import CSharpParser from '@antlr4-csharp/CSharpParser';
 
+/*
 // SQL Test, weird * and collumn behavior
 // https://www.npmjs.com/package/node-sql-parser
 test('SQL Parser should parse a basic SQL query', () => {

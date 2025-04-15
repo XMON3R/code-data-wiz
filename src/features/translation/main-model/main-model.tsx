@@ -1,4 +1,4 @@
-import { CommonModel } from "../parsers/common-model";
+import { CommonModel } from "../common-model/common-model";
 
 export interface MainModel extends CommonModel {
   entities: Entity[];

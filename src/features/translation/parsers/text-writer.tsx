@@ -1,6 +1,6 @@
-import { CommonModel } from "./common-model";
+import { CommonModel } from "../common-model/common-model";
 
 export interface TextWriter {
-    parse(model: CommonModel): Promise<string>;
+    write(model: CommonModel): Promise<string>;
   }
   

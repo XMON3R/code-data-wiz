@@ -1,5 +1,5 @@
 // sql-parser.ts
-import { SQLDiagram, SQLTable, SQLColumn, SQLDataType } from './sql-model';
+import { SQLDiagram /*, SQLTable*/, SQLColumn, SQLDataType } from './sql-model';
 
 export interface SQLParser {
   parse(input: string): SQLDiagram;

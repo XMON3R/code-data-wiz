@@ -1,5 +1,5 @@
 import React from 'react';
-import '../output.css';
+import '../../output.css';
 
 // Enum for easy switching of translation "modules"
 enum ViewMode {

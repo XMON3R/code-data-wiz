@@ -1,5 +1,5 @@
 // plugins/json-vocabulary/json-vocabulary-adapter.ts
-import { MainModel, Entity, Property, PrimitiveType } from "../../main-model/main-model";
+import { MainModel, Entity, Property, PrimitiveType } from "../../data-model-api/main-model/main-model"
 import { JsonVocabularyModel } from "./json-vocabulary-model";
 
 export class JsonVocabularyAdapter {

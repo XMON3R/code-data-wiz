@@ -3,9 +3,9 @@ import Navbar, { ViewMode } from './navbar.tsx';
 import Editor from './editor.tsx';
 import VerticalSplitter from './vertical-splitter.tsx';
 import { sql } from '@codemirror/lang-sql';
-import translationController from '../features/translation/translation-controller.tsx'; // Adjusted import path
-import SQLParserWriter from '../features/sql-processing/sql-parser.tsx'; // Adjusted import path for SQL writer
-import ParserWriter from '../features/translation/parsers/parser-writer.tsx'; // Import ParserWriter interface for type reference
+import translationController from '../controllers/translation-controller.tsx'
+import SQLParserWriter from '../../plugins/sql-processing/sql-parser.tsx'; // Adjusted import path for SQL writer
+import ParserWriter from '../../data-model-api/old_parsers/parser-writer.tsx'; // Import ParserWriter interface for type reference
 
 const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.ClassDiagram);

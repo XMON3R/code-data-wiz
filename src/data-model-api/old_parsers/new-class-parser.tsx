@@ -1,4 +1,4 @@
-import ParserWriter from './parser-writer';
+import ParserWriter from './parser-writer'
 
 //general "to-do" class for any translation "module"
 class ClassParser {

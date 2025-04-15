@@ -4,5 +4,6 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/rp24/",
+  base: "/code-data-wiz/",
+  //base: "/rp24/",
 })

@@ -1,7 +1,7 @@
 import { expect, test, beforeEach } from 'vitest';
 import { JsonVocabularyAdapter } from "./json-vocabulary-adapter";
 import { JsonVocabularyModel } from "./json-vocabulary-model";
-import { MainModel } from "../../main-model/main-model";
+import { MainModel } from "../../data-model-api/main-model/main-model"
 
 let adapter: JsonVocabularyAdapter;
 let mockJsonVocabularyModel: JsonVocabularyModel;

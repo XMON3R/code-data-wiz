@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
-import ParserWriter from './parsers/parser-writer';
-import Config from '../shared/config';
+import ParserWriter from '../../data-model-api/old_parsers/parser-writer'
+import Config from '../components/shared/config'
 
 // Define an interface for the hook's return type
 interface TranslationState {

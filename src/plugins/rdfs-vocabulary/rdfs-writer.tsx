@@ -1,5 +1,5 @@
 // rdfs-writer.ts
-import { RdfsVocabulary, RdfsClass, RdfsProperty } from "./rdfs-model";
+import { RdfsVocabulary /*, RdfsClass, RdfsProperty */ } from "./rdfs-model";
 
 export interface RdfsWriter {
   write(vocabulary: RdfsVocabulary): Promise<string>;

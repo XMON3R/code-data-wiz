@@ -1,5 +1,5 @@
 // rdfs-adapter.ts
-import { MainModel, Entity, Property, PrimitiveType } from "../../main-model/main-model"; // Adjust import path as needed
+/*import { MainModel, Entity, Property, PrimitiveType } from "../../data-model-api/main-model/main-model"; // Adjust import path as needed
 import { RdfsVocabulary, RdfsClass, RdfsLiteral, RdfsDatatype, RdfsProperty } from "./rdfs-model";
 
 export class RdfsAdapter {
@@ -88,4 +88,4 @@ export class RdfsAdapter {
 
     return vocabulary;
   }
-}
+}*/

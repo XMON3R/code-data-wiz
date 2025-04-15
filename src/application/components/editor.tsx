@@ -1,6 +1,6 @@
 import CodeMirror from '@uiw/react-codemirror';
 import { Extension } from '@codemirror/state';
-import '../output.css';
+import '../../output.css';
 
 // Interface setting up the editor shown in UI
 interface EditorProps {

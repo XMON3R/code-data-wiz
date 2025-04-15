@@ -1,4 +1,4 @@
-import { CommonModel } from "../common-model/common-model";
+import { CommonModel } from "../common-model/common-model.tsx"
 
 export interface MainModel extends CommonModel {
   entities: Entity[];

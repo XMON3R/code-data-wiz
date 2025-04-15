@@ -1,4 +1,4 @@
-import ParserWriter from '../translation/parsers/parser-writer';
+import ParserWriter from '../../data-model-api/old_parsers/parser-writer';
 
 //SQL Parser is basically a translation module based on the ParserWriter interface
 class SQLParserWriter implements ParserWriter {

@@ -1,5 +1,5 @@
 // plugins/json-vocabulary/json-vocabulary-writer.ts
-import { TextWriter } from "../../parsers/text-writer";
+import { TextWriter } from "../../data-model-api/parsers/text-writer"
 import { JsonVocabularyModel } from "./json-vocabulary-model";
 
 export class JsonVocabularyWriter implements TextWriter {

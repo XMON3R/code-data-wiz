@@ -1,20 +1,25 @@
-import React from 'react';
-import '../../output.css';
+// DELETE
+//import React from 'react';
 
+// DELETE
 // Enum for easy switching of translation "modules"
+/*
 enum ViewMode {
   ClassDiagram = 'ClassDiagram',
   SQLQuery = 'SQLQuery',
 }
+*/
 
+// DELETE
 // Easily switchable ViewMode interface
-interface NavbarProps {
+/*interface NavbarProps {
   viewMode: ViewMode;
   onToggle: (mode: ViewMode) => void;
-}
+}*/
 
+// DELETE
 // Handling of onClick changes (might transform into a drop-down menu)
-const Navbar: React.FC<NavbarProps> = ({ viewMode, onToggle }) => (
+/*export const Navbar: React.FC<NavbarProps> = ({ viewMode, onToggle }) => (
   <div className="h-full border-2 border-gray-200 flex">
     <button
       className={`flex-1 bg-gray-600 text-white px-4 py-2 transition-colors duration-300 ${
@@ -33,7 +38,14 @@ const Navbar: React.FC<NavbarProps> = ({ viewMode, onToggle }) => (
       SQL Query
     </button>
   </div>
-);
+);*/
 
-export { ViewMode };
-export default Navbar;
+export function Header() {
+  return (
+  <div className="h-full border-2 border-gray-200 flex"> 
+    Code Data wiz ....
+  </div>
+  )
+};
+
+//export { ViewMode };

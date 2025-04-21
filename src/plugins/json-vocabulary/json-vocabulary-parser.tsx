@@ -1,5 +1,5 @@
 // plugins/json-vocabulary/json-vocabulary-parser.ts
-import { TextParser } from "../../data-model-api/parsers/text-parser"
+import { TextParser } from "../../data-model-api/text-parser"
 import { JsonVocabularyModel } from "./json-vocabulary-model";
 
 export class JsonVocabularyParser implements TextParser {

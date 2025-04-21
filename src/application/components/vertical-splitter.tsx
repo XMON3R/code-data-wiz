@@ -1,7 +1,5 @@
-//LOOK TO SPLITTER FOR ORIGINAL CODE, THIS IS AN EDIT TO MATCH THIS PROJECT
-
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import './splitter.css';
+import './vertical-splitter.css';
 
 interface VerticalSplitterProps {
   className?: string;
@@ -17,7 +15,8 @@ interface VerticalSplitterProps {
 
 /**
  * Vertical Splitter component that allows resizing the left and right sections
- */
+ * BASED ON DATASPENCER (https://github.com/mff-uk/dataspecer)
+*/
 export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null!);
   const leftRef = useRef<HTMLDivElement>(null!);

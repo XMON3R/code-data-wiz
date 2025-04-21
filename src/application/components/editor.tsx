@@ -1,6 +1,6 @@
-import CodeMirror from '@uiw/react-codemirror';
 import { Extension } from '@codemirror/state';
-import '../../output.css';
+import { createEditor } from '../../plugins/plugins-factory';
+import { EditorType } from '../../plugins';
 
 // Interface setting up the editor shown in UI
 interface EditorProps {
@@ -12,10 +12,37 @@ interface EditorProps {
 }
 
 // Implementation of CodeMirror component for better visuals and formatting
-function Editor({ value, onChange, readOnly, extensions, className }: EditorProps) {
+export function Editor({ value, onChange, readOnly, extensions, className }: EditorProps) {
   return (
     <div className={`h-full flex-1 grow-0 ${className}`}>
-      <CodeMirror
+      <EditorHeader className="h-10" 
+        type={}
+        onChangeType={}
+      />
+      <EditorWrap 
+        type={}
+        value={}
+        onChange={}
+      />
+    </div>
+  );
+}
+
+function EditorWrap(props: {
+  type: EditorType;
+}) {
+  const EditorComponent = createEditor(props.type)
+  return (
+    <EditorComponent
+    />
+  )
+}
+
+
+
+/* 
+
+<CodeMirror
         theme="dark"
         value={value}
         width="100%"
@@ -24,8 +51,4 @@ function Editor({ value, onChange, readOnly, extensions, className }: EditorProp
         readOnly={readOnly}
         extensions={extensions}
       />
-    </div>
-  );
-}
-
-export default Editor;
+*/

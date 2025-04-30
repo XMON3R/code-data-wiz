@@ -1,13 +1,37 @@
-# VisuLearn 
-## Vizualizační a "překladový" nástroj UML-SQL-C# 
+# Code-Data Wiz
+Tento nástroj slouží k usnadnění práce při práci s různými datovými formáty, datovými schématy a programovacími jazyky. Je možné je navzájem překládat včetně možnosti vizualizace (budoucí funkce).
 
-Ročníkový projekt pro rok 2024 na Matematicko-fyzikální fakultě Univerzity Karlovy pod vedením Mgr. Petra Škody, Ph.D. zabývající vizualizací a "překladem" UML diagramů do SQL a typovaných programovacích jazyků. Tento nástroj by měl sloužit k usnadnění práce při pracování s výše zmíněnými "formáty" dat a zároveň nabízí možnost pochopit dané struktury ve vícero jazycích a formátech.
+## Požadavky
+- NodeJS 22+
+- NPM 9+ (součástí NodeJS)
+- Prohlížeč podporující moderní JavaScript 
+- Volitelně (pro lokální spuštění či nasazení): Git pro klonování repozitáře
+
 
 ## Jak se nástroj spustit?
-Buď online [zde](https://xmon3r.github.io/rp24/) či lokálně:
+Buď online [zde](https://xmon3r.github.io/code-data-wiz/) (JIŽ BRZY) či lokálně:
 
-1. naklonujte repozitář
-2. v konzoli otevřete root složku obsahující celý projekt
-3. použijte příkaz "npm install" pro přípravu projektu (+ případně npm audit fix při změně packagů)
-4. následně použijte příkaz "npm run dev" 
-5. projekt následně naleznete na adrese: [http://localhost:5173/rp24/](http://localhost:5173/rp24/) 
+
+1. Naklonujte repozitář pomocí příkazu:
+```bash
+   git clone https://github.com/xmon3r/code-data-wiz.git
+```
+
+2. Otevřete konzoli a přejděte do složky projektu:
+```bash
+cd code-data-wiz
+```
+
+3. Instalace závislostí a vytvoření env souboru
+```bash
+npm install
+cp .env.example .env
+```
+
+4. Spusťte lokální server:
+```bash
+npm run dev
+```
+
+5. Pak naleznete na:
+[http://localhost:5173/code-data-wiz/](http://localhost:5173/code-data-wiz/) 

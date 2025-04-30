@@ -29,7 +29,7 @@
 
 // TODO (till friday)
 
--> branch do mainu zpět, archivace původního mainu ale!
+OK -> branch do mainu zpět, archivace původního mainu ale!
 
 json-ld přejmenovat na slovníky
 

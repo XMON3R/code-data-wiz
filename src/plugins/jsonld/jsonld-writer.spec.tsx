@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
-import { JsonVocabularyWriter } from "./json-vocabulary-writer";
-import { JsonVocabularyModel } from "./json-vocabulary-model";
+import { JsonVocabularyWriter } from "./jsonld-writer";
+import { JsonVocabularyModel } from "./jsonld-model";
 
 // Create a new instance of the JsonVocabularyWriter for each test
 const createWriter = () => new JsonVocabularyWriter();

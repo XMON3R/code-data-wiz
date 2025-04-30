@@ -1,5 +1,2 @@
-export enum EditorType {
-    ClassDiagram = 'ClassDiagram',
-    SQLQuery = 'SQLQuery',
-  }
-  
+
+export {EditorType} from './plugins-codelist';

@@ -1,4 +1,3 @@
-// rdfs-model.ts
 
 export interface RdfsResource {
     iri: string;

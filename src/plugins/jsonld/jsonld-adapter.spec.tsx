@@ -1,11 +1,11 @@
 import { expect, test, beforeEach } from 'vitest';
-import { JsonVocabularyAdapter } from "./json-vocabulary-adapter";
-import { JsonVocabularyModel } from "./json-vocabulary-model";
-import { MainModel } from "../../data-model-api/main-model/main-model"
+import { JsonVocabularyAdapter } from "./jsonld-adapter.tsx";
+import { JsonVocabularyModel } from "./jsonld-model.tsx";
+import { UniversalModel } from "../../data-model-api/index.ts";
 
 let adapter: JsonVocabularyAdapter;
 let mockJsonVocabularyModel: JsonVocabularyModel;
-let mockMainModel: MainModel;
+let mockMainModel: UniversalModel;
 
 beforeEach(() => {
   adapter = new JsonVocabularyAdapter();
@@ -63,3 +63,13 @@ test("should correctly adapt from MainModel to JsonVocabularyModel (basic)", asy
 // - Test handling of nested objects in JsonVocabularyModel.
 // - Test how different 'type' definitions in MainModel properties
 //   are handled during the conversion to JsonVocabularyModel.
+
+
+test("Root can be an object.", () => { 
+  const input = {
+    type: "object",
+    properties: {
+      name: { type: "string" },
+    },
+  },
+});

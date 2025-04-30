@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import SimpleSQLWriter from './sql-writer';
+import { SimpleSQLWriter } from './sql-writer';
 import { SQLDiagram } from './sql-model';
 
 const writer = new SimpleSQLWriter();

@@ -1,11 +1,11 @@
 // plugins/json-vocabulary/json-vocabulary-parser.ts
 import { TextParser } from "../../data-model-api/text-parser"
-import { JsonVocabularyModel } from "./json-vocabulary-model";
+import { JsonldModel } from "./jsonld-model";
 
 export class JsonVocabularyParser implements TextParser {
-  async parse(text: string): Promise<JsonVocabularyModel> {
+  async parse(text: string): Promise<JsonldModel> {
     try {
-      const jsonData: JsonVocabularyModel = JSON.parse(text);
+      const jsonData: JsonldModel = JSON.parse(text);
       return jsonData;
     } catch (error) {
       console.error("Error parsing JSON:", error);

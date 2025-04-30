@@ -3,7 +3,7 @@ import { EditorType } from "../plugins";
 import { ApllicationState } from "./application-state.tsx";
 
 export interface ApplicationController {
-    
+
     onChangeLeftEditorType: (value:EditorType) => void;
 
     onChangeRightEditorType: (value:EditorType) => void;
@@ -13,15 +13,21 @@ export interface ApplicationController {
 }
 
 export function useController (
-    setState: (update: (state:ApllicationState) => ApllicationState) => void;
+    setState: (update: (state:ApllicationState) => ApllicationState) => void,
 ) :ApplicationController {
 
     return {
-        onChangeLeftEditorType: (value) => setState(state => {
-            return {
-                ...state,
-                leftEditorType: value,
-            }
-        }),
-    }
+        onChangeLeftEditorType: (value) => setState(state => ({
+            ...state,
+            leftEditorType: value,
+        })),
+        onChangeRightEditorType: (value) => setState(state => ({
+            ...state,
+            rightEditorType: value,
+        })),
+        onChangeValue: (value) => setState(state => ({
+            ...state,
+            value: value,
+        })),
+    };
 }

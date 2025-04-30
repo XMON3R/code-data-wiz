@@ -1,6 +1,6 @@
-import { CommonModel } from "../common-model.tsx"
+import { UniversalModel } from './index.ts';
 
 export interface TextWriter {
-    write(model: CommonModel): Promise<string>;
+    write(model: UniversalModel): Promise<string>;
   }
   

@@ -13,7 +13,9 @@ export interface ApllicationState {
 export function createDefaultApplicationState(): ApllicationState {
     return {
         leftEditorType: EditorType.ClassDiagram,
-        rightEditorType: EditorType.SQLQuery,
-        value: {} // TODO
+        rightEditorType: EditorType.SecondaryEditor,
+        value: {
+            entities: []
+        }
     };
 }

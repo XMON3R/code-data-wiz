@@ -5,7 +5,7 @@ export interface SQLWriter {
   generateCode(parsed: SQLDiagram): string;
 }
 
-class SimpleSQLWriter implements SQLWriter {
+export class SimpleSQLWriter implements SQLWriter {
   generateCode(parsed: SQLDiagram): string {
     let sqlStatements = '';
 
@@ -18,5 +18,3 @@ class SimpleSQLWriter implements SQLWriter {
     return sqlStatements;
   }
 }
-
-export default SimpleSQLWriter;

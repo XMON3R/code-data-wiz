@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import './vertical-splitter.css';
+import React, { useRef, useEffect, useState, useCallback } from "react";
+import "./vertical-splitter.css";
 
 interface VerticalSplitterProps {
   className?: string;
@@ -24,7 +24,7 @@ export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
 
   // Ensure there are exactly two children passed
   console.assert(props.children.length === 2, {
-    message: 'Invalid number of children',
+    message: "Invalid number of children",
     actual: props.children.length,
   });
 
@@ -44,7 +44,7 @@ export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
 
   return (
     <div
-      className={`flex flex-row ${props.className ?? ''}`}
+      className={`flex flex-row ${props.className ?? ""}`}
       ref={containerRef}
     >
       <div ref={leftRef} style={{ width: `${leftWidth}%` }}>
@@ -53,7 +53,7 @@ export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
       <div
         className="splitter__divider bg-slate-300"
         onMouseDown={handleMouseDown}
-        style={{ cursor: 'col-resize' }}
+        style={{ cursor: "col-resize" }}
       />
       <div className="grow">{props.children[1]}</div>
     </div>
@@ -90,12 +90,12 @@ function useHandleMouseDown(
       };
 
       const handleMouseUp = () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
       };
 
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
     },
     [leftRef, containerRef, setLeftWidth]
   );

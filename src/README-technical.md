@@ -27,18 +27,21 @@
 
 
 
-// TODO (till friday)
-
-OK -> branch do mainu zpět, archivace původního mainu ale!
-
+// TODO (till MONDAY)
 json-ld přejmenovat na slovníky
 
 zleva doprava překlad zatím stejný stačí
 
-předělat uvozovky! DVOJITÉ jsou správné.
+předělat uvozovky! DVOJITÉ jsou správné. --------------- final check udělat
 
 Tailwind
 
 models opravit a dodělat 
 
 funkční dropdown
+
+
+
+
+DONE 
+branch do mainu zpět, archivace původního mainu ale!

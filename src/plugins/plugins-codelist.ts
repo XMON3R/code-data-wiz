@@ -1,9 +1,9 @@
 
 export enum EditorType {
-    ClassDiagram = 'ClassDiagram',
+    ClassDiagram = "ClassDiagram",
     
-    SQLQuery = 'SQLQuery',
+    SQLQuery = "SQLQuery",
 
-    SecondaryEditor = 'SecondaryEditor',
+    SecondaryEditor = "SecondaryEditor",
   }
   

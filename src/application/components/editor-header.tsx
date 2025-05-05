@@ -1,5 +1,5 @@
-import React from 'react';
-import { EditorType } from '../../plugins';
+import React from "react";
+import { EditorType } from "../../plugins";
 
 interface EditorHeaderProps {
     className?: string;

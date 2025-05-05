@@ -13,13 +13,13 @@ export interface UniversalModel {
 //  Represents a single entity within the data model.
 export interface Entity {
   /**
-   * A user-friendly label for the entity.  This is what's typically
+   * A user-friendly label for the entity.  This is what"s typically
    * displayed in the user interface.
    */
   label: string;
 
   //  TODO: MÍSTO LABELU - This comment indicates a potential future
-  //  change where 'label' might be replaced by 'name'.  'name' would
+  //  change where "label" might be replaced by "name".  "name" would
   //  likely be a more technical, machine-readable identifier.
   // name: string;
 
@@ -66,7 +66,7 @@ export interface Property {
 //  NIC Z TOHO NENÍ POTŘEBA, PŘES PLUGINY - This comment indicates that the
 //  following interfaces related to type representation are handled by
 //  plugins, not directly by the core application code.  The core
-//  application interacts with the 'type' property, but the plugins
+//  application interacts with the "type" property, but the plugins
 //  define the specific types.
 
 //  The base interface for all type representations.

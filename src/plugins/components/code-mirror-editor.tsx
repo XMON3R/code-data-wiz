@@ -1,5 +1,5 @@
-import CodeMirror from '@uiw/react-codemirror';
-import { Extension } from '@codemirror/state'; 
+import CodeMirror from "@uiw/react-codemirror";
+import { Extension } from "@codemirror/state"; 
 
 interface CodeMirrorEditorProps { 
     value: string;

@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest';
+import { expect, test } from "vitest";
 import { JsonVocabularyWriter } from "./jsonld-writer";
 import { JsonVocabularyModel } from "./jsonld-model";
 
@@ -29,14 +29,14 @@ const mockModel: JsonVocabularyModel = {
   "customProperty": "customValue"
 };
 
-test('write should convert a JsonVocabularyModel to a formatted JSON string', async () => {
+test("write should convert a JsonVocabularyModel to a formatted JSON string", async () => {
   const writer = createWriter();
   const expectedJson = JSON.stringify(mockModel, null, 2);
   const actualJson = await writer.write(mockModel);
   expect(actualJson).toBe(expectedJson);
 });
 
-test('write should handle an empty JsonVocabularyModel and return an empty JSON object', async () => {
+test("write should handle an empty JsonVocabularyModel and return an empty JSON object", async () => {
   const writer = createWriter();
   const emptyModel: JsonVocabularyModel = {} as JsonVocabularyModel; // Type assertion for an empty object
   const expectedJson = JSON.stringify({}, null, 2);
@@ -44,7 +44,7 @@ test('write should handle an empty JsonVocabularyModel and return an empty JSON 
   expect(actualJson).toBe(expectedJson);
 });
 
-test('write should correctly serialize different data types within the model', async () => {
+test("write should correctly serialize different data types within the model", async () => {
   const writer = createWriter();
   const modelWithDifferentTypes: JsonVocabularyModel = {
     "@context": "test",
@@ -60,7 +60,7 @@ test('write should correctly serialize different data types within the model', a
   expect(actualJson).toBe(expectedJson);
 });
 
-test('write should handle nested objects correctly', async () => {
+test("write should handle nested objects correctly", async () => {
   const writer = createWriter();
   const nestedModel: Partial<JsonVocabularyModel> = { // Use Partial to indicate not all properties are present
     "@context": "test",
@@ -75,7 +75,7 @@ test('write should handle nested objects correctly', async () => {
   expect(actualJson).toBe(expectedJson);
 });
 
-test('write should handle arrays of primitive types', async () => {
+test("write should handle arrays of primitive types", async () => {
   const writer = createWriter();
   const arrayModel: Partial<JsonVocabularyModel> = { // Use Partial
     "@context": "test",

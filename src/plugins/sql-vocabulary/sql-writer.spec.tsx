@@ -1,17 +1,17 @@
-import { expect, test } from 'vitest';
-import { SimpleSQLWriter } from './sql-writer';
-import { SQLDiagram } from './sql-model';
+import { expect, test } from "vitest";
+import { SimpleSQLWriter } from "./sql-writer";
+import { SQLDiagram } from "./sql-model";
 
 const writer = new SimpleSQLWriter();
 
-test('should generate SQL for a single table', () => {
+test("should generate SQL for a single table", () => {
   const diagram: SQLDiagram = {
     tables: [
       {
-        name: 'User',
+        name: "User",
         columns: [
-          { name: 'id', type: 'INT' },
-          { name: 'name', type: 'VARCHAR(255)' },
+          { name: "id", type: "INT" },
+          { name: "name", type: "VARCHAR(255)" },
         ],
       },
     ],
@@ -26,22 +26,22 @@ test('should generate SQL for a single table', () => {
   expect(result).toEqual(expected);
 });
 
-test('should generate SQL for multiple tables', () => {
+test("should generate SQL for multiple tables", () => {
   const diagram: SQLDiagram = {
     tables: [
       {
-        name: 'User',
+        name: "User",
         columns: [
-          { name: 'id', type: 'INT' },
-          { name: 'name', type: 'VARCHAR(255)' },
+          { name: "id", type: "INT" },
+          { name: "name", type: "VARCHAR(255)" },
         ],
       },
       {
-        name: 'Post',
+        name: "Post",
         columns: [
-          { name: 'postId', type: 'INT' },
-          { name: 'content', type: 'VARCHAR(255)' },
-          { name: 'userId', type: 'INT' },
+          { name: "postId", type: "INT" },
+          { name: "content", type: "VARCHAR(255)" },
+          { name: "userId", type: "INT" },
         ],
       },
     ],
@@ -62,15 +62,15 @@ CREATE TABLE Post (
   expect(result).toEqual(expected);
 });
 
-test('should handle tables with different data types', () => {
+test("should handle tables with different data types", () => {
   const diagram: SQLDiagram = {
     tables: [
       {
-        name: 'Product',
+        name: "Product",
         columns: [
-          { name: 'productId', type: 'INT' },
-          { name: 'productName', type: 'VARCHAR(255)' },
-          { name: 'price', type: 'DECIMAL(10, 2)' },
+          { name: "productId", type: "INT" },
+          { name: "productName", type: "VARCHAR(255)" },
+          { name: "price", type: "DECIMAL(10, 2)" },
         ],
       },
     ],
@@ -86,11 +86,11 @@ test('should handle tables with different data types', () => {
   expect(result).toEqual(expected);
 });
 
-test('should handle empty tables', () => {
+test("should handle empty tables", () => {
   const diagram: SQLDiagram = {
     tables: [
       {
-        name: 'Empty',
+        name: "Empty",
         columns: [],
       },
     ],

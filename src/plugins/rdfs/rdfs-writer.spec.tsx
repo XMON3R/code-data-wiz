@@ -1,10 +1,10 @@
-import { expect, test } from 'vitest';
+import { expect, test } from "vitest";
 import { SimpleRdfsWriter } from "./rdfs-writer";
 import { RdfsVocabulary } from "./rdfs-model";
 
 const writer = new SimpleRdfsWriter();
 
-test('should write basic RDFS classes with labels', async () => {
+test("should write basic RDFS classes with labels", async () => {
   const vocabulary: RdfsVocabulary = {
     classes: {
       "http://example.org/Person": {
@@ -22,7 +22,7 @@ test('should write basic RDFS classes with labels', async () => {
   expect(rdfContent).toContain(`<http://example.org/Person> <http://www.w3.org/2000/01/rdf-schema#label> "Osoba"@cs .`);
 });
 
-test('should write RDFS classes with subClassOf and comments', async () => {
+test("should write RDFS classes with subClassOf and comments", async () => {
   const vocabulary: RdfsVocabulary = {
     classes: {
       "http://example.org/Student": {
@@ -41,7 +41,7 @@ test('should write RDFS classes with subClassOf and comments', async () => {
   expect(rdfContent).toContain(`<http://example.org/Student> <http://www.w3.org/2000/01/rdf-schema#comment> "A student."@en .`);
 });
 
-test('should write RDFS properties with domain and range', async () => {
+test("should write RDFS properties with domain and range", async () => {
   const vocabulary: RdfsVocabulary = {
     classes: {},
     literals: {},
@@ -60,7 +60,7 @@ test('should write RDFS properties with domain and range', async () => {
   expect(rdfContent).toContain(`<http://example.org/hasName> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2000/01/rdf-schema#Literal> .`);
 });
 
-test('should handle empty vocabulary', async () => {
+test("should handle empty vocabulary", async () => {
   const vocabulary: RdfsVocabulary = {
     classes: {},
     literals: {},

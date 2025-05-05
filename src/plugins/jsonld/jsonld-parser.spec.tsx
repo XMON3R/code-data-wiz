@@ -1,4 +1,4 @@
-import { expect, test, describe } from 'vitest';
+import { expect, test, describe } from "vitest";
 import { JsonVocabularyParser } from "./jsonld-parser";
 
 // Instance of JsonVocabularyParser
@@ -34,7 +34,7 @@ describe("JsonVocabularyParser", ( ) => {
       });
       
       test("should throw an error for invalid JSON", async () => {
-          const invalidJsonString = `{"invalid": "json"`; // Missing closing '}'
+          const invalidJsonString = `{"invalid": "json"`; // Missing closing "}"
           await expect(parser.parse(invalidJsonString)).rejects.toThrowError("Failed to parse JSON");
         });
 })

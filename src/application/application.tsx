@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Header } from './components/header.tsx';
-import VerticalSplitter from './components/vertical-splitter.tsx';
-import { createDefaultApplicationState } from './application-state.tsx';
-import { useController } from './application-controller.tsx';
-import { Editor } from './components/editor.tsx';
+import React, { useState } from "react";
+import { Header } from "./components/header.tsx";
+import VerticalSplitter from "./components/vertical-splitter.tsx";
+import { createDefaultApplicationState } from "./application-state.tsx";
+import { useController } from "./application-controller.tsx";
+import { Editor } from "./components/editor.tsx";
 
 export const App: React.FC = () => {
     const [state, setState] = useState(createDefaultApplicationState()); // Get state and setState

@@ -1,8 +1,8 @@
-import { Extension } from '@codemirror/state';
-import { createEditor } from '../../plugins/plugins-factory';
-import { EditorType } from '../../plugins';
-import { EditorHeader } from './editor-header'; // Make sure this import is correct
-import { UniversalModel } from '../../data-model-api';
+import { Extension } from "@codemirror/state";
+import { createEditor } from "../../plugins/plugins-factory";
+import { EditorType } from "../../plugins";
+import { EditorHeader } from "./editor-header"; // Make sure this import is correct
+import { UniversalModel } from "../../data-model-api";
 
 // Interface setting up the editor shown in UI
 export interface EditorProps {

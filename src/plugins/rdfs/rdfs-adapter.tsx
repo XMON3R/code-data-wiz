@@ -48,7 +48,7 @@ export class RdfsAdapter {
 
     for (const entity of mainModel.entities) {
       const iriProperty = entity.properties.find(p => p.label === "iri");
-      if (iriProperty && typeof iriProperty.value === 'string') {
+      if (iriProperty && typeof iriProperty.value === "string") {
         const iri = iriProperty.value;
         const label: { [key: string]: string } = {};
         const comment: { [key: string]: string } = {};
@@ -58,18 +58,18 @@ export class RdfsAdapter {
         const subPropertyOf: string[] = [];
 
         entity.properties.forEach(prop => {
-          if (prop.label.startsWith("label@") && typeof prop.value === 'string') {
+          if (prop.label.startsWith("label@") && typeof prop.value === "string") {
             label[prop.label.substring(6)] = prop.value;
-          } else if (prop.label.startsWith("comment@") && typeof prop.value === 'string') {
+          } else if (prop.label.startsWith("comment@") && typeof prop.value === "string") {
             comment[prop.label.substring(8)] = prop.value;
           } else if (prop.label === "subClassOf" && Array.isArray(prop.value)) {
-            subClassOf.push(...prop.value.filter((v): v is string => typeof v === 'string'));
+            subClassOf.push(...prop.value.filter((v): v is string => typeof v === "string"));
           } else if (prop.label === "domain" && Array.isArray(prop.value)) {
-            domain.push(...prop.value.filter((v): v is string => typeof v === 'string'));
+            domain.push(...prop.value.filter((v): v is string => typeof v === "string"));
           } else if (prop.label === "range" && Array.isArray(prop.value)) {
-            range.push(...prop.value.filter((v): v is string => typeof v === 'string'));
+            range.push(...prop.value.filter((v): v is string => typeof v === "string"));
           } else if (prop.label === "subPropertyOf" && Array.isArray(prop.value)) {
-            subPropertyOf.push(...prop.value.filter((v): v is string => typeof v === 'string'));
+            subPropertyOf.push(...prop.value.filter((v): v is string => typeof v === "string"));
           }
         });
 

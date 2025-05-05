@@ -6,7 +6,7 @@ export function listPluginMetadata() {
         type: EditorType.ClassDiagram,
         label: "",
         description: "",
-        name: 'Class Diagram',
+        name: "Class Diagram",
     };
 }
 

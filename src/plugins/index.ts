@@ -1,2 +1,2 @@
 
-export {EditorType} from './plugins-codelist';
+export {EditorType} from "./plugins-codelist";

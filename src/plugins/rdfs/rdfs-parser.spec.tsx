@@ -1,10 +1,10 @@
-import { expect, test } from 'vitest';
+import { expect, test } from "vitest";
 import { SimpleRdfsParser } from "./rdfs-parser";
 //import { RdfsVocabulary } from "./rdfs-model";
 
 const parser = new SimpleRdfsParser();
 
-test('should parse basic RDFS classes', async () => {
+test("should parse basic RDFS classes", async () => {
   const rdfContent = `
     <http://example.org/Person> a <http://www.w3.org/2000/01/rdf-schema#Class> .
     <http://example.org/Person> <http://www.w3.org/2000/01/rdf-schema#label> "Person"@en .
@@ -17,7 +17,7 @@ test('should parse basic RDFS classes', async () => {
   expect(vocabulary.classes["http://example.org/Person"]?.label?.cs).toBe("Osoba");
 });
 
-test('should parse RDFS subClassOf', async () => {
+test("should parse RDFS subClassOf", async () => {
   const rdfContent = `
     <http://example.org/Student> a <http://www.w3.org/2000/01/rdf-schema#Class> .
     <http://example.org/Student> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/Person> .
@@ -27,7 +27,7 @@ test('should parse RDFS subClassOf', async () => {
   expect(vocabulary.classes["http://example.org/Student"]?.subClassOf).toEqual(["http://example.org/Person"]);
 });
 
-test('should parse RDFS properties with domain and range', async () => {
+test("should parse RDFS properties with domain and range", async () => {
   const rdfContent = `
     <http://example.org/hasName> a <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
     <http://example.org/hasName> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/Person> .
@@ -39,7 +39,7 @@ test('should parse RDFS properties with domain and range', async () => {
   expect(vocabulary.properties["http://example.org/hasName"]?.range).toEqual(["http://www.w3.org/2000/01/rdf-schema#Literal"]);
 });
 
-test('should handle multiple triples', async () => {
+test("should handle multiple triples", async () => {
   const rdfContent = `
     <http://example.org/Person> a <http://www.w3.org/2000/01/rdf-schema#Class> .
     <http://example.org/name> a <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
@@ -51,7 +51,7 @@ test('should handle multiple triples', async () => {
   expect(vocabulary.properties["http://example.org/name"]?.domain).toEqual(["http://example.org/Person"]);
 });
 
-test('should ignore comments and empty lines', async () => {
+test("should ignore comments and empty lines", async () => {
   const rdfContent = `
     # This is a comment
     <http://example.org/ClassA> a <http://www.w3.org/2000/01/rdf-schema#Class> .

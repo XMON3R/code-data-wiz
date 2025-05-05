@@ -1,4 +1,4 @@
-/*import { expect, test, beforeEach } from 'vitest';
+/*import { expect, test, beforeEach } from "vitest";
 import { RdfsAdapter } from "./rdfs-adapter";
 import { RdfsVocabulary } from "./rdfs-model";
 import { MainModel } from "../../data-model-api/main-model/main-model"; // Adjust import path as needed

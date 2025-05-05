@@ -15,12 +15,12 @@ export class SimpleRdfsWriter implements RdfsWriter {
       output += `<${rdfsClass.iri}> a <http://www.w3.org/2000/01/rdf-schema#Class> .\n`;
       if (rdfsClass.label) {
         for (const lang in rdfsClass.label) {
-          output += `<${rdfsClass.iri}> <http://www.w3.org/2000/01/rdf-schema#label> "${rdfsClass.label[lang]}"${lang ? `@${lang}` : ''} .\n`;
+          output += `<${rdfsClass.iri}> <http://www.w3.org/2000/01/rdf-schema#label> "${rdfsClass.label[lang]}"${lang ? `@${lang}` : ""} .\n`;
         }
       }
       if (rdfsClass.comment) {
         for (const lang in rdfsClass.comment) {
-          output += `<${rdfsClass.iri}> <http://www.w3.org/2000/01/rdf-schema#comment> "${rdfsClass.comment[lang]}"${lang ? `@${lang}` : ''} .\n`;
+          output += `<${rdfsClass.iri}> <http://www.w3.org/2000/01/rdf-schema#comment> "${rdfsClass.comment[lang]}"${lang ? `@${lang}` : ""} .\n`;
         }
       }
       if (rdfsClass.subClassOf) {
@@ -28,7 +28,7 @@ export class SimpleRdfsWriter implements RdfsWriter {
           output += `<${rdfsClass.iri}> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <${superClass}> .\n`;
         }
       }
-      output += '\n';
+      output += "\n";
     }
 
     for (const iri in vocabulary.properties) {
@@ -36,12 +36,12 @@ export class SimpleRdfsWriter implements RdfsWriter {
       output += `<${rdfsProperty.iri}> a <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .\n`;
       if (rdfsProperty.label) {
         for (const lang in rdfsProperty.label) {
-          output += `<${rdfsProperty.iri}> <http://www.w3.org/2000/01/rdf-schema#label> "${rdfsProperty.label[lang]}"${lang ? `@${lang}` : ''} .\n`;
+          output += `<${rdfsProperty.iri}> <http://www.w3.org/2000/01/rdf-schema#label> "${rdfsProperty.label[lang]}"${lang ? `@${lang}` : ""} .\n`;
         }
       }
       if (rdfsProperty.comment) {
         for (const lang in rdfsProperty.comment) {
-          output += `<${rdfsProperty.iri}> <http://www.w3.org/2000/01/rdf-schema#comment> "${rdfsProperty.comment[lang]}"${lang ? `@${lang}` : ''} .\n`;
+          output += `<${rdfsProperty.iri}> <http://www.w3.org/2000/01/rdf-schema#comment> "${rdfsProperty.comment[lang]}"${lang ? `@${lang}` : ""} .\n`;
         }
       }
       if (rdfsProperty.domain) {
@@ -59,7 +59,7 @@ export class SimpleRdfsWriter implements RdfsWriter {
           output += `<${rdfsProperty.iri}> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> <${subProperty}> .\n`;
         }
       }
-      output += '\n';
+      output += "\n";
     }
 
     // You would extend this to handle literals and datatypes as needed.

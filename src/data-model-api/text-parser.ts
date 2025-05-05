@@ -1,4 +1,4 @@
-import { UniversalModel } from './index.ts';  // IMPORT PŘÍMO ZE SOUBORU 
+import { UniversalModel } from "./index.ts";  // IMPORT PŘÍMO ZE SOUBORU 
 
 export interface TextParser /* <T extends DomainSpecificModel> */ {
 

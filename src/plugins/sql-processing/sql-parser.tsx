@@ -1,18 +1,18 @@
-import ParserWriter from '../../data-model-api/old_parsers/parser-writer';
+import ParserWriter from "../../data-model-api/old_parsers/parser-writer";
 
 //SQL Parser is basically a translation module based on the ParserWriter interface
 class SQLParserWriter implements ParserWriter {
   parse(input: string): string {
     const classRegex = /class (\w+)\s*\{([^}]*)\}/g;
-    let diagram = '';
+    let diagram = "";
     let match;
 
     while ((match = classRegex.exec(input)) !== null) {
       const className = match[1];
       const attributes = match[2]
-        .split('\n')
+        .split("\n")
         .map((attr) => attr.trim())
-        .filter((attr) => attr !== '');
+        .filter((attr) => attr !== "");
 
       diagram += `class ${className} {\n`;
       attributes.forEach((attr) => {
@@ -26,26 +26,26 @@ class SQLParserWriter implements ParserWriter {
 
   generateCode(parsed: string): string {
     const classRegex = /class (\w+)\s*\{\n([^}]*)\n\}/g;
-    let sqlStatements = '';
+    let sqlStatements = "";
     let match;
 
     while ((match = classRegex.exec(parsed)) !== null) {
       const className = match[1];
       const attributes = match[2]
-        .split('\n')
+        .split("\n")
         .map((attr) => attr.trim())
-        .filter((attr) => attr !== '');
+        .filter((attr) => attr !== "");
 
       sqlStatements += `CREATE TABLE ${className} (\n`;
 
       attributes.forEach((attr) => {
-        const [type, name] = attr.split(' ');
+        const [type, name] = attr.split(" ");
         const sqlType = this.mapTypeToSQL(type);
         sqlStatements += `  ${name} ${sqlType},\n`;
       });
 
       sqlStatements = sqlStatements.trimEnd().slice(0, -1); // Remove trailing comma
-      sqlStatements += '\n);\n\n';
+      sqlStatements += "\n);\n\n";
     }
 
     return sqlStatements;
@@ -53,14 +53,14 @@ class SQLParserWriter implements ParserWriter {
 
   private mapTypeToSQL(type: string): string {
     switch (type) {
-      case 'int':
-        return 'INT';
-      case 'String':
-        return 'VARCHAR(255)';
-      case 'double':
-        return 'DECIMAL(10, 2)';
+      case "int":
+        return "INT";
+      case "String":
+        return "VARCHAR(255)";
+      case "double":
+        return "DECIMAL(10, 2)";
       default:
-        return 'TEXT';
+        return "TEXT";
     }
   }
 }

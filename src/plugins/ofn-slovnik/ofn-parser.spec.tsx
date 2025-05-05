@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest";
-import { JsonVocabularyParser } from "./jsonld-parser";
+import { JsonVocabularyParser } from "./ofn-parser";
 
 // Instance of JsonVocabularyParser
 const parser = new JsonVocabularyParser();

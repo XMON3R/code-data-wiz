@@ -1,6 +1,6 @@
 // plugins/json-vocabulary/json-vocabulary-adapter.ts
 import { MainModel, Entity, Property, PrimitiveType } from "../../data-model-api/main-model/main-model"
-import { JsonVocabularyModel } from "./jsonld-model";
+import { JsonVocabularyModel } from "./ofn-model";
 
 export class JsonVocabularyAdapter {
   async fromJsonVocabulary(model: JsonVocabularyModel): Promise<MainModel> {

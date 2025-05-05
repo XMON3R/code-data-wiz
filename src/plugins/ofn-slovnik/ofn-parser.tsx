@@ -1,6 +1,6 @@
 // plugins/json-vocabulary/json-vocabulary-parser.ts
 import { TextParser } from "../../data-model-api/text-parser"
-import { JsonldModel } from "./jsonld-model";
+import { JsonldModel } from "./ofn-model";
 
 export class JsonVocabularyParser implements TextParser {
   async parse(text: string): Promise<JsonldModel> {

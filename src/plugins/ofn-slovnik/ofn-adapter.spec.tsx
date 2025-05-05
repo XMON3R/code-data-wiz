@@ -1,6 +1,6 @@
 import { expect, test, beforeEach } from 'vitest';
-import { JsonVocabularyAdapter } from "./jsonld-adapter.tsx";
-import { JsonVocabularyModel } from "./jsonld-model.tsx";
+import { JsonVocabularyAdapter } from "./ofn-adapter.tsx";
+import { JsonVocabularyModel } from "./ofn-model.tsx";
 import { UniversalModel } from "../../data-model-api/index.ts";
 
 let adapter: JsonVocabularyAdapter;

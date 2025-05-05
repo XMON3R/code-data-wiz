@@ -1,6 +1,6 @@
 // plugins/json-vocabulary/json-vocabulary-writer.ts
 import { TextWriter } from "../../data-model-api/parsers/text-writer"
-import { JsonVocabularyModel } from "./jsonld-model";
+import { JsonVocabularyModel } from "./ofn-model";
 
 export class JsonVocabularyWriter implements TextWriter {
   async write(model: JsonVocabularyModel): Promise<string> {

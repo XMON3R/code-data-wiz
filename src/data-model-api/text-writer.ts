@@ -1,4 +1,4 @@
-import { UniversalModel } from "./index.ts";
+import { UniversalModel } from "./universal-model.ts";
 
 export interface TextWriter {
     write(model: UniversalModel): Promise<string>;

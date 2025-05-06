@@ -1,8 +1,14 @@
-import { UniversalModel } from "./index.ts";  // IMPORT PŘÍMO ZE SOUBORU 
+import { UniversalModel } from "./universal-model.ts";  
 
-export interface TextParser /* <T extends DomainSpecificModel> */ {
-
+//ASK
+/*
+export interface TextParser  {
     parse(text: string): Promise<UniversalModel>;
+  }
+  
+  */
 
+export interface TextParser<T = UniversalModel> {
+    parse(text: string): Promise<T>;
   }
   

@@ -1,44 +1,44 @@
 import { expect, test } from "vitest";
-import { JsonVocabularyWriter } from "./jsonld-writer";
-import { JsonVocabularyModel } from "./ofn-model";
+import { OfnWriter } from "./ofn-writer";
+import { OfnModel } from "./ofn-model";
 
-// Create a new instance of the JsonVocabularyWriter for each test
-const createWriter = () => new JsonVocabularyWriter();
+// Create a new instance of the OfnWriter for each test
+const createWriter = () => new OfnWriter();
 
 // Define a consistent mock model for testing
-const mockModel: JsonVocabularyModel = {
+const mockModel: OfnModel = {
   "@context": "https://example.org/context",
-  "iri": "https://example.org/vocabulary",
-  "typ": ["Vocabulary"],
-  "název": {
-    "cs": "Testovací slovník",
-    "en": "Test vocabulary"
+  iri: "https://example.org/vocabulary",
+  type: ["Vocabulary"],
+  name: {
+    cs: "Testovací slovník",
+    en: "Test vocabulary",
   },
-  "popis": {
-    "cs": "Toto je testovací slovník.",
-    "en": "This is a test vocabulary."
+  description: {
+    cs: "Toto je testovací slovník.",
+    en: "This is a test vocabulary.",
   },
-  "vytvořeno": {
-    "typ": "Časový okamžik",
-    "datum": "2025-04-11"
+  created: {
+    type: "Časový okamžik",
+    date: "2025-04-11",
   },
-  "aktualizováno": {
-    "typ": "Časový okamžik",
-    "datum_a_čas": "2025-04-11T15:25:00+02:00"
+  updated: {
+    type: "Časový okamžik",
+    datetime: "2025-04-11T15:25:00+02:00",
   },
-  "customProperty": "customValue"
+  customProperty: "customValue",
 };
 
-test("write should convert a JsonVocabularyModel to a formatted JSON string", async () => {
+test("write should convert a OfnModel to a formatted JSON string", async () => {
   const writer = createWriter();
   const expectedJson = JSON.stringify(mockModel, null, 2);
   const actualJson = await writer.write(mockModel);
   expect(actualJson).toBe(expectedJson);
 });
 
-test("write should handle an empty JsonVocabularyModel and return an empty JSON object", async () => {
+test("write should handle an empty OfnModel and return an empty JSON object", async () => {
   const writer = createWriter();
-  const emptyModel: JsonVocabularyModel = {} as JsonVocabularyModel; // Type assertion for an empty object
+  const emptyModel: OfnModel = {}; //  Changed to be a truly empty object
   const expectedJson = JSON.stringify({}, null, 2);
   const actualJson = await writer.write(emptyModel);
   expect(actualJson).toBe(expectedJson);
@@ -46,14 +46,14 @@ test("write should handle an empty JsonVocabularyModel and return an empty JSON 
 
 test("write should correctly serialize different data types within the model", async () => {
   const writer = createWriter();
-  const modelWithDifferentTypes: JsonVocabularyModel = {
+  const modelWithDifferentTypes: OfnModel = {
     "@context": "test",
-    "iri": "123", // Corrected to string
-    "typ": ["true", "false"], // Corrected to array of strings
-    "název": { "cs": null as any, "en": undefined as any }, // Allow null and undefined
-    "popis": { "cs": "", "en": "" },
-    "vytvořeno": { "typ": "", "datum": "" },
-    "aktualizováno": { "typ": "", "datum_a_čas": "" },
+    iri: "123",
+    type: ["true", "false"],
+    name: { cs: null as any, en: undefined as any },
+    description: { cs: "", en: "" },
+    created: { type: "", date: "" },
+    updated: { type: "", datetime: "" },
   };
   const expectedJson = JSON.stringify(modelWithDifferentTypes, null, 2);
   const actualJson = await writer.write(modelWithDifferentTypes);
@@ -62,32 +62,38 @@ test("write should correctly serialize different data types within the model", a
 
 test("write should handle nested objects correctly", async () => {
   const writer = createWriter();
-  const nestedModel: Partial<JsonVocabularyModel> = { // Use Partial to indicate not all properties are present
+  const nestedModel: OfnModel = {
     "@context": "test",
-    "nested": {
-      "level1": {
-        "level2": "value"
-      }
-    }
+    iri: "test-iri",
+    type: [],
+    name: {},
+    description: {},
+    created: { type: "", date: "" },
+    updated: { type: "", datetime: "" },
+    nested: {
+      level1: {
+        level2: "value",
+      },
+    },
   };
   const expectedJson = JSON.stringify(nestedModel, null, 2);
-  const actualJson = await writer.write(nestedModel as JsonVocabularyModel); // Explicitly cast for write
+  const actualJson = await writer.write(nestedModel);
   expect(actualJson).toBe(expectedJson);
 });
 
 test("write should handle arrays of primitive types", async () => {
   const writer = createWriter();
-  const arrayModel: Partial<JsonVocabularyModel> = { // Use Partial
+  const arrayModel: OfnModel = {
     "@context": "test",
-    "iri": "test-iri",
-    "typ": ["one", "two", "three"],
-    "název": { "cs": "", "en": "" },
-    "popis": { "cs": "", "en": "" },
-    "vytvořeno": { "typ": "", "datum": "" },
-    "aktualizováno": { "typ": "", "datum_a_čas": "" },
-    "items": [1, "two", true]
+    iri: "test-iri",
+    type: ["one", "two", "three"],
+    name: {},
+    description: {},
+    created: { type: "", date: "" },
+    updated: { type: "", datetime: "" },
+    items: [1, "two", true],
   };
   const expectedJson = JSON.stringify(arrayModel, null, 2);
-  const actualJson = await writer.write(arrayModel as JsonVocabularyModel); // Explicitly cast
+  const actualJson = await writer.write(arrayModel);
   expect(actualJson).toBe(expectedJson);
 });

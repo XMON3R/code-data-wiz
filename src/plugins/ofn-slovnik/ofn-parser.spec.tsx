@@ -1,8 +1,8 @@
 import { expect, test, describe } from "vitest";
-import { JsonVocabularyParser } from "./ofn-parser";
+import { OfnParser } from "./ofn-parser";
 
 // Instance of JsonVocabularyParser
-const parser = new JsonVocabularyParser();
+const parser = new OfnParser();
 
 describe("JsonVocabularyParser", ( ) => {
     test("should successfully parse a valid JSON vocabulary string", async () => {
@@ -33,8 +33,8 @@ describe("JsonVocabularyParser", ( ) => {
         expect(model.název.cs).toBe("Slovník turistických cílů");
       });
       
-      test("should throw an error for invalid JSON", async () => {
-          const invalidJsonString = `{"invalid": "json"`; // Missing closing "}"
-          await expect(parser.parse(invalidJsonString)).rejects.toThrowError("Failed to parse JSON");
+      test("should throw an error for invalid OFN JSON", async () => {
+          const invalidJsonString = `{"invalid": "json"`;
+          await expect(parser.parse(invalidJsonString)).rejects.toThrowError("Failed to parse OFN JSON");
         });
 })

@@ -1,0 +1,2 @@
+// z jakékoholiv modelu
+

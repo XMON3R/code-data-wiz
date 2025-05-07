@@ -1,64 +1,18 @@
+import { DomainSpecificModel } from "../../data-model-api/domain-specific-model";
 
-/*export interface OfnModel {  
-  "@context": string;
-  iri: string;
-  type: string[];
-  name: {
-      cs: string;
-      en: string;
-  };
-  description: {                   
-      cs: string;
-      en: string;
-  };
-  created: {
-      type: string;
-      date: string;
-  };
-  updated: {
-      type: string;
-      datetime: string;
-  };
-  [key: string]: any;
-}*/
-
-/*
-export interface OfnModel {
-    [key: string]: any;
-    "@context": string;
-    iri: string;
-    type: string[];
-    name: Record<string, string>;
-    description: Record<string, string>;
-    created: {
-        type: string;
-        date: string;
-    };
-    updated: {
-        type: string;
-        datetime: string;
-    };
-}*/
-
-export interface OfnModel {
-    "@context"?: string;
+/**
+ * {@link  https://ofn.gov.cz/slovníky/draft/#slovník-příklady-json-ld}
+ */
+export interface OfnModel extends DomainSpecificModel{
     iri?: string;
-    type?: string[];
-    name?: {
+    name: {
       cs?: string;
       en?: string;
     };
-    description?: {
+    description: {
       cs?: string;
       en?: string;
     };
-    created?: {
-      type?: string;
-      date?: string;
-    };
-    updated?: {
-      type?: string;
-      datetime?: string;
-    };
-    [key: string]: any;
+    createdAt?: string;
+    updatedAt?: string;
   }

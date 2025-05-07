@@ -2,6 +2,7 @@
 import { TextParser } from "../../data-model-api/text-parser"
 import { OfnModel } from "./ofn-model";
 
+// z adapteru sem přijde hodně code, postupně checkovat
 export class OfnParser implements TextParser<OfnModel> {
   async parse(text: string): Promise<OfnModel> {
       try {

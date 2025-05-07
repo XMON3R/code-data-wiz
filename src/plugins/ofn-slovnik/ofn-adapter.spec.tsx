@@ -1,40 +1,40 @@
 import { expect, test, beforeEach } from 'vitest';
-import { JsonVocabularyAdapter } from "./ofn-adapter.tsx";
-import { JsonVocabularyModel } from "./ofn-model.tsx";
-import { UniversalModel } from "../../data-model-api/index.ts";
+import { OfnAdapter } from "./ofn-adapter.tsx";
+import { OfnModel } from "./ofn-model.ts";
+import { UniversalModel } from "../../data-model-api/universal-model.ts";
 
-let adapter: JsonVocabularyAdapter;
-let mockJsonVocabularyModel: JsonVocabularyModel;
-let mockMainModel: UniversalModel;
+let adapter: OfnAdapter;
+let mockOfnModel: OfnModel;
+let mockUniversalModel: UniversalModel;
 
 beforeEach(() => {
-  adapter = new JsonVocabularyAdapter();
-  mockJsonVocabularyModel = {
+  adapter = new OfnAdapter();
+  mockOfnModel = {
     "@context": "test-context",
     iri: "test-iri",
-    typ: ["TestType"],
-    název: { cs: "Test CS", en: "Test EN" },
-    popis: { cs: "Test Popis CS", en: "Test Popis EN" },
-    vytvořeno: { typ: "Časový okamžik", datum: "2025-01-01" },
-    aktualizováno: { // Explicitly define the object for aktualizováno
-      typ: "Časový okamžik",
-      datum_a_čas: "2025-01-15T10:00:00+00:00"
+    type: ["TestType"],
+    name: { cs: "Test CS", en: "Test EN" },
+    description: { cs: "Test Popis CS", en: "Test Popis EN" },
+    created: { type: "Časový okamžik", date: "2025-01-01" }, 
+    updated: {                                         
+      type: "Časový okamžik",
+      datetime: "2025-01-15T10:00:00+00:00"
     },
     extraProperty: "extraValue",
   };
 
-  mockMainModel = {
+  mockUniversalModel = {
     entities: [
       {
         label: "JSON Vocabulary Root",
         properties: [
           { label: "@context", type: {} },
           { label: "iri", type: {} },
-          { label: "typ", type: {} },
-          { label: "název", type: {} },
-          { label: "popis", type: {} },
-          { label: "vytvořeno", type: {} },
-          { label: "aktualizováno", type: {} },
+          { label: "type", type: {} },
+          { label: "name", type: {} },
+          { label: "description", type: {} },
+          { label: "created", type: {} },
+          { label: "updated", type: {} },
           { label: "extraProperty", type: {} },
         ],
       },
@@ -42,34 +42,25 @@ beforeEach(() => {
   };
 });
 
-test("should correctly adapt from JsonVocabularyModel to MainModel", async () => {
-  const mainModel = await adapter.fromJsonVocabulary(mockJsonVocabularyModel);
-  expect(mainModel.entities.length).toBe(1);
-  expect(mainModel.entities[0].label).toBe("JSON Vocabulary Root");
-  expect(mainModel.entities[0].properties.length).toBe(Object.keys(mockJsonVocabularyModel).length);
-  expect(mainModel.entities[0].properties.find(p => p.label === "iri")?.label).toBe("iri");
+test("should correctly adapt from OfnModel to UniversalModel", async () => {
+  const universalModel = await adapter.fromJsonVocabulary(mockOfnModel);
+  expect(universalModel.entities.length).toBe(1);
+  expect(universalModel.entities[0].label).toBe("JSON Vocabulary Root");
+  expect(universalModel.entities[0].properties.length).toBe(Object.keys(mockOfnModel).length);
+  expect(universalModel.entities[0].properties.find(p => p.label === "iri")?.label).toBe("iri");
 });
 
-test("should correctly adapt from MainModel to JsonVocabularyModel (basic)", async () => {
-  const jsonVocabularyModel = await adapter.toJsonVocabulary(mockMainModel);
-  expect(jsonVocabularyModel["@context"]).toBe("https://ofn.gov.cz/slovníky/draft/kontexty/slovníky.jsonld");
-  expect(jsonVocabularyModel.iri).toBe("https://slovník.gov.cz/datový/turistické-cíle");
-  // Note: This test only checks the hardcoded properties in the adapter.
-  // A more comprehensive test would require a more sophisticated adapter.
+test("should correctly adapt from UniversalModel to OfnModel (basic)", async () => {
+  const ofnModel = await adapter.toJsonVocabulary(mockUniversalModel);
+  expect(ofnModel["@context"]).toBe("https://ofn.gov.cz/slovníky/draft/kontexty/slovníky.jsonld");
+  expect(ofnModel.iri).toBe("https://slovník.gov.cz/datový/turistické-cíle");
 });
 
-// Add more tests to verify the adapter's behavior with different
-// structures and data types in both models. For example:
-// - Test handling of nested objects in JsonVocabularyModel.
-// - Test how different 'type' definitions in MainModel properties
-//   are handled during the conversion to JsonVocabularyModel.
-
-
-test("Root can be an object.", () => { 
+test("Root can be an object.", () => {
   const input = {
     type: "object",
     properties: {
       name: { type: "string" },
     },
-  },
+  };
 });

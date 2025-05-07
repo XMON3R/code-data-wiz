@@ -24,7 +24,3 @@
     }
   ]
 }
-
-
-Otázky: 
---- mají jednotlivé vocabs stavit na základním writer a parseru?

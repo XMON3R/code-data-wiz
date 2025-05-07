@@ -1,7 +1,6 @@
 import { expect, test, describe } from "vitest";
 import { OfnParser } from "./ofn-parser";
 
-// Instance of JsonVocabularyParser
 const parser = new OfnParser();
 
 describe("JsonVocabularyParser", ( ) => {

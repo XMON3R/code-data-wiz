@@ -3,20 +3,14 @@ import "./vertical-splitter.css";
 
 interface VerticalSplitterProps {
   className?: string;
-  /**
-   * We expect two children.
-   */
   children: React.ReactElement[];
-  /**
-   * Initial value of the split.
-   */
   initialSize?: number;
 }
 
 /**
  * Vertical Splitter component that allows resizing the left and right sections
  * BASED ON DATASPENCER (https://github.com/mff-uk/dataspecer)
-*/
+ */
 export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null!);
   const leftRef = useRef<HTMLDivElement>(null!);
@@ -43,10 +37,13 @@ export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
   }, [leftWidth]);
 
   return (
+    // Reinstated h-full here. This ensures the splitter takes the full height available from App.tsx.
+    // The className from App.tsx (flex-1 min-h-0) controls how much space it gets.
     <div
-      className={`flex flex-row ${props.className ?? ""}`}
+      className={`flex flex-row h-full ${props.className ?? ""}`} /* ADDED h-full back */
       ref={containerRef}
     >
+      {/* Left Panel: Width controlled by style. It will stretch vertically by default (align-items: stretch). */}
       <div ref={leftRef} style={{ width: `${leftWidth}%` }}>
         {props.children[0]}
       </div>
@@ -55,6 +52,8 @@ export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
         onMouseDown={handleMouseDown}
         style={{ cursor: "col-resize" }}
       />
+      {/* Right Panel: Uses 'grow' to take remaining horizontal space and handle internal scrolling.
+          It will also stretch vertically by default. */}
       <div className="grow">{props.children[1]}</div>
     </div>
   );

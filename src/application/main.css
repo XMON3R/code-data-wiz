@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+/* --- NO SCROLLING single page design --- */
+html,
+body,
+#root {
+  height: 100%;       /* Makes them take full viewport height */
+  margin: 0;          /* Removes default browser margins */
+  padding: 0;         /* Removes default browser paddings */
+  overflow: hidden;   /* THIS IS THE KEY! Prevents scrollbars on these elements */
+  box-sizing: border-box; /* Ensures consistent box model */
+}

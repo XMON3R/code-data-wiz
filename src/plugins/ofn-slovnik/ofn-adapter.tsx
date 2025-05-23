@@ -1,6 +1,8 @@
 import { UniversalModel, Entity, Property, Type } from "../../data-model-api/universal-model.ts"
 import { OfnModel } from "./ofn-model";
 
+//TODO: add a proper type for the OfnModel
+
 export class OfnAdapter {
   //NE async
   async fromJsonVocabulary(model: OfnModel): Promise<UniversalModel> {
@@ -44,7 +46,7 @@ export class OfnAdapter {
       const rootEntity = mainModel.entities[0];
       if (rootEntity.properties) {
         rootEntity.properties.forEach(prop => {
-          //  more sophisticated logic is needed
+          //  More sophisticated logic is needed
           jsonVocabularyData[prop.label] = {}; // Placeholder
         });
       }

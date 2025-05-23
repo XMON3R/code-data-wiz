@@ -8,8 +8,6 @@ interface EditorHeaderProps {
 }
 
 export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType }) => {
-    // You'll need to implement the UI elements here that allow the user
-    // to select a different editor type. This might be a dropdown, buttons, etc.
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value as EditorType;

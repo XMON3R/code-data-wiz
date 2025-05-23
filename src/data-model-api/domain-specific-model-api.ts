@@ -1,5 +1,3 @@
-// data-model-api/domain-specific-model-api.ts
-
 import { UniversalModel } from "./universal-model";
 
 /**

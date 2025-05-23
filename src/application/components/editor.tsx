@@ -1,13 +1,13 @@
 import { Extension } from "@codemirror/state";
 import { createEditor } from "../../plugins/plugins-factory";
 import { EditorType } from "../../plugins";
-import { EditorHeader } from "./editor-header"; // Make sure this import is correct
+import { EditorHeader } from "./editor-header"; 
 import { UniversalModel } from "../../data-model-api";
 
 // Interface setting up the editor shown in UI
 export interface EditorProps {
-  value: UniversalModel; // Change to UniversalModel
-  onChange?: (value: UniversalModel) => void; // Change to UniversalModel
+  value: UniversalModel; 
+  onChange?: (value: UniversalModel) => void;
   readOnly?: boolean;
   extensions?: Extension[];
   className?: string;
@@ -17,8 +17,8 @@ export interface EditorProps {
 
 interface EditorWrapProps {
   type: EditorType;
-  value: UniversalModel; // Change to UniversalModel
-  onChange?: (value: UniversalModel) => void; // Change to UniversalModel
+  value: UniversalModel;
+  onChange?: (value: UniversalModel) => void; 
   readOnly?: boolean;
 }
 
@@ -29,8 +29,8 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
         <div className={`h-full flex-1 grow-0 ${className}`}>
             <EditorHeader
                 className="h-10"
-                type={type}  // Pass the type prop
-                onChangeType={onChangeType} // Pass the onChangeType prop
+                type={type} 
+                onChangeType={onChangeType} 
             />
             <EditorWrap
                 type={type}
@@ -46,8 +46,8 @@ function EditorWrap({ type, value, onChange, readOnly }: EditorWrapProps) {
     const EditorComponent = createEditor(type);
     return (
         <EditorComponent
-            value={value} // Pass UniversalModel directly
-            onChange={onChange || (() => {})} // Provide a default no-op function
+            value={value} // pass UniversalModel directly?
+            onChange={onChange || (() => {})} // default no-op function
             readonly={readOnly}
         />
     );

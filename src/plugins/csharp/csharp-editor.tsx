@@ -2,6 +2,8 @@ import { CodeMirrorEditor } from "../components/code-mirror-editor";
 import { UniversalModel } from "../../data-model-api";
 import { useEffect, useState } from "react";
 
+// TODO: transform this into a proper C#-specific vocabulary writer and adapter.
+
 // Assuming these classes are in separate files.  Adjust the paths as necessary.
 class CsharpVocabularyWriter {
     write(jsonVocabulary: any): string {

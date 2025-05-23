@@ -19,7 +19,7 @@ export function createEditor(type: EditorType) {
         case EditorType.SecondaryEditor:
             return csharpEditor
         case EditorType.SQLQuery:
-            // return sqlEditor; // Uncomment and implement this when SQL editor is available
+            // return sqlEditor; // TODO
             throw new Error("SQL editor not implemented yet.");
         default:
             throw new Error(`Unknown editor type: ${type}`);

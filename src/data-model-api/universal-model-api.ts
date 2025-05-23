@@ -1,2 +1,2 @@
-// z jakékoholiv modelu
+// FROM ANY MODEL API
 

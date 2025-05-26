@@ -1,3 +1,6 @@
+/**
+ * {@link  https://ofn.gov.cz/slovn%C3%ADky/draft/p%C5%99%C3%ADklady/slovn%C3%ADk.ttl}
+ */
 
 export interface RdfsResource {
     iri: string;

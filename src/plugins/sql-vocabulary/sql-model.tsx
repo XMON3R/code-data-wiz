@@ -1,3 +1,6 @@
+/**
+ * {@link https://dev.mysql.com/doc/}
+ */
 
 export interface SQLDiagram {
   tables: SQLTable[];

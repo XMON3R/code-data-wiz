@@ -1,6 +1,9 @@
 
-interface HeaderProps {
-  className?: string; // className optional, as it might not always be provided
+interface HeaderProps { 
+  /**
+   * ADD
+   */
+  className?: string; 
 }
 
 export function Header({ className }: HeaderProps) {

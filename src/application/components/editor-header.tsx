@@ -21,8 +21,8 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
             <select id="editor-type" value={type} onChange={handleTypeChange} className="bg-gray-700 text-white rounded-md p-1">
                 <option value={EditorType.ClassDiagram}>Class Diagram</option>
                 <option value={EditorType.SQLQuery}>SQL Query</option>
-                <option value={EditorType.SQLQuery}>Secondary</option>
-                {/* add more */}
+                <option value={EditorType.SecondaryEditor}>Secondary</option>
+                {/* TODO: Add more once implemented */}
             </select>
             <span className="ml-auto">{"-> " + type}</span> {/* Display current type */}
         </div>

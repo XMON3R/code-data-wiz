@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
-import "./vertical-splitter.css";
+import "./vertical-splitter.css"; // Assuming this CSS handles splitter styling
 
 interface VerticalSplitterProps {
   className?: string;
@@ -8,8 +8,8 @@ interface VerticalSplitterProps {
 }
 
 /**
- * Vertical Splitter component that allows resizing the left and right sections
- * BASED ON DATASPENCER (https://github.com/mff-uk/dataspecer)
+ * Vertical Splitter component that allows resizing the left and right sections.
+ * Each child (expected to be an Editor) will manage its own internal scrolling and sticky header.
  */
 export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null!);
@@ -37,14 +37,14 @@ export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
   }, [leftWidth]);
 
   return (
-    // Reinstated h-full here. This ensures the splitter takes the full height available from App.tsx.
-    // The className from App.tsx (flex-1 min-h-0) controls how much space it gets.
+    // The splitter itself still takes full height and manages horizontal layout
     <div
-      className={`flex flex-row h-full ${props.className ?? ""}`} /* ADDED h-full back */
+      className={`flex flex-row h-full ${props.className ?? ""}`}
       ref={containerRef}
     >
-      {/* Left Panel: Width controlled by style. It will stretch vertically by default (align-items: stretch). */}
-      <div ref={leftRef} style={{ width: `${leftWidth}%` }}>
+      {/* Left Panel: Width controlled by style. It will stretch vertically. */}
+      {/* The actual scrolling will happen inside the Editor component itself. */}
+      <div ref={leftRef} style={{ width: `${leftWidth}%` }} className="flex flex-col h-full">
         {props.children[0]}
       </div>
       <div
@@ -52,9 +52,9 @@ export const VerticalSplitter: React.FC<VerticalSplitterProps> = (props) => {
         onMouseDown={handleMouseDown}
         style={{ cursor: "col-resize" }}
       />
-      {/* Right Panel: Uses 'grow' to take remaining horizontal space and handle internal scrolling.
-          It will also stretch vertically by default. */}
-      <div className="grow">{props.children[1]}</div>
+      {/* Right Panel: Uses 'grow' to take remaining horizontal space. */}
+      {/* It will also stretch vertically. The actual scrolling will happen inside the Editor component itself. */}
+      <div className="grow flex flex-col h-full">{props.children[1]}</div>
     </div>
   );
 };
@@ -84,7 +84,6 @@ function useHandleMouseDown(
         const dx = event.clientX - start.x;
         const nextWidthFraction = ((leftWidth + dx) / containerWidth) * 100;
 
-        // Set the new width while clamping it between 10% and 90%
         setLeftWidth(Math.min(Math.max(nextWidthFraction, 10), 90));
       };
 
@@ -99,5 +98,3 @@ function useHandleMouseDown(
     [leftRef, containerRef, setLeftWidth]
   );
 }
-
-export default VerticalSplitter;

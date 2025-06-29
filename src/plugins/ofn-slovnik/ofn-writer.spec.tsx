@@ -23,7 +23,7 @@ describe("OfnWriter", () => {
     };
 
     const expectedJson = JSON.stringify(fullModel, null, 2);
-    const actualJson = await writer.write(fullModel);
+    const actualJson = await writer.writeText(fullModel);
     expect(actualJson).toBe(expectedJson);
   });
 
@@ -39,7 +39,7 @@ describe("OfnWriter", () => {
     };
 
     const expectedJson = JSON.stringify(minimalModel, null, 2);
-    const actualJson = await writer.write(minimalModel);
+    const actualJson = await writer.writeText(minimalModel);
     expect(actualJson).toBe(expectedJson);
   });
 
@@ -53,7 +53,7 @@ describe("OfnWriter", () => {
     };
 
     const expectedJson = JSON.stringify(modelWithoutIri, null, 2);
-    const actualJson = await writer.write(modelWithoutIri);
+    const actualJson = await writer.writeText(modelWithoutIri);
     expect(actualJson).toBe(expectedJson);
   });
 
@@ -73,7 +73,7 @@ describe("OfnWriter", () => {
     };
 
     const expectedJson = JSON.stringify(partialModel, null, 2);
-    const actualJson = await writer.write(partialModel);
+    const actualJson = await writer.writeText(partialModel);
     expect(actualJson).toBe(expectedJson);
   });
 });

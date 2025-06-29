@@ -1,7 +1,7 @@
 import { OfnModel } from "./ofn-model";
-import { TextParser } from "../../data-model-api/text-parser";
+import { DomainTextParser } from "../../data-model-api/domain-specific-model-api";
 
-export class OfnParser implements TextParser<OfnModel> {
+export class OfnParser implements DomainTextParser<OfnModel> {
   async parseText(text: string): Promise<OfnModel> {
       try {
           const rawData = JSON.parse(text);

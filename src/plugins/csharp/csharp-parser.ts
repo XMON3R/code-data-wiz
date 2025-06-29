@@ -1,5 +1,5 @@
 import { DomainTextParser } from "../../data-model-api/domain-specific-model-api";
-import { CSharpModel, CSharpClass, CSharpProperty, CSharpType } from "./csharp-model";
+import { CSharpModel, CSharpClass /*, CSharpProperty, CSharpType*/ } from "./csharp-model";
 
 /**
  * A parser for C# code strings into a CSharpModel.
@@ -16,9 +16,12 @@ export class CSharpTextParser implements DomainTextParser<CSharpModel> {
         while ((classMatch = classRegex.exec(csharpString)) !== null) {
             const accessModifier = classMatch[1] || "internal"; // Default to internal if not specified
             const className = classMatch[2];
-            const classContent = classMatch[3];
+            
+            // TODO
+            //const classContent = classMatch[3];
 
-            const properties: CSharpProperty[] = [];
+            // TODO
+            // const properties: CSharpProperty[] = [];
 
             classes.push({
                 name: className,

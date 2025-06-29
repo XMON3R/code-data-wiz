@@ -20,6 +20,7 @@
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
+    "plantuml-encoder": "^1.4.0",
     "pretier": "0.0.1",
     "prettier": "3.5.3",
     "react": "^19.1.0",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
+    "@types/plantuml-encoder": "^1.4.2",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "autoprefixer": "^10.4.21",

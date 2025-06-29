@@ -22,10 +22,9 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
                 <option value={EditorType.ClassDiagram}>Class Diagram</option>
                 <option value={EditorType.SQLQuery}>SQL Query</option>
                 <option value={EditorType.SecondaryEditor}>Secondary</option>
-                {/* TODO: Add more once implemented */}
+                <option value={EditorType.PlantUML}>PlantUML Diagram</option>
             </select>
             <span className="ml-auto">{"-> " + type}</span> {/* Display current type */}
         </div>
     );
 };
-

@@ -7,7 +7,12 @@ import { Editor } from "./components/editor.tsx";
 
 export const App: React.FC = () => {
     const [state, setState] = useState(createDefaultApplicationState());
+    const [error, setError] = useState<string | null>(null);
     const controller = useController(setState);
+
+    const handleLeftError = (error: string | null) => {
+        setError(error);
+    };
 
     return (
         // Main application container: flex column, full height of #root
@@ -24,6 +29,7 @@ export const App: React.FC = () => {
                     onChange={controller.onChangeValue}
                     extensions={[]}
                     className="flex-col bg-gray-900 text-white"
+                    onError={handleLeftError}
                 />
                 <Editor
                     type={state.rightEditorType}
@@ -32,6 +38,7 @@ export const App: React.FC = () => {
                     onChange={controller.onChangeValue}
                     readOnly={true}
                     className="flex-col bg-gray-900 text-white"
+                    error={error}
                 />
             </VerticalSplitter>
         </div>

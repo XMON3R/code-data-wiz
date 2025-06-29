@@ -13,6 +13,8 @@ export interface EditorProps {
   className?: string;
   type: EditorType;
   onChangeType: (value: EditorType) => void;
+  onError?: (error: string | null) => void;
+  error?: string | null;
 }
 
 interface EditorWrapProps {
@@ -26,7 +28,7 @@ interface EditorWrapProps {
  * Editor component that contains a header and the actual editor content.
  * This component itself is now scrollable, and its header will stick to the top.
  */
-export function Editor({ value, onChange, readOnly, className, type, onChangeType }: EditorProps) {
+export function Editor({ value, onChange, readOnly, className, type, onChangeType, error, onError }: EditorProps) {
   return (
     // This div is now the scrollable container for the header and content.
     // It takes full height from its parent (VerticalSplitter pane) and handles overflow.
@@ -38,12 +40,18 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
         onChangeType={onChangeType}
       />
       {/* EditorWrap - takes remaining space and contains the CodeMirror editor */}
-      <EditorWrap
-        type={type}
-        value={value}
-        onChange={onChange}
-        readOnly={readOnly}
-      />
+      {error ? (
+        <div className="p-4 text-red-500">{error}</div>
+      ) : (
+        <EditorWrap
+          type={type}
+          value={value}
+          onChange={onChange}
+          readOnly={readOnly}
+          onChangeType={onChangeType}
+          onError={onError}
+        />
+      )}
     </div>
   );
 }
@@ -52,7 +60,10 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
  * Wrapper for the actual CodeMirror editor component.
  * Ensures the CodeMirror editor itself takes up available space.
  */
-function EditorWrap({ type, value, onChange, readOnly }: EditorWrapProps) {
+function EditorWrap({ type, value, onChange, readOnly, onChangeType, onError }: EditorProps) {
+  if (!onChangeType) {
+    throw new Error("onChangeType is required for EditorWrap");
+  }
   const EditorComponent = createEditor(type);
   return (
     // This div ensures the CodeMirror component can grow to fill the remaining space.
@@ -62,6 +73,7 @@ function EditorWrap({ type, value, onChange, readOnly }: EditorWrapProps) {
         value={value}
         onChange={onChange || (() => {})}
         readonly={readOnly}
+        onError={onError}
       />
     </div>
   );

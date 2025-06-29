@@ -1,4 +1,5 @@
 import { csharpEditor } from "./csharp/csharp-editor";
+import { sqlEditor } from "./sql-vocabulary/sql-editor";
 import { EditorType } from "./plugins-codelist";
 
 export function listPluginMetadata() {
@@ -19,11 +20,8 @@ export function createEditor(type: EditorType) {
         case EditorType.SecondaryEditor:
             return csharpEditor
         case EditorType.SQLQuery:
-            // return sqlEditor; // TODO
-            throw new Error("SQL editor not implemented yet.");
+            return sqlEditor;
         default:
             throw new Error(`Unknown editor type: ${type}`);
     }
 }
-
-

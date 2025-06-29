@@ -10,8 +10,8 @@ test("should generate SQL for a single table", () => {
       {
         name: "User",
         columns: [
-          { name: "id", type: "INT" },
-          { name: "name", type: "VARCHAR(255)" },
+          { name: "id", type: { name: "INT" } },
+          { name: "name", type: { name: "VARCHAR", parameters: [255] } },
         ],
       },
     ],
@@ -32,16 +32,16 @@ test("should generate SQL for multiple tables", () => {
       {
         name: "User",
         columns: [
-          { name: "id", type: "INT" },
-          { name: "name", type: "VARCHAR(255)" },
+          { name: "id", type: { name: "INT" } },
+          { name: "name", type: { name: "VARCHAR", parameters: [255] } },
         ],
       },
       {
         name: "Post",
         columns: [
-          { name: "postId", type: "INT" },
-          { name: "content", type: "VARCHAR(255)" },
-          { name: "userId", type: "INT" },
+          { name: "postId", type: { name: "INT" } },
+          { name: "content", type: { name: "VARCHAR", parameters: [255] } },
+          { name: "userId", type: { name: "INT" } },
         ],
       },
     ],
@@ -62,23 +62,25 @@ CREATE TABLE Post (
   expect(result).toEqual(expected);
 });
 
-test("should handle tables with different data types", () => {
+test("should handle tables with different data types and parameters", () => {
   const diagram: SQLDiagram = {
     tables: [
       {
         name: "Product",
         columns: [
-          { name: "productId", type: "INT" },
-          { name: "productName", type: "VARCHAR(255)" },
-          { name: "price", type: "DECIMAL(10, 2)" },
+          { name: "productId", type: { name: "INT" } },
+          { name: "productName", type: { name: "VARCHAR", parameters: [100] } },
+          { name: "price", type: { name: "DECIMAL", parameters: [10, 2] } },
+          { name: "description", type: { name: "TEXT" } },
         ],
       },
     ],
   };
   const expected = `CREATE TABLE Product (
   productId INT,
-  productName VARCHAR(255),
-  price DECIMAL(10, 2)
+  productName VARCHAR(100),
+  price DECIMAL(10, 2),
+  description TEXT
 );
 
 `;
@@ -86,20 +88,27 @@ test("should handle tables with different data types", () => {
   expect(result).toEqual(expected);
 });
 
-test("should handle empty tables", () => {
+test("should handle tables with no columns", () => {
   const diagram: SQLDiagram = {
     tables: [
       {
-        name: "Empty",
+        name: "EmptyTable",
         columns: [],
       },
     ],
   };
-  const expected = `CREATE TABLE Empty (
+  const expected = `CREATE TABLE EmptyTable (
 
 );
 
 `;
   const result = writer.generateCode(diagram);
   expect(result).toEqual(expected);
+});
+
+test("should handle an empty diagram with no tables", () => {
+    const diagram: SQLDiagram = { tables: [] };
+    const expected = "";
+    const result = writer.generateCode(diagram);
+    expect(result).toEqual(expected);
 });

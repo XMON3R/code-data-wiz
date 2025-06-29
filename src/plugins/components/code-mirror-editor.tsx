@@ -1,5 +1,6 @@
 import CodeMirror from "@uiw/react-codemirror";
 import { Extension } from "@codemirror/state";
+import { useEffect, useState } from "react";
 
 interface CodeMirrorEditorProps {
     value: string;
@@ -9,14 +10,24 @@ interface CodeMirrorEditorProps {
 }
 
 export function CodeMirrorEditor(props: CodeMirrorEditorProps) {
+    const [internalValue, setInternalValue] = useState(props.value);
+
+    useEffect(() => {
+        setInternalValue(props.value);
+    }, [props.value]);
+
+    const handleChange = (newValue: string) => {
+        setInternalValue(newValue);
+        props.onChange(newValue);
+    };
+
     return (
         <CodeMirror
             theme="dark"
-            value={props.value}
+            value={internalValue}
             width="100%"
-            // Set height to 100% to fill the parent's available space,
             height="100%"
-            onChange={props.onChange}
+            onChange={handleChange}
             readOnly={props.readOnly}
             extensions={props.extensions}
         />

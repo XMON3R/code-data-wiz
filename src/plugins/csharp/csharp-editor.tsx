@@ -52,6 +52,7 @@ export function csharpEditor(props: {
     value: UniversalModel;
     onChange: (value: UniversalModel) => void;
     readonly?: boolean;
+    onError?: (error: string | null) => void;
 }) {
     const [editorValue, setEditorValue] = useState<string>("");
     const writer = new CsharpVocabularyWriter();
@@ -74,8 +75,11 @@ export function csharpEditor(props: {
             const newUniversalModel = csharpModel.fromJsonVocabulary(jsonValue);
 
             //  Call the onChange prop to update the parent component"s state
+            props.onError?.(null);
             props.onChange(newUniversalModel);
-        } catch (error) {
+        } catch (e) {
+            const error = e as Error;
+            props.onError?.(error.message);
             console.error("Error handling editor change:", error);
             //  In a real app, you"d want to show user feedback here,
             //  e.g., an error message in the UI.  For now, we just log it.

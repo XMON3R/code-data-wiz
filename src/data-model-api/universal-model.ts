@@ -52,11 +52,10 @@ export interface Property {
    * The data type of the property.  This determines the kind of
    * data the property can hold.
    */
-  type: Type;
-
-  //  visibility -  This comment suggests a potential future property
-  //  to control access to the property (e.g., public, private).
-  // visibility: string;
+ type: {
+    // Např. "INT", "VARCHAR(255)", "string", "int"
+    domainSpecificType: string;
+  };
 }
 
 

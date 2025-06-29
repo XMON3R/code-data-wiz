@@ -14,8 +14,8 @@ test("should parse a single class into a SQL table", () => {
       {
         name: "User",
         columns: [
-          { name: "id", type: "INT" },
-          { name: "name", type: "VARCHAR(255)" },
+          { name: "id", type: { name: "INT" } },
+          { name: "name", type: { name: "VARCHAR", parameters: [255] } },
         ],
       },
     ],
@@ -40,16 +40,16 @@ class Post {
       {
         name: "User",
         columns: [
-          { name: "id", type: "INT" },
-          { name: "name", type: "VARCHAR(255)" },
+          { name: "id", type: { name: "INT" } },
+          { name: "name", type: { name: "VARCHAR", parameters: [255] } },
         ],
       },
       {
         name: "Post",
         columns: [
-          { name: "postId", type: "INT" },
-          { name: "content", type: "VARCHAR(255)" },
-          { name: "userId", type: "INT" },
+          { name: "postId", type: { name: "INT" } },
+          { name: "content", type: { name: "VARCHAR", parameters: [255] } },
+          { name: "userId", type: { name: "INT" } },
         ],
       },
     ],
@@ -69,9 +69,9 @@ test("should handle different data types", () => {
       {
         name: "Product",
         columns: [
-          { name: "productId", type: "INT" },
-          { name: "productName", type: "VARCHAR(255)" },
-          { name: "price", type: "DECIMAL(10, 2)" },
+          { name: "productId", type: { name: "INT" } },
+          { name: "productName", type: { name: "VARCHAR", parameters: [255] } },
+          { name: "price", type: { name: "DECIMAL", parameters: [10, 2] } },
         ],
       },
     ],
@@ -109,8 +109,8 @@ class Order {
       {
         name: "Order",
         columns: [
-          { name: "orderId", type: "INT" },
-          { name: "orderDate", type: "VARCHAR(255)" },
+          { name: "orderId", type: { name: "INT" } },
+          { name: "orderDate", type: { name: "VARCHAR", parameters: [255] } },
         ],
       },
     ],
@@ -130,13 +130,94 @@ test("should default unknown types to TEXT", () => {
       {
         name: "Item",
         columns: [
-          { name: "itemId", type: "INT" },
-          { name: "isActive", type: "TEXT" },
-          { name: "createdOn", type: "TEXT" },
+          { name: "itemId", type: { name: "INT" } },
+          { name: "isActive", type: { name: "TEXT" } },
+          { name: "createdOn", type: { name: "TEXT" } },
         ],
       },
     ],
   };
   const result = parser.parse(input);
   expect(result).toEqual(expected);
+});
+
+// --- NEW TESTS ---
+
+test("should handle a class with no attributes but with whitespace inside", () => {
+  const input = `class NoAttributes {
+
+  }`;
+  const expected: SQLDiagram = {
+    tables: [
+      {
+        name: "NoAttributes",
+        columns: [],
+      },
+    ],
+  };
+  const result = parser.parse(input);
+  expect(result).toEqual(expected);
+});
+
+test("should correctly handle a class with only one attribute", () => {
+  const input = `class Singleton {
+    String uniqueField
+  }`;
+  const expected: SQLDiagram = {
+    tables: [
+      {
+        name: "Singleton",
+        columns: [{ name: "uniqueField", type: { name: "VARCHAR", parameters: [255] } }],
+      },
+    ],
+  };
+  const result = parser.parse(input);
+  expect(result).toEqual(expected);
+});
+
+test("should handle multiple spaces between type and name", () => {
+  const input = `class Room {
+    int     roomId
+    String  roomName
+  }`;
+  const expected: SQLDiagram = {
+    tables: [
+      {
+        name: "Room",
+        columns: [
+            { name: "roomId", type: { name: "INT" } },
+            { name: "roomName", type: { name: "VARCHAR", parameters: [255] } }
+        ],
+      },
+    ],
+  };
+  const result = parser.parse(input);
+  expect(result).toEqual(expected);
+});
+
+test("should return an empty diagram for an empty input string", () => {
+    const input = "";
+    const expected: SQLDiagram = { tables: [] };
+    const result = parser.parse(input);
+    expect(result).toEqual(expected);
+});
+
+test("should ignore text outside of class definitions", () => {
+    const input = `
+      Some text before the class.
+      class MyTable {
+        int id
+      }
+      Some text after the class.
+    `;
+    const expected: SQLDiagram = {
+      tables: [
+        {
+          name: "MyTable",
+          columns: [{ name: "id", type: { name: "INT" } }],
+        },
+      ],
+    };
+    const result = parser.parse(input);
+    expect(result).toEqual(expected);
 });

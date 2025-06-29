@@ -1,99 +1,79 @@
-import { expect, test } from "vitest";
+import { describe, it, expect } from "vitest";
 import { OfnWriter } from "./ofn-writer";
 import { OfnModel } from "./ofn-model";
 
-// Create a new instance of the OfnWriter for each test
-const createWriter = () => new OfnWriter();
+// Use a describe block to group related tests for the OfnWriter
+describe("OfnWriter", () => {
+  const writer = new OfnWriter();
 
-// Define a consistent mock model for testing
-const mockModel: OfnModel = {
-  "@context": "https://example.org/context",
-  iri: "https://example.org/vocabulary",
-  type: ["Vocabulary"],
-  name: {
-    cs: "Testovací slovník",
-    en: "Test vocabulary",
-  },
-  description: {
-    cs: "Toto je testovací slovník.",
-    en: "This is a test vocabulary.",
-  },
-  created: {
-    type: "Časový okamžik",
-    date: "2025-04-11",
-  },
-  updated: {
-    type: "Časový okamžik",
-    datetime: "2025-04-11T15:25:00+02:00",
-  },
-  customProperty: "customValue",
-};
-
-test("write should convert a OfnModel to a formatted JSON string", async () => {
-  const writer = createWriter();
-  const expectedJson = JSON.stringify(mockModel, null, 2);
-  const actualJson = await writer.write(mockModel);
-  expect(actualJson).toBe(expectedJson);
-});
-
-test("write should handle an empty OfnModel and return an empty JSON object", async () => {
-  const writer = createWriter();
-  const emptyModel: OfnModel = {}; //  Changed to be a truly empty object
-  const expectedJson = JSON.stringify({}, null, 2);
-  const actualJson = await writer.write(emptyModel);
-  expect(actualJson).toBe(expectedJson);
-});
-
-test("write should correctly serialize different data types within the model", async () => {
-  const writer = createWriter();
-  const modelWithDifferentTypes: OfnModel = {
-    "@context": "test",
-    iri: "123",
-    type: ["true", "false"],
-    name: { cs: null as any, en: undefined as any },
-    description: { cs: "", en: "" },
-    created: { type: "", date: "" },
-    updated: { type: "", datetime: "" },
-  };
-  const expectedJson = JSON.stringify(modelWithDifferentTypes, null, 2);
-  const actualJson = await writer.write(modelWithDifferentTypes);
-  expect(actualJson).toBe(expectedJson);
-});
-
-test("write should handle nested objects correctly", async () => {
-  const writer = createWriter();
-  const nestedModel: OfnModel = {
-    "@context": "test",
-    iri: "test-iri",
-    type: [],
-    name: {},
-    description: {},
-    created: { type: "", date: "" },
-    updated: { type: "", datetime: "" },
-    nested: {
-      level1: {
-        level2: "value",
+  it("should convert a full OfnModel to a formatted JSON string", async () => {
+    // This model correctly implements all properties of the OfnModel interface.
+    const fullModel: OfnModel = {
+      iri: "https://example.com/vocabulary/1",
+      name: {
+        cs: "Testovací slovník",
+        en: "Test Vocabulary",
       },
-    },
-  };
-  const expectedJson = JSON.stringify(nestedModel, null, 2);
-  const actualJson = await writer.write(nestedModel);
-  expect(actualJson).toBe(expectedJson);
-});
+      description: {
+        cs: "Toto je popis.",
+        en: "This is a description.",
+      },
+      createdAt: "2025-01-15T10:00:00Z",
+      updatedAt: "2025-01-16T12:30:00Z",
+    };
 
-test("write should handle arrays of primitive types", async () => {
-  const writer = createWriter();
-  const arrayModel: OfnModel = {
-    "@context": "test",
-    iri: "test-iri",
-    type: ["one", "two", "three"],
-    name: {},
-    description: {},
-    created: { type: "", date: "" },
-    updated: { type: "", datetime: "" },
-    items: [1, "two", true],
-  };
-  const expectedJson = JSON.stringify(arrayModel, null, 2);
-  const actualJson = await writer.write(arrayModel);
-  expect(actualJson).toBe(expectedJson);
+    const expectedJson = JSON.stringify(fullModel, null, 2);
+    const actualJson = await writer.write(fullModel);
+    expect(actualJson).toBe(expectedJson);
+  });
+
+  it("should handle a minimal OfnModel with only required properties", async () => {
+    // The 'OfnModel' requires 'name' and 'description' properties.
+    const minimalModel: OfnModel = {
+      name: {
+        cs: "Minimální název",
+      },
+      description: {
+        en: "Minimal description",
+      },
+    };
+
+    const expectedJson = JSON.stringify(minimalModel, null, 2);
+    const actualJson = await writer.write(minimalModel);
+    expect(actualJson).toBe(expectedJson);
+  });
+
+  it("should handle models where optional properties are undefined", async () => {
+    // This test ensures that optional fields like 'iri' are not included
+    // in the output if they are not present in the model.
+    const modelWithoutIri: OfnModel = {
+      name: { en: "No IRI" },
+      description: { en: "This model lacks an IRI" },
+      createdAt: "2025-01-15T10:00:00Z",
+    };
+
+    const expectedJson = JSON.stringify(modelWithoutIri, null, 2);
+    const actualJson = await writer.write(modelWithoutIri);
+    expect(actualJson).toBe(expectedJson);
+  });
+
+  it("should correctly serialize partial or empty name/description objects", async () => {
+    // This test checks how the writer handles cases where language-specific
+    // fields within name or description are missing.
+    const partialModel: OfnModel = {
+      iri: "https://example.com/vocabulary/3",
+      name: {
+        cs: "Částečný název",
+        // 'en' name is missing
+      },
+      description: {
+        // 'cs' description is missing
+        en: "Partial description",
+      },
+    };
+
+    const expectedJson = JSON.stringify(partialModel, null, 2);
+    const actualJson = await writer.write(partialModel);
+    expect(actualJson).toBe(expectedJson);
+  });
 });

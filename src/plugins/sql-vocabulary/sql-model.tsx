@@ -2,7 +2,9 @@
  * {@link https://dev.mysql.com/doc/}
  */
 
-export interface SQLDiagram {
+import { DomainSpecificModel } from "../../data-model-api/domain-specific-model";
+
+export interface SQLDiagram extends DomainSpecificModel {
   tables: SQLTable[];
 }
 

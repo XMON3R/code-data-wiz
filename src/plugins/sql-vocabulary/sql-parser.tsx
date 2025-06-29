@@ -1,4 +1,4 @@
-import { SQLDiagram, SQLColumn, SQLDataType, SQLTable } from "./sql-model";
+import { SQLDiagram, SQLDataType, SQLTable } from "./sql-model";
 
 export interface SQLParser {
   parse(input: string): SQLDiagram;
@@ -18,7 +18,7 @@ class SimpleSQLParser implements SQLParser {
     // This regex splits the input into individual CREATE TABLE statements.
     const statements = input.split(/(?=CREATE\s+TABLE)/i);
 
-    statements.forEach((statement, index) => {
+    statements.forEach((statement) => {
       if (statement.trim() === "") return;
 
       // Check for a valid table name

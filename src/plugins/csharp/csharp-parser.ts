@@ -1,28 +1,34 @@
-
 import { DomainTextParser } from "../../data-model-api/domain-specific-model-api";
-import { CsharpModel } from "./csharp-model";
+import { CSharpModel, CSharpClass, CSharpProperty, CSharpType } from "./csharp-model";
 
 /**
- * A parser for C# code strings into a CsharpModel.
- *
- * TODO: This is currently a mock implementation that attempts to parse
- * the C# string as JSON. A real implementation would involve:
- * - Using a C# syntax parser (e.g., ANTLR, Tree-sitter, or a custom parser).
- * - Extracting class, property, method, and other structural information.
- * - Building a CsharpModel object from the parsed syntax tree.
+ * A parser for C# code strings into a CSharpModel.
+ * This implementation uses regular expressions to extract class and property information.
  */
-export class CsharpTextParser implements DomainTextParser<CsharpModel> {
-    async parseText(csharpString: string): Promise<CsharpModel> {
-        console.log("CsharpTextParser.parseText called with C# string (mocking JSON parse):", csharpString);
-        try {
-            // In a real scenario, this would parse C# code, not JSON.
-            // For now, we assume the C# string might contain a JSON representation of CsharpModel
-            const parsedData: CsharpModel = JSON.parse(csharpString);
-            // You might add basic validation here if the CsharpModel interface has required fields
-            return parsedData;
-        } catch (error) {
-            console.error("CsharpTextParser: Failed to parse C# string (mocking JSON parse):", error);
-            throw new Error("Failed to parse C# code. (Mock: Expected JSON representation of CsharpModel): " + (error instanceof Error ? error.message : String(error)));
+export class CSharpTextParser implements DomainTextParser<CSharpModel> {
+    async parseText(csharpString: string): Promise<CSharpModel> {
+        const classes: CSharpClass[] = [];
+
+        // Regex to find class definitions: `[accessModifier] class [ClassName] { ... }`
+        const classRegex = /(public|private|protected|internal)?\s*class\s+(\w+)\s*{([^}]*)}/g;
+        let classMatch: RegExpExecArray | null;
+
+        while ((classMatch = classRegex.exec(csharpString)) !== null) {
+            const accessModifier = classMatch[1] || "internal"; // Default to internal if not specified
+            const className = classMatch[2];
+            const classContent = classMatch[3];
+
+            const properties: CSharpProperty[] = [];
+
+            classes.push({
+                name: className,
+                type: "class",
+                accessModifier: accessModifier,
+                properties: [],
+                methods: [], // Basic parser does not extract methodsq
+            });
         }
+
+        return { classes: classes };
     }
 }

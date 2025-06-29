@@ -1,13 +1,29 @@
-// plugins/json-vocabulary/json-vocabulary-parser.ts
-import { TextParser } from "../../data-model-api/text-parser"
 import { OfnModel } from "./ofn-model";
+import { TextParser } from "../../data-model-api/text-parser";
 
-// TODO: A lot of code from adapter will come here, do slowly step by step 
 export class OfnParser implements TextParser<OfnModel> {
-  async parse(text: string): Promise<OfnModel> {
+  async parseText(text: string): Promise<OfnModel> {
       try {
-          const ofnJsonData: OfnModel = JSON.parse(text);
-          return ofnJsonData;
+          const rawData = JSON.parse(text);
+
+          // Map the raw data to the OfnModel interface
+          const ofnModel: OfnModel = {
+              iri: rawData.iri,
+              name: rawData.název, // Map 'název' to 'name'
+              description: rawData.popis, // Map 'popis' to 'description'
+              createdAt: rawData.vytvořeno?.datum || rawData.vytvořeno?.datum_a_čas,
+              updatedAt: rawData.aktualizováno?.datum || rawData.aktualizováno?.datum_a_čas,
+          };
+          
+          // Add any other top-level properties from the source JSON
+          Object.keys(rawData).forEach(key => {
+            if (!(key in ofnModel) && !['název', 'popis', 'vytvořeno', 'aktualizováno'].includes(key)) {
+                (ofnModel as any)[key] = rawData[key];
+            }
+          });
+
+          return ofnModel;
+
       } catch (error) {
           console.error("Error parsing OFN JSON:", error);
           throw new Error("Failed to parse OFN JSON");

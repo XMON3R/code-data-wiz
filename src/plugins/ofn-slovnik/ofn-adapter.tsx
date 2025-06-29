@@ -1,77 +1,90 @@
-import { UniversalModel, Entity, Property, Type } from "../../data-model-api/universal-model.ts"
-import { OfnModel } from "./ofn-model";
+//import { UniversalModel, Entity, Property } from "../../data-model-api/universal-model";
+//import { OfnModel } from "./ofn-model";
+//import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
 
-//TODO: add a proper type for the OfnModel
+/*
+export class OfnAdapter implements DomainModelAdapter<OfnModel> {
+  
+  /**
+   * Converts the domain-specific OfnModel into the UniversalModel.
+   * It represents the OFN vocabulary as a single entity.
+   */
+  
+  /*
 
-export class OfnAdapter {
-  //NE async
-  async fromJsonVocabulary(model: OfnModel): Promise<UniversalModel> {
-    const entities: Entity[] = [];
+
+  async toUniversalModel(model: OfnModel): Promise<UniversalModel> {
     const properties: Property[] = [];
 
+    // Iterate over the keys of the OfnModel and create properties
     for (const key in model) {
       if (Object.prototype.hasOwnProperty.call(model, key)) {
-        const value: any = model[key]; // Use 'any' to handle the variety of data in OfnModel
-        let type: Type = {}; // Default to an empty type object, which is valid since Type is an empty interface
-
-        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === null) {
-          type = {};
-        } else if (Array.isArray(value)) {
-          type = {};
-        } else if (typeof value === 'object' && value !== null) {
-          type = {};
-        }
+        const value = model[key as keyof OfnModel];
+        
+        // For complex objects (like name, description), we stringify them.
+        // For simple values, we use them directly.
+        const propertyValue = (typeof value === 'object' && value !== null) 
+          ? JSON.stringify(value) 
+          : String(value ?? '');
 
         properties.push({
           label: key,
-          type: type,
+          // The domainSpecificType can hold a hint about the original type
+          type: { domainSpecificType: typeof value },
+          // Store the actual value in a new 'value' field in the Property
+          value: propertyValue, 
         });
       }
     }
 
-    entities.push({
-      label: "JSON Vocabulary Root",
+    const entity: Entity = {
+      label: "OFN Vocabulary",
       properties: properties,
-    });
-
-    return {
-      entities: entities,
     };
+
+    return { entities: [entity] };
   }
 
-  async toJsonVocabulary(mainModel: UniversalModel): Promise<OfnModel> {
-    const jsonVocabularyData: { [key: string]: any } = {};
+  /**
+   * Converts the UniversalModel back into an OfnModel.
+   */
 
-    if (mainModel.entities && mainModel.entities.length > 0) {
-      const rootEntity = mainModel.entities[0];
-      if (rootEntity.properties) {
-        rootEntity.properties.forEach(prop => {
-          //  More sophisticated logic is needed
-          jsonVocabularyData[prop.label] = {}; // Placeholder
-        });
-      }
+
+
+
+
+
+  /*
+  async fromUniversalModel(mainModel: UniversalModel): Promise<OfnModel> {
+    const ofnData: Partial<OfnModel> = {};
+    
+    // Expecting a single entity representing the OFN vocabulary
+    const entity = mainModel.entities[0];
+
+    if (entity && entity.properties) {
+      entity.properties.forEach(prop => {
+        const key = prop.label as keyof OfnModel;
+        const value = (prop as any).value; // Get the value we stored
+
+        try {
+          // Attempt to parse the value if it's a JSON string
+          const parsedValue = JSON.parse(value);
+          ofnData[key] = parsedValue;
+        } catch (e) {
+          // If it's not a valid JSON string, use it as is
+          ofnData[key] = value;
+        }
+      });
     }
 
-    return {
-      "@context": "https://ofn.gov.cz/slovníky/draft/kontexty/slovníky.jsonld",
-      "iri": "https://slovník.gov.cz/datový/turistické-cíle",
-      "typ": ["Slovník"],
-      "název": {
-        "cs": "Slovník turistických cílů",
-        "en": "Vocabulary of tourist points of interest"
-      },
-      "popis": {
-        "cs": "Slovník turistických cílů slouží v rámci příkladu pro OFN Slovníky",
-        "en": "Vocabulary of tourist points of interest serves as an example in the formal open standard for vocabularies"
-      },
-      "vytvořeno": {
-        "typ": "Časový okamžik",
-        "datum": "2024-01-01"
-      },
-      "aktualizováno": {
-        "typ": "Časový okamžik",
-        "datum_a_čas": "2024-01-15T04:53:21+02:00"
-      },
-    };
+    // The result needs to conform to OfnModel, so we cast it.
+    // A more robust implementation would have validation here.
+    return ofnData as OfnModel;
   }
 }
+
+
+
+
+
+*/

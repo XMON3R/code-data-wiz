@@ -17,12 +17,14 @@ export interface EditorProps {
   error?: string | null;
 }
 
+/*
 interface EditorWrapProps {
   type: EditorType;
   value: UniversalModel;
   onChange?: (value: UniversalModel) => void;
   readOnly?: boolean;
 }
+*/
 
 /**
  * Editor component that contains a header and the actual editor content.

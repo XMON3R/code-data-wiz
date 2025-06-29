@@ -1,6 +1,7 @@
-import { csharpEditor } from "./csharp/csharp-editor";
+//import { csharpEditor } from "./csharp/csharp-editor";
 import { sqlEditor } from "./sql-vocabulary/sql-editor";
 import { EditorType } from "./plugins-codelist";
+import { mockEditor } from "./mockEditor";
 
 export function listPluginMetadata() {
     return {
@@ -16,9 +17,9 @@ export function listPluginMetadata() {
 export function createEditor(type: EditorType) {
     switch (type) {
         case EditorType.ClassDiagram:
-            return csharpEditor;
+            return mockEditor;
         case EditorType.SecondaryEditor:
-            return csharpEditor
+            return mockEditor
         case EditorType.SQLQuery:
             return sqlEditor;
         default:

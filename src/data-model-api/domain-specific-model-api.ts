@@ -41,41 +41,41 @@ export interface DomainTextWriter<T extends DomainSpecificModel> {
 /**
  * Interface for an adapter that converts between a DomainSpecificModel and the UniversalModel.
  * This is crucial for integrating domain-specific data with the core application's universal representation.
- * @template D The type of the DomainSpecificModel this adapter handles.
+ * @template T The type of the DomainSpecificModel this adapter handles.
  */
-export interface DomainModelAdapter<D extends DomainSpecificModel> {
+export interface DomainModelAdapter<T extends DomainSpecificModel> {
     /**
      * Converts a DomainSpecificModel instance into the application's UniversalModel.
      * @param domainModel The domain-specific model to convert.
      * @returns A Promise that resolves with the UniversalModel representation.
      */
-    toUniversalModel(domainModel: D): Promise<UniversalModel>;
+    toUniversalModel(domainModel: T): Promise<UniversalModel>;
 
     /**
      * Converts the application's UniversalModel into a DomainSpecificModel.
      * @param universalModel The UniversalModel to convert.
      * @returns A Promise that resolves with the domain-specific model representation.
      */
-    fromUniversalModel(universalModel: UniversalModel): Promise<D>;
+    fromUniversalModel(universalModel: UniversalModel): Promise<T>;
 }
 
 /**
  * The "merged" API for a specific domain, providing all capabilities
  * for handling that domain's model: parsing its text format, writing to its text format,
  * and adapting it to/from the UniversalModel.
- * @template D The type of the DomainSpecificModel this API provides services for.
+ * @template T The type of the DomainSpecificModel this API provides services for.
  */
-export interface DomainSpecificModelApi<D extends DomainSpecificModel> {
+export interface DomainSpecificModelApi<T extends DomainSpecificModel> {
     /**
      * The parser for this domain's text format.
      */
-    parser: DomainTextParser<D>;
+    parser: DomainTextParser<T>;
     /**
      * The writer for this domain's text format.
      */
-    writer: DomainTextWriter<D>;
+    writer: DomainTextWriter<T>;
     /**
      * The adapter for converting between this domain's model and the UniversalModel.
      */
-    adapter: DomainModelAdapter<D>;
+    adapter: DomainModelAdapter<T>;
 }

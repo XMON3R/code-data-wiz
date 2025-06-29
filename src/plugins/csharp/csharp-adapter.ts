@@ -1,7 +1,11 @@
 // src/plugins/csharp/csharp-model-adapter.ts
+/*
+
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
 import { UniversalModel, Entity, Property, Type } from "../../data-model-api/universal-model";
-import { CsharpModel, CsharpClass, CsharpProperty as CsharpDomainProperty, CsharpMethod } from "./csharp-model";
+import { CsharpModel, CsharpClass,  } from "./csharp-model";
+
+*/
 
 /**
  * An adapter for converting between CsharpModel and UniversalModel.
@@ -15,6 +19,9 @@ import { CsharpModel, CsharpClass, CsharpProperty as CsharpDomainProperty, Cshar
  * the UniversalModel. This is typically more complex as UniversalModel is a
  * simplified representation.
  */
+
+
+/*
 export class CsharpModelAdapter implements DomainModelAdapter<CsharpModel> {
     async toUniversalModel(csharpModel: CsharpModel): Promise<UniversalModel> {
         console.log("CsharpModelAdapter.toUniversalModel called with CsharpModel (mocking):", csharpModel);
@@ -37,7 +44,7 @@ export class CsharpModelAdapter implements DomainModelAdapter<CsharpModel> {
             csharpClass.methods.forEach(method => {
                 properties.push({
                     label: `${method.name}(${method.parameters.map(p => p.type).join(', ')}): ${method.returnType}`,
-                    type: {} as Type, // Placeholder
+                    type: { domainSpecificType: prop.type } as Type, // Added required property
                 });
             });
 
@@ -109,3 +116,6 @@ export class CsharpModelAdapter implements DomainModelAdapter<CsharpModel> {
         return csharpModel;
     }
 }
+
+
+*/

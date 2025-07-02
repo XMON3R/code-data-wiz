@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { LinkmlAdapter } from "./linkml-adapter";
-import { LinkmlModel, LinkmlSchema, LinkmlClassDefinition, LinkmlSlotDefinition } from "./linkml-model";
+import { LinkmlModel } from "./linkml-model";
 import { UniversalModel } from "../../data-model-api/universal-model";
 
 describe("LinkmlAdapter", () => {

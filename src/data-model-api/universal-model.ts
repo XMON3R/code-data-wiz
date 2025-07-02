@@ -53,8 +53,11 @@ export interface Property {
    * data the property can hold.
    */
  type: {
-    // Např. "INT", "VARCHAR(255)", "string", "int"
+    // e.g. "INT", "VARCHAR(255)", "string", "int"
     domainSpecificType: string;
+    format?: string; // Added format property to UniversalPropertyType
+
+    // should be general type, specific model should handle it 
   };
 }
 

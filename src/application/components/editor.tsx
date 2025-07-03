@@ -1,5 +1,5 @@
 import { Extension } from "@codemirror/state";
-import { createEditor } from "../../plugins/plugins-factory"; // Assuming this factory creates the CodeMirror component
+import { createEditor } from "../../plugins/plugins-factory";
 import { EditorType } from "../../plugins";
 import { EditorHeader } from "./editor-header";
 import { UniversalModel } from "../../data-model-api";
@@ -7,7 +7,7 @@ import { UniversalModel } from "../../data-model-api";
 // Interface setting up the editor shown in UI
 export interface EditorProps {
   value: UniversalModel;
-  onChange?: (value: UniversalModel) => void;
+  onChange?: (value: UniversalModel) => void; // This onChange is now only for the left editor
   readOnly?: boolean;
   extensions?: Extension[];
   className?: string;
@@ -15,31 +15,30 @@ export interface EditorProps {
   onChangeType: (value: EditorType) => void;
   onError?: (error: string | null) => void;
   error?: string | null;
+  isRightEditor?: boolean;
+  // These props are now only relevant for the right editor, but Editor still needs to accept them
+  autoRefresh?: boolean;
+  onToggleAutoRefresh?: (autoRefresh: boolean) => void;
+  onTranslateClick?: () => void;
 }
-
-/*
-interface EditorWrapProps {
-  type: EditorType;
-  value: UniversalModel;
-  onChange?: (value: UniversalModel) => void;
-  readOnly?: boolean;
-}
-*/
 
 /**
  * Editor component that contains a header and the actual editor content.
  * This component itself is now scrollable, and its header will stick to the top.
  */
-export function Editor({ value, onChange, readOnly, className, type, onChangeType, error, onError }: EditorProps) {
+export function Editor({ value, onChange, readOnly, className, type, onChangeType, error, onError, isRightEditor, autoRefresh, onToggleAutoRefresh, onTranslateClick }: EditorProps) {
+
   return (
-    // This div is now the scrollable container for the header and content.
-    // It takes full height from its parent (VerticalSplitter pane) and handles overflow.
     <div className={`h-full flex flex-col overflow-y-auto relative ${className}`}>
       {/* EditorHeader - now sticky within this scrollable div */}
       <EditorHeader
         className="h-10 flex-shrink-0 z-10 sticky top-0 bg-gray-800"
         type={type}
         onChangeType={onChangeType}
+        isRightEditor={isRightEditor}
+        autoRefresh={autoRefresh || false} // Default to false if not provided (for left editor)
+        onToggleAutoRefresh={onToggleAutoRefresh || (() => {})}
+        onTranslateClick={onTranslateClick || (() => {})}
       />
       {/* EditorWrap - takes remaining space and contains the CodeMirror editor */}
       {error ? (
@@ -47,8 +46,8 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
       ) : (
         <EditorWrap
           type={type}
-          value={value}
-          onChange={onChange}
+          value={value} // EditorWrap now directly uses the 'value' prop from Editor
+          onChange={onChange} // This onChange is only for the left editor
           readOnly={readOnly}
           onChangeType={onChangeType}
           onError={onError}
@@ -68,8 +67,6 @@ function EditorWrap({ type, value, onChange, readOnly, onChangeType, onError }: 
   }
   const EditorComponent = createEditor(type);
   return (
-    // This div ensures the CodeMirror component can grow to fill the remaining space.
-    // It also sets min-h-0 to prevent flexbox from forcing a scrollbar due to intrinsic content size.
     <div className="flex-1 min-h-0">
       <EditorComponent
         value={value}

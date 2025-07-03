@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
-import { JsonSchemaTextWriter } from "./json-schema-writer";
+import { JsonSchemaWriter } from "./json-schema-writer";
 import { JsonSchemaModel } from "./json-schema-model";
 
-const writer = new JsonSchemaTextWriter();
+const writer = new JsonSchemaWriter();
 
 test("should write a simple object schema", async () => {
     const model: JsonSchemaModel = {

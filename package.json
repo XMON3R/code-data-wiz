@@ -29,6 +29,7 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-yaml": "^6.1.2",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.14.1",

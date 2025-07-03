@@ -4,7 +4,7 @@ import { JsonSchemaModel, JsonSchemaDefinition, JsonSchemaProperty } from "./jso
 /**
  * A parser for JSON Schema strings into a JsonSchemaModel.
  */
-export class JsonSchemaTextParser implements DomainTextParser<JsonSchemaModel> {
+export class JsonSchemaParser implements DomainTextParser<JsonSchemaModel> {
     async parseText(jsonSchemaString: string): Promise<JsonSchemaModel> {
         try {
             const parsedSchema: any = JSON.parse(jsonSchemaString);

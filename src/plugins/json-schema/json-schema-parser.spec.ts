@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
-import { JsonSchemaTextParser } from "./json-schema-parser";
+import { JsonSchemaParser } from "./json-schema-parser";
 import { JsonSchemaModel } from "./json-schema-model";
 
-const parser = new JsonSchemaTextParser();
+const parser = new JsonSchemaParser();
 
 test("should parse a simple object schema", async () => {
     const input = `

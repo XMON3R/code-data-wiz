@@ -4,7 +4,7 @@ import { JsonSchemaModel, JsonSchemaDefinition, JsonSchemaProperty } from "./jso
 /**
  * A writer for JsonSchemaModel into a JSON Schema string.
  */
-export class JsonSchemaTextWriter implements DomainTextWriter<JsonSchemaModel> {
+export class JsonSchemaWriter implements DomainTextWriter<JsonSchemaModel> {
     async writeText(model: JsonSchemaModel): Promise<string> {
         const schemaObject = this.mapToJsonSchemaObject(model.schema);
         return JSON.stringify(schemaObject, null, 2); // Pretty-print with 2 spaces

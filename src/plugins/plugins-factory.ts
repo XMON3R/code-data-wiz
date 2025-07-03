@@ -4,6 +4,7 @@ import { EditorType } from "./plugins-codelist";
 import { mockEditor } from "./mockEditor";
 import { PlantUmlEditor } from "./plant-uml/plant-uml-editor";
 import { LinkmlEditor } from "./linkml/linkml-editor";
+import { JsonSchemaEditor } from "./json-schema/json-schema-editor";
 
 export function listPluginMetadata() {
     return [
@@ -32,6 +33,8 @@ export function createEditor(type: EditorType) {
             return sqlEditor;
         case EditorType.LinkML:
             return LinkmlEditor;
+        case EditorType.JsonSchema:
+            return JsonSchemaEditor;
         case EditorType.PlantUML:
             return PlantUmlEditor;
         default:

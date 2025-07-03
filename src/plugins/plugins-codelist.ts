@@ -6,5 +6,7 @@ export enum EditorType {
 
     LinkML = "LinkML",
 
+    JsonSchema = "JsonSchema",
+
     PlantUML = "PlantUML",
   }

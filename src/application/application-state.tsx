@@ -13,7 +13,7 @@ export interface ApllicationState {
 export function createDefaultApplicationState(): ApllicationState {
     return {
         leftEditorType: EditorType.ClassDiagram,
-        rightEditorType: EditorType.SecondaryEditor,
+        rightEditorType: EditorType.ClassDiagram,
         value: {
             entities: []
         }

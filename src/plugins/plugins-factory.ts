@@ -3,6 +3,7 @@ import { sqlEditor } from "./sql-vocabulary/sql-editor";
 import { EditorType } from "./plugins-codelist";
 import { mockEditor } from "./mockEditor";
 import { PlantUmlEditor } from "./plant-uml/plant-uml-editor";
+import { LinkmlEditor } from "./linkml/linkml-editor";
 
 export function listPluginMetadata() {
     return [
@@ -27,10 +28,10 @@ export function createEditor(type: EditorType) {
     switch (type) {
         case EditorType.ClassDiagram:
             return mockEditor;
-        case EditorType.SecondaryEditor:
-            return mockEditor
         case EditorType.SQLQuery:
             return sqlEditor;
+        case EditorType.LinkML:
+            return LinkmlEditor;
         case EditorType.PlantUML:
             return PlantUmlEditor;
         default:

@@ -29,7 +29,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
             <select id="editor-type" value={type} onChange={handleTypeChange} className="bg-gray-700 text-white rounded-md p-1">
                 <option value={EditorType.ClassDiagram}>Class Diagram</option>
                 <option value={EditorType.SQLQuery}>SQL Query</option>
-                <option value={EditorType.SecondaryEditor}>Secondary</option>
+                <option value={EditorType.LinkML}>LinkML</option>
                 <option value={EditorType.PlantUML}>PlantUML Diagram</option>
             </select>
 

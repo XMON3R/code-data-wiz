@@ -4,6 +4,7 @@ export enum EditorType {
     
     SQLQuery = "SQLQuery",
 
-    SecondaryEditor = "SecondaryEditor",
+    LinkML = "LinkML",
+
     PlantUML = "PlantUML",
   }

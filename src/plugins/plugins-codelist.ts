@@ -4,6 +4,8 @@ export enum EditorType {
     
     SQLQuery = "SQLQuery",
 
+    Java = "Java",
+
     LinkML = "LinkML",
 
     JsonSchema = "JsonSchema",

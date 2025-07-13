@@ -5,6 +5,7 @@ import { mockEditor } from "./mockEditor";
 import { PlantUmlEditor } from "./plant-uml/plant-uml-editor";
 import { LinkmlEditor } from "./linkml/linkml-editor";
 import { JsonSchemaEditor } from "./json-schema/json-schema-editor";
+import { JavaEditor } from "./java/java-editor";
 
 export function listPluginMetadata() {
     return [
@@ -31,6 +32,8 @@ export function createEditor(type: EditorType) {
             return mockEditor;
         case EditorType.SQLQuery:
             return sqlEditor;
+        case EditorType.Java:
+            return JavaEditor;
         case EditorType.LinkML:
             return LinkmlEditor;
         case EditorType.JsonSchema:

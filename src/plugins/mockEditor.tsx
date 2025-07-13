@@ -2,8 +2,6 @@ import { CodeMirrorEditor } from "./components/code-mirror-editor";
 import { UniversalModel } from "../data-model-api";
 import { useEffect, useState } from "react";
 
-// TODO: transform this into a proper C#-specific vocabulary writer and adapter.
-
 // Assuming these classes are in separate files.  Adjust the paths as necessary.
 class MockVocabularyWriter {
     write(jsonVocabulary: any): string {
@@ -53,44 +51,54 @@ export function mockEditor(props: {
     onChange: (value: UniversalModel) => void;
     readonly?: boolean;
     onError?: (error: string | null) => void;
+    isRightEditor?: boolean;
 }) {
-    const [editorValue, setEditorValue] = useState<string>("");
+    const [editorValue, setEditorValue] = useState<string>(() => {
+        const writer = new MockVocabularyWriter();
+        const csharpModel = new MockVocabularyAdapter();
+        const jsonValue = csharpModel.toJsonVocabulary(props.value);
+        return writer.write(jsonValue);
+    });
+    
     const writer = new MockVocabularyWriter();
     const csharpModel = new MockVocabularyAdapter();
     const reader = new MockVocabularyReader();
 
-    // Convert UniversalModel to string for CodeMirrorEditor on initial load or when props.value changes
     useEffect(() => {
-        const jsonValue = csharpModel.toJsonVocabulary(props.value);
-        const csharpStringValue = writer.write(jsonValue);
-        setEditorValue(csharpStringValue);
-    }, [props.value, csharpModel, writer]); //  Dependencies array
+        if (props.isRightEditor) {
+            const jsonValue = csharpModel.toJsonVocabulary(props.value);
+            const csharpStringValue = writer.write(jsonValue);
+            setEditorValue(csharpStringValue);
+        }
+    }, [props.value, props.isRightEditor, csharpModel, writer]);
 
     const handleEditorChange = (value: string) => {
+        if (!props.isRightEditor) {
+            setEditorValue(value);
+        }
+
         try {
-            //  Parse the string value from the editor into a JSON-like structure
             const jsonValue = reader.read(value);
 
-            // Convert the JSON-like structure back to UniversalModel
-            const newUniversalModel = csharpModel.fromJsonVocabulary(jsonValue);
-
-            //  Call the onChange prop to update the parent component"s state
-            props.onError?.(null);
-            props.onChange(newUniversalModel);
+            if (jsonValue) {
+                const newUniversalModel = csharpModel.fromJsonVocabulary(jsonValue);
+                props.onError?.(null);
+                props.onChange(newUniversalModel);
+            }
         } catch (e) {
             const error = e as Error;
             props.onError?.(error.message);
             console.error("Error handling editor change:", error);
-            //  In a real app, you"d want to show user feedback here,
-            //  e.g., an error message in the UI.  For now, we just log it.
         }
     };
+
+    const isReadOnly = props.isRightEditor || props.readonly;
 
     return (
         <CodeMirrorEditor
             value={editorValue}
             onChange={handleEditorChange}
-            readOnly={props.readonly}
+            readOnly={isReadOnly}
         />
     );
 }

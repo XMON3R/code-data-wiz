@@ -12,6 +12,7 @@ export function sqlEditor(props: {
     onChange: (value: UniversalModel) => void;
     readonly?: boolean;
     onError?: (error: string | null) => void;
+    isRightEditor?: boolean;
 }) {
     const writer = new SimpleSQLWriter();
     const adapter = new SqlAdapter();
@@ -39,12 +40,14 @@ export function sqlEditor(props: {
 
     useEffect(() => {
         async function updateEditorValue() {
-            const domainModel = await adapter.fromUniversalModel(props.value);
-            const stringValue = writer.generateCode(domainModel);
-            setEditorValue(stringValue);
+            if (props.isRightEditor) {
+                const domainModel = await adapter.fromUniversalModel(props.value);
+                const stringValue = writer.generateCode(domainModel);
+                setEditorValue(stringValue);
+            }
         }
         updateEditorValue();
-    }, [props.value, adapter, writer]);
+    }, [props.value, adapter, writer, props.isRightEditor]);
 
 
     return (

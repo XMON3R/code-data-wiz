@@ -51,6 +51,7 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
           readOnly={readOnly}
           onChangeType={onChangeType}
           onError={onError}
+          isRightEditor={isRightEditor}
         />
       )}
     </div>
@@ -61,7 +62,7 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
  * Wrapper for the actual CodeMirror editor component.
  * Ensures the CodeMirror editor itself takes up available space.
  */
-function EditorWrap({ type, value, onChange, readOnly, onChangeType, onError }: EditorProps) {
+function EditorWrap({ type, value, onChange, readOnly, onChangeType, onError, isRightEditor }: EditorProps) {
   if (!onChangeType) {
     throw new Error("onChangeType is required for EditorWrap");
   }
@@ -73,6 +74,7 @@ function EditorWrap({ type, value, onChange, readOnly, onChangeType, onError }: 
         onChange={onChange || (() => {})}
         readonly={readOnly}
         onError={onError}
+        isRightEditor={isRightEditor}
       />
     </div>
   );

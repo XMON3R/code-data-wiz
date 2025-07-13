@@ -1,6 +1,13 @@
 import { encode } from 'plantuml-encoder';
+import { UniversalModel } from '../../data-model-api';
 
-export function PlantUmlEditor() {
+export function PlantUmlEditor(props: {
+    value: UniversalModel;
+    onChange: (value: UniversalModel) => void;
+    readonly?: boolean;
+    onError?: (error: string | null) => void;
+    isRightEditor?: boolean;
+}) {
   const plantUmlCode = `
 @startuml
 title "Example C# Object Model"

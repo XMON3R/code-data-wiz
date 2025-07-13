@@ -16,6 +16,7 @@ export function LinkmlEditor(props: {
     onChange: (value: UniversalModel) => void;
     readonly?: boolean;
     onError?: (error: string | null) => void;
+    isRightEditor?: boolean;
 }) {
     // Instantiate the LinkML-specific tools
     const writer = new LinkmlWriter();
@@ -52,17 +53,19 @@ export function LinkmlEditor(props: {
     // Effect to update the editor's text when the universal model prop changes
     useEffect(() => {
         async function updateEditorValue() {
-            // Only try to generate text if the model is not empty
-            if (props.value && props.value.entities.length > 0) {
-                const domainModel = await adapter.fromUniversalModel(props.value);
-                const stringValue = await writer.writeText(domainModel);
-                setEditorValue(stringValue);
-            } else {
-                setEditorValue("");
+            if (props.isRightEditor) {
+                // Only try to generate text if the model is not empty
+                if (props.value && props.value.entities.length > 0) {
+                    const domainModel = await adapter.fromUniversalModel(props.value);
+                    const stringValue = await writer.writeText(domainModel);
+                    setEditorValue(stringValue);
+                } else {
+                    setEditorValue("");
+                }
             }
         }
         updateEditorValue();
-    }, [props.value, adapter, writer]);
+    }, [props.value, adapter, writer, props.isRightEditor]);
 
 
     return (

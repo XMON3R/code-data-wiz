@@ -16,6 +16,7 @@ export function JavaEditor(props: {
     onChange: (value: UniversalModel) => void;
     readonly?: boolean;
     onError?: (error: string | null) => void;
+    isRightEditor?: boolean;
 }) {
     const [writer] = useState(() => new JavaWriter());
     const [adapter] = useState(() => new JavaAdapter());
@@ -61,23 +62,25 @@ export function JavaEditor(props: {
     // This effect listens for changes coming FROM the UniversalModel
     // (e.g., from the other editor pane) and updates this editor's text.
     useEffect(() => {
-        // A simple check to prevent overwriting the user's text
-        // if the incoming model is empty while the user is typing.
-        if (props.value && props.value.entities.length > 0) {
-            adapter.fromUniversalModel(props.value)
-                .then(domainModel => writer.writeText(domainModel))
-                .then(stringValue => {
-                    // Only update if the generated text is different from the current text
-                    // to avoid cursor jumps and infinite loops.
-                    if (stringValue !== displayedText) {
-                        setDisplayedText(stringValue);
-                    }
-                });
-        } else {
-            // If the universal model becomes empty, clear the editor.
-            setDisplayedText("");
+        if (props.isRightEditor) {
+            // A simple check to prevent overwriting the user's text
+            // if the incoming model is empty while the user is typing.
+            if (props.value && props.value.entities.length > 0) {
+                adapter.fromUniversalModel(props.value)
+                    .then(domainModel => writer.writeText(domainModel))
+                    .then(stringValue => {
+                        // Only update if the generated text is different from the current text
+                        // to avoid cursor jumps and infinite loops.
+                        if (stringValue !== displayedText) {
+                            setDisplayedText(stringValue);
+                        }
+                    });
+            } else {
+                // If the universal model becomes empty, clear the editor.
+                setDisplayedText("");
+            }
         }
-    }, [props.value]); // This effect ONLY runs when the universal model changes.
+    }, [props.value, props.isRightEditor, adapter, writer, displayedText]); // This effect ONLY runs when the universal model changes.
 
 
     return (

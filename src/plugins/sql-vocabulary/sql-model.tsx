@@ -20,7 +20,7 @@ export interface SQLColumn {
     type: SQLDataType;
     // Properties like nullable, default value, etc
     isNullable?: boolean;
-    defaultValue?: string | number | null;
+    defaultValue?: string | number | boolean | null;
     // isPrimaryKey?: boolean;
 }
 

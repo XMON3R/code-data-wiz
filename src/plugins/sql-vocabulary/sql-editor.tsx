@@ -10,9 +10,8 @@ import { SimpleSQLWriter } from "./sql-writer";
 export function sqlEditor(props: {
     value: UniversalModel;
     onChange: (value: UniversalModel) => void;
-    readonly?: boolean;
+    isReadOnly?: boolean;
     onError?: (error: string | null) => void;
-    isRightEditor?: boolean;
 }) {
     const writer = new SimpleSQLWriter();
     const adapter = new SqlAdapter();
@@ -40,21 +39,21 @@ export function sqlEditor(props: {
 
     useEffect(() => {
         async function updateEditorValue() {
-            if (props.isRightEditor) {
+            if (props.isReadOnly) {
                 const domainModel = await adapter.fromUniversalModel(props.value);
                 const stringValue = writer.generateCode(domainModel);
                 setEditorValue(stringValue);
             }
         }
         updateEditorValue();
-    }, [props.value, adapter, writer, props.isRightEditor]);
+    }, [props.value, adapter, writer, props.isReadOnly]);
 
 
     return (
         <CodeMirrorEditor
             value={editorValue}
             onChange={handleEditorChange}
-            readOnly={props.readonly}
+            readOnly={props.isReadOnly}
             extensions={[sql()]}
         />
     );

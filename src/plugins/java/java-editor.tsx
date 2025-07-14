@@ -14,9 +14,8 @@ import { JavaAdapter } from "./java-adapter";
 export function JavaEditor(props: {
     value: UniversalModel;
     onChange: (value: UniversalModel) => void;
-    readonly?: boolean;
+    isReadOnly?: boolean;
     onError?: (error: string | null) => void;
-    isRightEditor?: boolean;
 }) {
     const [writer] = useState(() => new JavaWriter());
     const [adapter] = useState(() => new JavaAdapter());
@@ -62,7 +61,7 @@ export function JavaEditor(props: {
     // This effect listens for changes coming FROM the UniversalModel
     // (e.g., from the other editor pane) and updates this editor's text.
     useEffect(() => {
-        if (props.isRightEditor) {
+        if (props.isReadOnly) {
             // A simple check to prevent overwriting the user's text
             // if the incoming model is empty while the user is typing.
             if (props.value && props.value.entities.length > 0) {
@@ -80,14 +79,14 @@ export function JavaEditor(props: {
                 setDisplayedText("");
             }
         }
-    }, [props.value, props.isRightEditor, adapter, writer, displayedText]); // This effect ONLY runs when the universal model changes.
+    }, [props.value, props.isReadOnly, adapter, writer, displayedText]); // This effect ONLY runs when the universal model changes.
 
 
     return (
         <CodeMirrorEditor
             value={displayedText}
             onChange={handleEditorChange}
-            readOnly={props.readonly}
+            readOnly={props.isReadOnly}
             extensions={[java()]}
         />
     );

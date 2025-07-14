@@ -8,10 +8,10 @@ interface EditorHeaderProps {
     autoRefresh: boolean;
     onToggleAutoRefresh: (autoRefresh: boolean) => void;
     onTranslateClick: () => void;
-    isRightEditor?: boolean; // New prop
+    isReadOnly?: boolean; // New prop
 }
 
-export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isRightEditor }) => {
+export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isReadOnly }) => {
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value as EditorType;
@@ -36,7 +36,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
                 <option value={EditorType.PlantUML}>PlantUML Diagram</option>
             </select>
 
-            {isRightEditor && ( // Conditionally render for right editor only
+            {isReadOnly && ( // Conditionally render for right editor only
                 <div className="ml-4 flex items-center">
                     <label htmlFor="auto-refresh-toggle" className="mr-2">Auto-refresh:</label>
                     <input
@@ -50,7 +50,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
             )}
 
             <div className="ml-auto">
-                {isRightEditor && !autoRefresh && ( // Conditionally render for right editor and autoRefresh is off
+                {isReadOnly && !autoRefresh && ( // Conditionally render for right editor and autoRefresh is off
                     <button
                         onClick={onTranslateClick}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded"

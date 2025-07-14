@@ -8,7 +8,7 @@ import { UniversalModel } from "../../data-model-api";
 export interface EditorProps {
   value: UniversalModel;
   onChange?: (value: UniversalModel) => void; // This onChange is now only for the left editor
-  readOnly?: boolean;
+  isReadOnly?: boolean;
   extensions?: Extension[];
   className?: string;
   type: EditorType;
@@ -16,8 +16,6 @@ export interface EditorProps {
   onError?: (error: string | null) => void;
   error?: string | null;
 
-  //Rename to right side editor
-  isRightEditor?: boolean;
   // These props are now only relevant for the right editor, but Editor still needs to accept them
   autoRefresh?: boolean;
   onToggleAutoRefresh?: (autoRefresh: boolean) => void;
@@ -28,7 +26,7 @@ export interface EditorProps {
  * Editor component that contains a header and the actual editor content.
  * This component itself is now scrollable, and its header will stick to the top.
  */
-export function Editor({ value, onChange, readOnly, className, type, onChangeType, error, onError, isRightEditor, autoRefresh, onToggleAutoRefresh, onTranslateClick }: EditorProps) {
+export function Editor({ value, onChange, isReadOnly, className, type, onChangeType, error, onError, autoRefresh, onToggleAutoRefresh, onTranslateClick }: EditorProps) {
 
   return (
     <div className={`h-full flex flex-col overflow-y-auto relative ${className}`}>
@@ -37,7 +35,7 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
         className="h-10 flex-shrink-0 z-10 sticky top-0 bg-gray-800"
         type={type}
         onChangeType={onChangeType}
-        isRightEditor={isRightEditor}
+        isReadOnly={isReadOnly}
         autoRefresh={autoRefresh || false} // Default to false if not provided (for left editor)
         onToggleAutoRefresh={onToggleAutoRefresh || (() => {})}
         onTranslateClick={onTranslateClick || (() => {})}
@@ -50,10 +48,9 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
           type={type}
           value={value} // EditorWrap now directly uses the 'value' prop from Editor
           onChange={onChange} // This onChange is only for the left editor
-          readOnly={readOnly}
+          isReadOnly={isReadOnly}
           onChangeType={onChangeType}
           onError={onError}
-          isRightEditor={isRightEditor}
         />
       )}
     </div>
@@ -64,7 +61,7 @@ export function Editor({ value, onChange, readOnly, className, type, onChangeTyp
  * Wrapper for the actual CodeMirror editor component.
  * Ensures the CodeMirror editor itself takes up available space.
  */
-function EditorWrap({ type, value, onChange, readOnly, onChangeType, onError, isRightEditor }: EditorProps) {
+function EditorWrap({ type, value, onChange, isReadOnly, onChangeType, onError}: EditorProps) {
   if (!onChangeType) {
     throw new Error("onChangeType is required for EditorWrap");
   }
@@ -74,9 +71,8 @@ function EditorWrap({ type, value, onChange, readOnly, onChangeType, onError, is
       <EditorComponent
         value={value}
         onChange={onChange || (() => {})}
-        readonly={readOnly}
+        isReadOnly={isReadOnly}
         onError={onError}
-        isRightEditor={isRightEditor}
       />
     </div>
   );

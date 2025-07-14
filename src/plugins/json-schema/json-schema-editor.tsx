@@ -14,9 +14,8 @@ import { JsonSchemaWriter } from "./json-schema-writer";
 export function JsonSchemaEditor(props: {
     value: UniversalModel;
     onChange: (value: UniversalModel) => void;
-    readonly?: boolean;
+    isReadOnly?: boolean;
     onError?: (error: string | null) => void;
-    isRightEditor?: boolean;
 }) {
     // Instantiate the JSON Schema-specific tools
     const writer = new JsonSchemaWriter();
@@ -52,7 +51,7 @@ export function JsonSchemaEditor(props: {
     // Effect to update the editor's text when the universal model prop changes
     useEffect(() => {
         async function updateEditorValue() {
-            if (props.isRightEditor) {
+            if (props.isReadOnly) {
                 if (props.value && props.value.entities.length > 0) {
                     const domainModel = await adapter.fromUniversalModel(props.value);
                     const stringValue = await writer.writeText(domainModel);
@@ -63,14 +62,14 @@ export function JsonSchemaEditor(props: {
             }
         }
         updateEditorValue();
-    }, [props.value, adapter, writer, props.isRightEditor]);
+    }, [props.value, adapter, writer, props.isReadOnly]);
 
 
     return (
         <CodeMirrorEditor
             value={editorValue}
             onChange={handleEditorChange}
-            readOnly={props.readonly}
+            readOnly={props.isReadOnly}
             // Use the JSON language extension for syntax highlighting
             extensions={[json()]}
         />

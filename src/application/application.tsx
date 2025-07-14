@@ -54,17 +54,16 @@ export const App: React.FC = () => {
                     extensions={[]}
                     className="flex-col bg-gray-900 text-white"
                     onError={handleLeftError}
-                    isRightEditor={false}
+                    isReadOnly={false}
                 />
                 <Editor
                     type={state.rightEditorType}
                     onChangeType={controller.onChangeRightEditorType}
                     value={rightEditorDisplayedContent}
                     onChange={() => {}}
-                    readOnly={true}
+                    isReadOnly={true}
                     className="flex-col bg-gray-900 text-white"
                     error={error}
-                    isRightEditor={true}
                     autoRefresh={autoRefreshRightEditor}
                     onToggleAutoRefresh={handleToggleRightEditorAutoRefresh}
                     onTranslateClick={handleTranslateRightEditorClick}

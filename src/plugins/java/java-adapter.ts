@@ -19,7 +19,8 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
             fileMetaProperties.push({ label: "imports", value: JSON.stringify(model.imports), type: { domainSpecificType: "string[]" } });
         }
         if (fileMetaProperties.length > 0) {
-            entities.push({ label: "@file", properties: fileMetaProperties });
+            // Add a 'value' field to indicate it's metadata, so other models can potentially ignore it.
+            entities.push({ label: "@file", properties: fileMetaProperties, value: JSON.stringify({ type: "javaFileMetadata" }) });
         }
 
         // Convert each Java class to a universal entity

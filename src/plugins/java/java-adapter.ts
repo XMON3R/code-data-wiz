@@ -1,5 +1,5 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
-import { UniversalModel, Entity, Property } from "../../data-model-api/universal-model";
+import { UniversalModel, Entity, /*Property*/ } from "../../data-model-api/universal-model";
 import { JavaModel, JavaClass, JavaField } from "./java-model";
 
 /**
@@ -10,7 +10,9 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
     async toUniversalModel(model: JavaModel): Promise<UniversalModel> {
         const entities: Entity[] = [];
 
-        // Create a "meta" entity for file-level details
+        // Working imports and packages here, but not yet resolved not to show in other plugins after translation
+        /*
+        // Create a "meta" entity for file-level details with a specific label
         const fileMetaProperties: Property[] = [];
         if (model.packageName) {
             fileMetaProperties.push({ label: "packageName", value: model.packageName, type: { domainSpecificType: "string"} });
@@ -19,9 +21,9 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
             fileMetaProperties.push({ label: "imports", value: JSON.stringify(model.imports), type: { domainSpecificType: "string[]" } });
         }
         if (fileMetaProperties.length > 0) {
-            // Add a 'value' field to indicate it's metadata, so other models can potentially ignore it.
-            entities.push({ label: "@file", properties: fileMetaProperties, value: JSON.stringify({ type: "javaFileMetadata" }) });
-        }
+            // Use a more specific label to avoid clashes with other plugins
+            entities.push({ label: "@javaFile", properties: fileMetaProperties });
+        }*/
 
         // Convert each Java class to a universal entity
         model.classes.forEach(cls => {
@@ -55,21 +57,20 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
         const classes: JavaClass[] = [];
 
         model.entities.forEach(entity => {
-            if (entity.label === "@file") {
+            // Check for the specific @javaFile label --- placeholder for now
+            if (entity.label === "@javaFile") {
                 packageName = entity.properties.find(p => p.label === "packageName")?.value;
                 const importsProp = entity.properties.find(p => p.label === "imports");
                 if (importsProp?.value) {
                     imports = JSON.parse(importsProp.value);
                 }
-                return;
+                return; // Continue to the next entity
             }
 
             const classMeta = entity.value ? JSON.parse(entity.value) : {};
             const fields: JavaField[] = entity.properties.map(prop => {
                 const fieldMeta = prop.value ? JSON.parse(prop.value) : {};
                 
-                // FIX: Conditionally add boolean properties only if they are true.
-                // This prevents adding 'isStatic: false' to the final object.
                 const field: JavaField = {
                     name: prop.label,
                     type: prop.type.domainSpecificType,

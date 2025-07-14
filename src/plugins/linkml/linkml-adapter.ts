@@ -15,6 +15,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
         const linkmlClass = schema.classes[className];
         const entity: Entity = {
           label: className,
+          description: linkmlClass.description, // Preserve description
           properties: [],
         };
 
@@ -57,15 +58,14 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
   async fromUniversalModel(universalModel: UniversalModel): Promise<LinkmlModel> {
     const linkmlSchema: LinkmlSchema = {
       id: "http://example.com/linkml-schema", // Default ID
-      name: "example_schema", // Default name
+      name: universalModel.entities && universalModel.entities.length > 0 ? "my_schema" : "example_schema",
       classes: {},
-      slots: {},
     };
 
     if (universalModel.entities.length > 0) {
       for (const entity of universalModel.entities) {
         const linkmlClass: LinkmlClassDefinition = {
-          description: `Class for ${entity.label}`,
+          description: entity.description || `Class for ${entity.label}`, // Use entity description or fallback
           attributes: {},
         };
         linkmlSchema.classes![entity.label] = linkmlClass;

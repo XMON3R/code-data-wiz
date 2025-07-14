@@ -25,7 +25,7 @@ describe("LinkmlAdapter", () => {
                 description: "Unique identifier for the person",
                 range: "string",
                 required: true,
-              },
+              }, 
               name: {
                 description: "Name of the person",
                 range: "string",
@@ -59,6 +59,7 @@ describe("LinkmlAdapter", () => {
       entities: [
         {
           label: "Person",
+          description: "A person in the system", // Add this line
           properties: [
             { label: "id", type: { domainSpecificType: "string" } },
             { label: "name", type: { domainSpecificType: "string" } },
@@ -67,6 +68,7 @@ describe("LinkmlAdapter", () => {
         },
         {
           label: "Organization",
+          description: "An organization", // Add this line
           properties: [
             { label: "orgId", type: { domainSpecificType: "string" } },
             { label: "orgName", type: { domainSpecificType: "string" } },

@@ -10,6 +10,7 @@ export interface UniversalModel {
  */
 export interface Entity {
     label: string;
+    description?: string; // Added to preserve entity descriptions
     properties: Property[];
     /**
      * Optional field to store entity-level metadata, such as the type

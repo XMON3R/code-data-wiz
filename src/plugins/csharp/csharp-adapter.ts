@@ -1,121 +1,74 @@
-// src/plugins/csharp/csharp-model-adapter.ts
-/*
-
-import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
-import { UniversalModel, Entity, Property, Type } from "../../data-model-api/universal-model";
-import { CsharpModel, CsharpClass,  } from "./csharp-model";
-
-*/
+import {
+    UniversalModel,
+    Entity,
+    Property,
+} from "../../data-model-api/universal-model";
+import {
+    DomainModelAdapter,
+} from "../../data-model-api/domain-specific-model-api";
+import { CSharpModel, CSharpClass, CSharpProperty } from "./csharp-model";
 
 /**
- * An adapter for converting between CsharpModel and UniversalModel.
- *
- * TODO: These are mock implementations. A real implementation would involve:
- * - `toUniversalModel`: Iterating through CsharpModel classes, properties, and methods
- * and mapping them to UniversalModel entities and properties. This would require
- * decisions on how C# concepts (e.g., access modifiers, method parameters) map
- * to UniversalModel's generic `Type` or additional `Property` attributes.
- * - `fromUniversalModel`: The reverse process, reconstructing CsharpModel from
- * the UniversalModel. This is typically more complex as UniversalModel is a
- * simplified representation.
+ * An adapter to translate between the CSharpModel and the UniversalModel,
+ * inspired by a detailed, metadata-preserving approach.
  */
+export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
+    async toUniversalModel(model: CSharpModel): Promise<UniversalModel> {
+        const entities: Entity[] = model.classes.map(cls => {
+            const properties: Property[] = cls.properties.map(prop => ({
+                label: prop.name,
+                // The domain-specific type is stored for a richer representation.
+                type: { domainSpecificType: prop.type.name },
+                // Store property-specific metadata in the 'value' field as a JSON string.
+                value: JSON.stringify({
+                    accessModifier: prop.accessModifier,
+                    isNullable: prop.type.isNullable || false,
+                }),
+            }));
 
-
-/*
-export class CsharpModelAdapter implements DomainModelAdapter<CsharpModel> {
-    async toUniversalModel(csharpModel: CsharpModel): Promise<UniversalModel> {
-        console.log("CsharpModelAdapter.toUniversalModel called with CsharpModel (mocking):", csharpModel);
-        const entities: Entity[] = [];
-
-        // Example: Map each C# class to a UniversalModel Entity
-        csharpModel.classes.forEach(csharpClass => {
-            const properties: Property[] = [];
-
-            // Map C# properties to UniversalModel properties
-            csharpClass.properties.forEach(prop => {
-                properties.push({
-                    label: `${prop.name}: ${prop.type}`, // Example: "MyProperty: string"
-                    type: {} as Type, // Placeholder for actual type mapping
-                    // You might add more details from CsharpProperty to UniversalModel.Property here
-                });
-            });
-
-            // Map C# methods to UniversalModel properties (or separate entities if needed)
-            csharpClass.methods.forEach(method => {
-                properties.push({
-                    label: `${method.name}(${method.parameters.map(p => p.type).join(', ')}): ${method.returnType}`,
-                    type: { domainSpecificType: prop.type } as Type, // Added required property
-                });
-            });
-
-            entities.push({
-                label: csharpClass.name,
+            return {
+                label: cls.name,
                 properties: properties,
-                // You might add other metadata from CsharpClass here
-            });
+                // Store class-specific metadata in the 'value' field as a JSON string.
+                value: JSON.stringify({
+                    type: cls.type,
+                    accessModifier: cls.accessModifier,
+                }),
+            };
         });
-
-        if (entities.length === 0 && csharpModel.namespace) {
-            // If no classes, but a namespace exists, create a root entity for the namespace
-            entities.push({
-                label: `Namespace: ${csharpModel.namespace}`,
-                properties: [],
-            });
-        } else if (entities.length === 0) {
-            // Fallback for completely empty model
-            entities.push({
-                label: "Empty C# Model",
-                properties: [],
-            });
-        }
-
 
         return { entities };
     }
 
-    async fromUniversalModel(universalModel: UniversalModel): Promise<CsharpModel> {
-        console.log("CsharpModelAdapter.fromUniversalModel called with UniversalModel (mocking):", universalModel);
-        const csharpModel: CsharpModel = {
-            classes: [],
-            usings: ["System", "System.Collections.Generic"], // Example default usings
-            namespace: "GeneratedNamespace" // Example default namespace
-        };
+    async fromUniversalModel(model: UniversalModel): Promise<CSharpModel> {
+        const classes: CSharpClass[] = model.entities.map(entity => {
+            // Skip any file-level metadata entities, if they were to be added.
+            if (entity.label === "@file") {
+                return null;
+            }
 
-        // Example: Map UniversalModel Entities back to CsharpModel Classes
-        universalModel.entities.forEach(entity => {
-            const csharpClass: CsharpClass = {
-                name: entity.label,
-                type: "class", // Default to class
-                properties: [],
-                methods: [],
-            };
-
-            // This is a very simplistic reverse mapping.
-            // A real adapter would need complex logic to infer C# properties/methods
-            // from UniversalModel's generic properties.
-            entity.properties.forEach(prop => {
-                // Try to infer if it's a property or method based on label conventions
-                if (prop.label.includes('(') && prop.label.includes(')')) {
-                    // Looks like a method
-                    csharpClass.methods.push({
-                        name: prop.label.split('(')[0].trim(),
-                        returnType: prop.label.split(':').pop()?.trim() || "void",
-                        parameters: [], // Needs more complex parsing of label
-                    });
-                } else {
-                    // Assume it's a property
-                    csharpClass.properties.push({
-                        name: prop.label.split(':')[0].trim(),
-                        type: prop.label.split(':').pop()?.trim() || "object",
-                    });
-                }
+            const classMeta = entity.value ? JSON.parse(entity.value) : {};
+            const properties: CSharpProperty[] = entity.properties.map(prop => {
+                const propMeta = prop.value ? JSON.parse(prop.value) : {};
+                return {
+                    name: prop.label,
+                    type: {
+                        name: prop.type.domainSpecificType,
+                        isNullable: propMeta.isNullable,
+                    },
+                    accessModifier: propMeta.accessModifier || "public",
+                };
             });
-            csharpModel.classes.push(csharpClass);
-        });
 
-        return csharpModel;
+            return {
+                name: entity.label,
+                type: classMeta.type || "class",
+                accessModifier: classMeta.accessModifier || "public",
+                properties: properties,
+                methods: [], // Methods are not part of this conversion.
+            };
+        }).filter(Boolean) as CSharpClass[]; // Filter out any nulls.
+
+        return { classes };
     }
 }
-
-
-*/

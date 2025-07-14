@@ -1,29 +1,39 @@
-import { CSharpDiagram, CSharpType } from "./csharp-model";
+import { CSharpDiagram, CSharpClass, CSharpType } from "./csharp-model";
 
+/**
+ * An interface for generating C# code from a CSharpDiagram.
+ */
 export interface CSharpWriter {
-  generateCode(parsed: CSharpDiagram): string;
+    generateCode(parsed: CSharpDiagram): string;
 }
 
+/**
+ * A simple implementation of the CSharpWriter.
+ */
 export class SimpleCSharpWriter implements CSharpWriter {
-  generateCode(parsed: CSharpDiagram): string {
-    let csharpCode = "";
-
-    for (const csharpClass of parsed.classes) {
-      csharpCode += `public class ${csharpClass.name}\n{\n`;
-      const propertyDefinitions = csharpClass.properties
-        .map(property => `    public ${this.formatCSharpType(property.type)} ${property.name} { get; set; }`)
-        .join("\n");
-      csharpCode += `${propertyDefinitions}\n}\n\n`;
+    public generateCode(parsed: CSharpDiagram): string {
+        return parsed.classes.map(c => this.generateClass(c)).join("\n");
     }
 
-    return csharpCode;
-  }
+    private generateClass(csharpClass: CSharpClass): string {
+        let classCode = `public class ${csharpClass.name}\n{\n`;
 
-  private formatCSharpType(type: CSharpType): string {
-    let formattedType = type.name;
-    if (type.isNullable) {
-      formattedType += "?";
+        if (csharpClass.properties.length > 0) {
+            const propertyDefinitions = csharpClass.properties
+                .map(property => `    public ${this.formatCSharpType(property.type)} ${property.name} { get; set; }`)
+                .join("\n");
+            classCode += `${propertyDefinitions}\n`;
+        }
+
+        classCode += `}\n`;
+        return classCode;
     }
-    return formattedType;
-  }
+
+    private formatCSharpType(type: CSharpType): string {
+        let formattedType = type.name;
+        if (type.isNullable) {
+            formattedType += "?";
+        }
+        return formattedType;
+    }
 }

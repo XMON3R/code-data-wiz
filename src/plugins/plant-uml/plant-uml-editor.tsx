@@ -4,13 +4,20 @@ import { UniversalModel } from '../../data-model-api';
 function universalModelToPlantUml(model: UniversalModel): string {
   let plantUmlCode = "@startuml\n";
   plantUmlCode += `title "Model Visualization"
+skinparam titleFontColor #ffffff
 skinparam classAttributeIconSize 0
 skinparam style strictuml
+skinparam backgroundcolor #101828
+skinparam FontColor #ffffff
+
 skinparam class {
-  BackgroundColor #f8fafc
-  ArrowColor #64748b
-  BorderColor #64748b
+  BackgroundColor #374151
+  ArrowColor #f8fafc
+  BorderColor #f8fafc
+  FontColor #ffffff
 }
+
+skinparam classAttributeFontColor #ffffff
 `;
 
   if (model && model.entities) {
@@ -38,8 +45,8 @@ export function PlantUmlEditor(props: {
   const imageUrl = `http://www.plantuml.com/plantuml/svg/${encodedPlantUml}`;
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '1rem', boxSizing: 'border-box', backgroundColor: '#f8fafc', overflow: 'auto' }}>
-      <img src={imageUrl} alt="Model Visualization" style={{ maxWidth: '100%', maxHeight: '100%', backgroundColor: 'white' }} />
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%', padding: '1rem', boxSizing: 'border-box', backgroundColor: '#101828', overflow: 'auto' }}>
+      <img src={imageUrl} alt="Model Visualization" style={{ maxWidth: '100%', maxHeight: '100%' }} />
     </div>
   );
 }

@@ -56,8 +56,8 @@ export class CSharpTextParser implements DomainTextParser<CSharpModel> {
     private parseProperties(classContent: string): CSharpProperty[] {
         try {
             const properties: CSharpProperty[] = [];
-            // Regex to find property definitions: `[accessModifier] [type] [PropertyName] { get; set; }`
-            const propertyRegex = /(public|private|protected|internal)?\s*([\w<>?]+)\s+(\w+)\s*\{[^}]+\}/g;
+            // Regex to find property definitions: `[accessModifier] [type] [PropertyName] { get; set; }` or `[accessModifier] [type] [PropertyName];`
+            const propertyRegex = /(public|private|protected|internal)?\s*([\w<>?]+)\s+(\w+)\s*(?:\{[^}]+\}|;)/g;
             let propertyMatch: RegExpExecArray | null;
 
             while ((propertyMatch = propertyRegex.exec(classContent)) !== null) {

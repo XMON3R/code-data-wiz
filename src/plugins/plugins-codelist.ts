@@ -6,9 +6,11 @@ export enum EditorType {
 
     Java = "Java",
 
+    Csharp = "Csharp",
+
     LinkML = "LinkML",
 
     JsonSchema = "JsonSchema",
 
-    PlantUML = "PlantUML",
+    PlantUML = "PlantUML"
   }

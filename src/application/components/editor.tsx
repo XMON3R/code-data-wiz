@@ -15,6 +15,8 @@ export interface EditorProps {
   onChangeType: (value: EditorType) => void;
   onError?: (error: string | null) => void;
   error?: string | null;
+
+  //Rename to right side editor
   isRightEditor?: boolean;
   // These props are now only relevant for the right editor, but Editor still needs to accept them
   autoRefresh?: boolean;

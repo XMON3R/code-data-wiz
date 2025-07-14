@@ -6,6 +6,7 @@ import { PlantUmlEditor } from "./plant-uml/plant-uml-editor";
 import { LinkmlEditor } from "./linkml/linkml-editor";
 import { JsonSchemaEditor } from "./json-schema/json-schema-editor";
 import { JavaEditor } from "./java/java-editor";
+import { CSharpEditor } from "./csharp/csharp-editor";
 
 export function listPluginMetadata() {
     return [
@@ -34,6 +35,8 @@ export function createEditor(type: EditorType) {
             return sqlEditor;
         case EditorType.Java:
             return JavaEditor;
+        case EditorType.Csharp:
+            return CSharpEditor;
         case EditorType.LinkML:
             return LinkmlEditor;
         case EditorType.JsonSchema:

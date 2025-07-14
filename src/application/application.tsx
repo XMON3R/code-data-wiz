@@ -67,6 +67,7 @@ export const App: React.FC = () => {
                     onError={handleLeftError}
                     isReadOnly={false}
                     onDownload={handleDownload} // Pass the handler from the hook
+                    onToggleSettings={() => { /* Placeholder for now */ }} // Pass a placeholder function
                 />
                 <Editor
                     type={state.rightEditorType}

@@ -8,11 +8,12 @@ interface EditorHeaderProps {
     autoRefresh: boolean;
     onToggleAutoRefresh: (autoRefresh: boolean) => void;
     onTranslateClick: () => void;
-    isReadOnly?: boolean; // New prop
-    onDownload: () => void; // New prop for download handler
+    isReadOnly?: boolean;
+    onDownload: () => void; 
+    onToggleSettings?: () => void; // placeholder for toggling settings/config 
 }
 
-export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isReadOnly, onDownload }) => {
+export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isReadOnly, onDownload, onToggleSettings }) => {
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value as EditorType;
@@ -51,6 +52,15 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
             )}
 
             <div className="ml-auto flex items-center"> {/* Added flex items-center to align buttons */}
+                {!isReadOnly && onToggleSettings && ( // Conditionally render for left editor only
+                    <button
+                        onClick={onToggleSettings}
+                        className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded mr-2"
+                        title="Settings"
+                    >
+                        ⚙️
+                    </button>
+                )}
                 {isReadOnly && !autoRefresh && ( // Conditionally render for right editor and autoRefresh is off
                     <button
                         onClick={onTranslateClick}

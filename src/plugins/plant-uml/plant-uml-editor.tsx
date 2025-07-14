@@ -1,7 +1,7 @@
 import { encode } from 'plantuml-encoder';
 import { UniversalModel } from '../../data-model-api';
 
-function universalModelToPlantUml(model: UniversalModel): string {
+export function universalModelToPlantUml(model: UniversalModel): string {
   let plantUmlCode = "@startuml\n";
   plantUmlCode += `title "Model Visualization"
 skinparam titleFontColor #ffffff

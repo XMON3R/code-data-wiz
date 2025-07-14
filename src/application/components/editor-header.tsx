@@ -9,9 +9,10 @@ interface EditorHeaderProps {
     onToggleAutoRefresh: (autoRefresh: boolean) => void;
     onTranslateClick: () => void;
     isReadOnly?: boolean; // New prop
+    onDownload: () => void; // New prop for download handler
 }
 
-export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isReadOnly }) => {
+export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isReadOnly, onDownload }) => {
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value as EditorType;
@@ -49,15 +50,22 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
                 </div>
             )}
 
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center"> {/* Added flex items-center to align buttons */}
                 {isReadOnly && !autoRefresh && ( // Conditionally render for right editor and autoRefresh is off
                     <button
                         onClick={onTranslateClick}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mr-2" // Added mr-2 for spacing
                     >
                         Translate
                     </button>
                 )}
+                {/* Download button */}
+                <button
+                    onClick={onDownload}
+                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded"
+                >
+                    Download
+                </button>
             </div>
         </div>
     );

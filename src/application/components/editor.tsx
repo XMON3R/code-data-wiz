@@ -20,13 +20,20 @@ export interface EditorProps {
   autoRefresh?: boolean;
   onToggleAutoRefresh?: (autoRefresh: boolean) => void;
   onTranslateClick?: () => void;
+  onDownload?: (content: UniversalModel, type: EditorType) => void; // New prop
 }
 
 /**
  * Editor component that contains a header and the actual editor content.
  * This component itself is now scrollable, and its header will stick to the top.
  */
-export function Editor({ value, onChange, isReadOnly, className, type, onChangeType, error, onError, autoRefresh, onToggleAutoRefresh, onTranslateClick }: EditorProps) {
+export function Editor({ value, onChange, isReadOnly, className, type, onChangeType, error, onError, autoRefresh, onToggleAutoRefresh, onTranslateClick, onDownload }: EditorProps) {
+
+  const handleDownload = () => {
+    if (onDownload) {
+      onDownload(value, type);
+    }
+  };
 
   return (
     <div className={`h-full flex flex-col overflow-y-auto relative ${className}`}>
@@ -39,6 +46,7 @@ export function Editor({ value, onChange, isReadOnly, className, type, onChangeT
         autoRefresh={autoRefresh || false} // Default to false if not provided (for left editor)
         onToggleAutoRefresh={onToggleAutoRefresh || (() => {})}
         onTranslateClick={onTranslateClick || (() => {})}
+        onDownload={handleDownload} // Pass the handler
       />
       {/* EditorWrap - takes remaining space and contains the CodeMirror editor */}
       {error ? (

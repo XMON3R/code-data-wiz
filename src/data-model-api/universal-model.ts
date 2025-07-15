@@ -41,5 +41,6 @@ export interface Type {
      * e.g., "VARCHAR(255)", "string", "Long"
      */
     domainSpecificType: string;
+    universalType?: "string" | "number" | "boolean" | "date" | "datetime" | "other";
     format?: string;
 }

@@ -3,6 +3,19 @@
  */
 export interface UniversalModel {
     entities: Entity[];
+    relationships?: Relationship[];
+}
+
+/**
+ * Represents a relationship between two entities.
+ */
+export interface Relationship {
+    sourceEntityLabel: string;
+    targetEntityLabel: string;
+    type: "association" | "composition" | "aggregation" | "inheritance" | "dependency";
+    label?: string;
+    sourceCardinality?: string;
+    targetCardinality?: string;
 }
 
 /**

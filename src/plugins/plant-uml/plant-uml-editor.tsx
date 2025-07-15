@@ -33,8 +33,35 @@ skinparam classAttributeFontColor #ffffff
     }
   }
 
+  if (model && model.relationships) {
+    for (const rel of model.relationships) {
+      const relationshipSyntax = getPlantUmlRelationshipSyntax(rel.type);
+      const label = rel.label ? ` : ${rel.label}` : '';
+      const sourceCardinality = rel.sourceCardinality ? ` "${rel.sourceCardinality}"` : '';
+      const targetCardinality = rel.targetCardinality ? ` "${rel.targetCardinality}"` : '';
+      plantUmlCode += `${rel.sourceEntityLabel} ${sourceCardinality} ${relationshipSyntax}${targetCardinality} ${rel.targetEntityLabel}${label}\n`;
+    }
+  }
+
   plantUmlCode += "@enduml\n";
   return plantUmlCode;
+}
+
+function getPlantUmlRelationshipSyntax(type: "association" | "composition" | "aggregation" | "inheritance" | "dependency"): string {
+  switch (type) {
+    case "association":
+      return "-->";
+    case "composition":
+      return "--*";
+    case "aggregation":
+      return "--o";
+    case "inheritance":
+      return "--|>";
+    case "dependency":
+      return "..>";
+    default:
+      return "-->";
+  }
 }
 
 export function PlantUmlEditor(props: {

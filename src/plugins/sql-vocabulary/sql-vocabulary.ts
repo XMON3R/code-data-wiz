@@ -9,12 +9,49 @@ interface SQLTypeMapping {
  * A vocabulary of common SQL types.
  */
 export const SQLVocabulary: Record<string, SQLTypeMapping> = {
-    "varchar": { universalType: "string" },
+    // Integer types
     "int": { universalType: "number" },
     "integer": { universalType: "number" },
+    "tinyint": { universalType: "number" },
+    "smallint": { universalType: "number" },
+    "mediumint": { universalType: "number" },
+    "bigint": { universalType: "number" },
+    "unsigned big int": { universalType: "number" },
+    "int2": { universalType: "number" },
+    "int8": { universalType: "number" },
+
+    // Character types
+    "varchar": { universalType: "string" },
+    "character": { universalType: "string" },
+    "varying character": { universalType: "string" },
+    "nchar": { universalType: "string" },
+    "native character": { universalType: "string" },
+    "nvarchar": { universalType: "string" },
+    "text": { universalType: "string" },
+    "clob": { universalType: "string" },
+
+    // Blob types
+    "blob": { universalType: "string", format: "byte" },
+
+    // Real and double precision types
+    "real": { universalType: "number" },
+    "double": { universalType: "number" },
+    "double precision": { universalType: "number" },
+    "float": { universalType: "number" },
+
+    // Numeric types
+    "numeric": { universalType: "number" },
+    "decimal": { universalType: "number" },
+
+    // Boolean types
     "boolean": { universalType: "boolean" },
+
+    // Date and time types
     "date": { universalType: "date" },
+    "datetime": { universalType: "datetime" },
     "timestamp": { universalType: "datetime" },
+    "time": { universalType: "string", format: "time" },
+    "year": { universalType: "number" },
 };
 
 /**
@@ -23,7 +60,8 @@ export const SQLVocabulary: Record<string, SQLTypeMapping> = {
  * @returns The universal type representation.
  */
 export function toUniversalType(sqlType: string): Type {
-    const mapping = SQLVocabulary[sqlType.toLowerCase()];
+    const baseType = sqlType.split("(")[0].trim().toLowerCase();
+    const mapping = SQLVocabulary[baseType];
     if (mapping) {
         return {
             domainSpecificType: sqlType,

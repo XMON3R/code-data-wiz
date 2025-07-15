@@ -1,7 +1,7 @@
 import { Type } from "../../data-model-api/universal-model";
 
 interface CSharpTypeMapping {
-    universalType: "string" | "number" | "boolean" | "datetime";
+    universalType: "string" | "number" | "boolean" | "datetime" | "other";
     format?: string;
 }
 
@@ -9,13 +9,37 @@ interface CSharpTypeMapping {
  * A vocabulary of common C# types.
  */
 export const CSharpVocabulary: Record<string, CSharpTypeMapping> = {
+    // String types
     "string": { universalType: "string" },
+    "char": { universalType: "string" },
+
+    // Integer types
     "int": { universalType: "number" },
-    "bool": { universalType: "boolean" },
+    "uint": { universalType: "number" },
+    "long": { universalType: "number" },
+    "ulong": { universalType: "number" },
+    "short": { universalType: "number" },
+    "ushort": { universalType: "number" },
+    "byte": { universalType: "number" },
+    "sbyte": { universalType: "number" },
+
+    // Floating-point types
     "float": { universalType: "number" },
     "double": { universalType: "number" },
-    "decimal": { universalType: "number" },
+    "decimal": { universalType: "number", format: "decimal" },
+
+    // Boolean type
+    "bool": { universalType: "boolean" },
+
+    // Date and time types
     "datetime": { universalType: "datetime" },
+    "datetimeoffset": { universalType: "datetime" },
+    "timespan": { universalType: "string" },
+
+    // Other types
+    "guid": { universalType: "string", format: "uuid" },
+    "byte[]": { universalType: "string", format: "byte" },
+    "object": { universalType: "other" },
 };
 
 /**
@@ -24,7 +48,8 @@ export const CSharpVocabulary: Record<string, CSharpTypeMapping> = {
  * @returns The universal type representation.
  */
 export function toUniversalType(csharpType: string): Type {
-    const mapping = CSharpVocabulary[csharpType.toLowerCase()];
+    const baseType = csharpType.split("<")[0].trim().toLowerCase();
+    const mapping = CSharpVocabulary[baseType];
     if (mapping) {
         return {
             domainSpecificType: csharpType,

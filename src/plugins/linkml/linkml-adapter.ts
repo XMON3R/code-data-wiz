@@ -1,6 +1,7 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
 import { UniversalModel, Entity, Property } from "../../data-model-api/universal-model";
 import { LinkmlModel, LinkmlSchema, LinkmlClassDefinition, LinkmlSlotDefinition } from "./linkml-model";
+import { toUniversalType, fromUniversalType } from "./linkml-vocabulary";
 
 export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
   async toUniversalModel(linkmlModel: LinkmlModel): Promise<UniversalModel> {
@@ -25,9 +26,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
             const slot = linkmlClass.attributes[slotName];
             const universalProperty: Property = {
               label: slotName,
-              type: {
-                domainSpecificType: slot.range || "any",
-              },
+              type: toUniversalType(slot.range || "any"),
             };
             entity.properties.push(universalProperty);
           }
@@ -40,9 +39,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
             if (slot) {
               const universalProperty: Property = {
                 label: slotName,
-                type: {
-                  domainSpecificType: slot.range || "any",
-                },
+                type: toUniversalType(slot.range || "any"),
               };
               entity.properties.push(universalProperty);
             }
@@ -73,7 +70,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
         for (const prop of entity.properties) {
           const linkmlSlot: LinkmlSlotDefinition = {
             description: `Slot for ${prop.label}`,
-            range: prop.type.domainSpecificType,
+            range: fromUniversalType(prop.type),
             required: true, // Assuming all properties are required for simplicity in this mock
           };
           linkmlClass.attributes![prop.label] = linkmlSlot;

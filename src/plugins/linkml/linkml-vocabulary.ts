@@ -11,9 +11,9 @@ interface LinkMLTypeMapping {
 export const LinkMLVocabulary: Record<string, LinkMLTypeMapping> = {
     "string": { universalType: "string" },
     "integer": { universalType: "number" },
-    "float": { universalType: "number" },
-    "double": { universalType: "number" },
-    "decimal": { universalType: "number" },
+    "float": { universalType: "number", format: "float" },
+    "double": { universalType: "number", format: "double" },
+    "decimal": { universalType: "number", format: "decimal" },
     "boolean": { universalType: "boolean" },
     "date": { universalType: "date" },
     "datetime": { universalType: "datetime" },

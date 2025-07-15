@@ -16,16 +16,16 @@ export const CSharpVocabulary: Record<string, CSharpTypeMapping> = {
     // Integer types
     "int": { universalType: "number" },
     "uint": { universalType: "number" },
-    "long": { universalType: "number" },
-    "ulong": { universalType: "number" },
+    "long": { universalType: "number", format: "long" },
+    "ulong": { universalType: "number", format: "long" },
     "short": { universalType: "number" },
     "ushort": { universalType: "number" },
     "byte": { universalType: "number" },
     "sbyte": { universalType: "number" },
 
     // Floating-point types
-    "float": { universalType: "number" },
-    "double": { universalType: "number" },
+    "float": { universalType: "number", format: "float" },
+    "double": { universalType: "number", format: "double" },
     "decimal": { universalType: "number", format: "decimal" },
 
     // Boolean type
@@ -66,6 +66,12 @@ export function toUniversalType(csharpType: string): Type {
  * @returns The C# type representation.
  */
 export function fromUniversalType(universalType: Type): string {
+    // Attempt to use the domainSpecificType directly if it's a known C# type
+    if (universalType.domainSpecificType && CSharpVocabulary[universalType.domainSpecificType.toLowerCase()]) {
+        return universalType.domainSpecificType;
+    }
+
+    // Fallback to universal type mapping
     if (universalType.universalType) {
         for (const csharpType in CSharpVocabulary) {
             const mapping = CSharpVocabulary[csharpType];

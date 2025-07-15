@@ -15,8 +15,8 @@ export const SQLVocabulary: Record<string, SQLTypeMapping> = {
     "tinyint": { universalType: "number" },
     "smallint": { universalType: "number" },
     "mediumint": { universalType: "number" },
-    "bigint": { universalType: "number" },
-    "unsigned big int": { universalType: "number" },
+    "bigint": { universalType: "number", format: "long" },
+    "unsigned big int": { universalType: "number", format: "long" },
     "int2": { universalType: "number" },
     "int8": { universalType: "number" },
 
@@ -34,10 +34,10 @@ export const SQLVocabulary: Record<string, SQLTypeMapping> = {
     "blob": { universalType: "string", format: "byte" },
 
     // Real and double precision types
-    "real": { universalType: "number" },
-    "double": { universalType: "number" },
-    "double precision": { universalType: "number" },
-    "float": { universalType: "number" },
+    "real": { universalType: "number", format: "float" },
+    "double": { universalType: "number", format: "double" },
+    "double precision": { universalType: "number", format: "double" },
+    "float": { universalType: "number", format: "float" },
 
     // Numeric types
     "numeric": { universalType: "number" },
@@ -78,6 +78,15 @@ export function toUniversalType(sqlType: string): Type {
  * @returns The SQL type representation.
  */
 export function fromUniversalType(universalType: Type): string {
+    // Attempt to use the domainSpecificType directly if it's a known SQL type
+    if (universalType.domainSpecificType) {
+        const baseType = universalType.domainSpecificType.split("(")[0].trim().toLowerCase();
+        if (SQLVocabulary[baseType]) {
+            return universalType.domainSpecificType;
+        }
+    }
+
+    // Fallback to universal type mapping
     if (universalType.universalType) {
         for (const sqlType in SQLVocabulary) {
             const mapping = SQLVocabulary[sqlType];

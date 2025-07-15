@@ -41,6 +41,12 @@ export function toUniversalType(jsonType: string): Type {
  * @returns The JSON Schema type representation.
  */
 export function fromUniversalType(universalType: Type): string {
+    // Attempt to use the domainSpecificType directly if it's a known JSON Schema type
+    if (universalType.domainSpecificType && JsonSchemaVocabulary[universalType.domainSpecificType.toLowerCase()]) {
+        return universalType.domainSpecificType;
+    }
+
+    // Fallback to universal type mapping
     if (universalType.universalType) {
         for (const jsonType in JsonSchemaVocabulary) {
             const mapping = JsonSchemaVocabulary[jsonType];

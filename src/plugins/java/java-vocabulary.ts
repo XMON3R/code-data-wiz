@@ -16,18 +16,18 @@ export const JavaVocabulary: Record<string, JavaTypeMapping> = {
     // Integer types
     "int": { universalType: "number" },
     "Integer": { universalType: "number" },
-    "long": { universalType: "number" },
-    "Long": { universalType: "number" },
+    "long": { universalType: "number", format: "long" },
+    "Long": { universalType: "number", format: "long" },
     "short": { universalType: "number" },
     "Short": { universalType: "number" },
     "byte": { universalType: "number" },
     "Byte": { universalType: "number" },
 
     // Floating-point types
-    "float": { universalType: "number" },
-    "Float": { universalType: "number" },
-    "double": { universalType: "number" },
-    "Double": { universalType: "number" },
+    "float": { universalType: "number", format: "float" },
+    "Float": { universalType: "number", format: "float" },
+    "double": { universalType: "number", format: "double" },
+    "Double": { universalType: "number", format: "double" },
     "BigDecimal": { universalType: "number", format: "decimal" },
 
     // Boolean type
@@ -70,6 +70,12 @@ export function toUniversalType(javaType: string): Type {
  * @returns The Java type representation.
  */
 export function fromUniversalType(universalType: Type): string {
+    // Attempt to use the domainSpecificType directly if it's a known Java type
+    if (universalType.domainSpecificType && JavaVocabulary[universalType.domainSpecificType]) {
+        return universalType.domainSpecificType;
+    }
+
+    // Fallback to universal type mapping
     if (universalType.universalType) {
         for (const javaType in JavaVocabulary) {
             const mapping = JavaVocabulary[javaType];

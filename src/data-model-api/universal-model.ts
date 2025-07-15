@@ -55,5 +55,5 @@ export interface Type {
      */
     domainSpecificType: string;
     universalType?: "string" | "number" | "boolean" | "date" | "datetime" | "other";
-    format?: string;
+    format?: "double" | "long" | "decimal" | "uuid" | "byte" | "uri" | "curie" | "time" | string;
 }

@@ -66,19 +66,24 @@ export function toUniversalType(csharpType: string): Type {
  * @returns The C# type representation.
  */
 export function fromUniversalType(universalType: Type): string {
-    // Attempt to use the domainSpecificType directly if it's a known C# type
-    if (universalType.domainSpecificType && CSharpVocabulary[universalType.domainSpecificType.toLowerCase()]) {
-        return universalType.domainSpecificType;
-    }
-
-    // Fallback to universal type mapping
+    // First, try to find a mapping based on universalType and format
     if (universalType.universalType) {
         for (const csharpType in CSharpVocabulary) {
             const mapping = CSharpVocabulary[csharpType];
             if (mapping.universalType === universalType.universalType && (!mapping.format || mapping.format === universalType.format)) {
-                return csharpType;
+                return csharpType; // Return the canonical C# type (e.g., "int")
             }
         }
     }
+
+    // If no universal mapping is found, fall back to domainSpecificType if it's a known C# type
+    if (universalType.domainSpecificType) {
+        const lowerCaseDomainType = universalType.domainSpecificType.toLowerCase();
+        if (CSharpVocabulary[lowerCaseDomainType]) {
+            return lowerCaseDomainType; // Return the lowercase C# type (e.g., "int")
+        }
+    }
+
+    // As a last resort, return "object" or the original domainSpecificType if it's truly unmappable
     return universalType.domainSpecificType || "object";
 }

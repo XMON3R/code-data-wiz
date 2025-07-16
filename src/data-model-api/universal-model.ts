@@ -1,21 +1,19 @@
 /**
- * The top-level interface representing the entire data-model.
+ * Represents a single parameter of a method.
  */
-export interface UniversalModel {
-    entities: Entity[];
-    relationships?: Relationship[];
+export interface MethodParameter {
+    name: string;
+    type: Type;
 }
 
 /**
- * Represents a relationship between two entities.
+ * Represents a method or function within an entity.
  */
-export interface Relationship {
-    sourceEntityLabel: string;
-    targetEntityLabel: string;
-    type: "association" | "composition" | "aggregation" | "inheritance" | "dependency";
-    label?: string;
-    sourceCardinality?: string;
-    targetCardinality?: string;
+export interface Method {
+    label: string;
+    returnType: Type;
+    parameters: MethodParameter[];
+    value?: any; // For storing metadata like access modifiers, static, async, etc.
 }
 
 /**
@@ -23,12 +21,11 @@ export interface Relationship {
  */
 export interface Entity {
     label: string;
-    description?: string; // Added to preserve entity descriptions
+    description?: string;
     properties: Property[];
-    /**
-     * Optional field to store entity-level metadata, such as the type
-     * of a class ('class', 'record') or its access modifier.
-     */
+    // --- FIX IS HERE ---
+    // Methods are now a distinct, optional part of an entity.
+    methods?: Method[];
     value?: any;
 }
 
@@ -38,10 +35,6 @@ export interface Entity {
 export interface Property {
     label: string;
     type: Type;
-    /**
-     * Optional field to store the actual value or a JSON string of
-     * property-level metadata (e.g., access modifiers, annotations).
-     */
     value?: any;
 }
 
@@ -49,11 +42,15 @@ export interface Property {
  * The base interface for all type representations.
  */
 export interface Type {
-    /**
-     * A string representation of the original, domain-specific type.
-     * e.g., "VARCHAR(255)", "string", "Long"
-     */
     domainSpecificType: string;
     universalType?: "string" | "number" | "boolean" | "date" | "datetime" | "other";
-    format?: "double" | "long" | "decimal" | "uuid" | "byte" | "uri" | "curie" | "time" | string;
+    format?: string;
+}
+
+/**
+ * The top-level interface representing the entire data-model.
+ */
+export interface UniversalModel {
+    entities: Entity[];
+    relationships?: any[]; // Placeholder for future relationship modeling
 }

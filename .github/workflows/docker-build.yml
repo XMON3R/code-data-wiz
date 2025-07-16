@@ -25,6 +25,6 @@ jobs:
         with:
           context: ./
           push: true
-          tags: ghcr.io/XMON3R/code-data-wiz:${{ github.ref_name }}
+          tags: ghcr.io/xmon3r/code-data-wiz:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

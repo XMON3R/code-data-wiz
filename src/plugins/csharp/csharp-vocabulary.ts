@@ -44,8 +44,6 @@ export const CSharpVocabulary: Record<string, CSharpTypeMapping> = {
 
 /**
  * Translates a C# type to a universal type.
- * @param csharpType The C# type to translate.
- * @returns The universal type representation.
  */
 export function toUniversalType(csharpType: string): Type {
     const baseType = csharpType.split("<")[0].trim().toLowerCase();
@@ -57,16 +55,23 @@ export function toUniversalType(csharpType: string): Type {
             ...(mapping.format && { format: mapping.format }),
         };
     }
+    // For any unknown type (like 'List' or a custom class name), preserve it.
     return { domainSpecificType: csharpType, universalType: "other" };
 }
 
 /**
  * Translates a universal type to a C# type.
- * @param universalType The universal type to translate.
- * @returns The C# type representation.
  */
 export function fromUniversalType(universalType: Type): string {
-    // First, try to find a mapping based on universalType and format
+    // --- THIS IS THE CORRECTED LOGIC ---
+
+    // If the type is 'other', it means it's a custom class or a type not in our
+    // vocabulary (like 'List'). In this case, we MUST use the original name.
+    if (universalType.universalType === "other") {
+        return universalType.domainSpecificType || "object";
+    }
+    
+    // Otherwise, find the best match from our vocabulary.
     if (universalType.universalType) {
         for (const csharpType in CSharpVocabulary) {
             const mapping = CSharpVocabulary[csharpType];
@@ -76,14 +81,6 @@ export function fromUniversalType(universalType: Type): string {
         }
     }
 
-    // If no universal mapping is found, fall back to domainSpecificType if it's a known C# type
-    if (universalType.domainSpecificType) {
-        const lowerCaseDomainType = universalType.domainSpecificType.toLowerCase();
-        if (CSharpVocabulary[lowerCaseDomainType]) {
-            return lowerCaseDomainType; // Return the lowercase C# type (e.g., "int")
-        }
-    }
-
-    // As a last resort, return "object" or the original domainSpecificType if it's truly unmappable
+    // As a last resort, fall back to the original type name or "object".
     return universalType.domainSpecificType || "object";
 }

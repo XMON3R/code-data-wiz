@@ -6,12 +6,11 @@ import {
 import {
     DomainModelAdapter,
 } from "../../data-model-api/domain-specific-model-api";
-import { CSharpModel, CSharpClass, CSharpProperty } from "./csharp-model";
+import { CSharpModel, CSharpClass, CSharpProperty, CSharpMethod } from "./csharp-model";
 import { toUniversalType, fromUniversalType } from "./csharp-vocabulary";
 
 /**
- * An adapter to translate between the CSharpModel and the UniversalModel,
- * inspired by a detailed, metadata-preserving approach.
+ * An adapter to translate between the CSharpModel and the UniversalModel.
  */
 export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
     async toUniversalModel(model: CSharpModel): Promise<UniversalModel> {
@@ -20,15 +19,31 @@ export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
                 label: prop.name,
                 type: toUniversalType(prop.type.name),
                 value: JSON.stringify({
+                    isProperty: true, // Add a flag to distinguish from methods
                     accessModifier: prop.accessModifier,
                     isNullable: prop.type.isNullable || false,
+                    isReadonly: prop.isReadonly || false,
+                }),
+            }));
+            
+            // Convert methods into universal properties as well
+            const methodsAsProperties: Property[] = cls.methods.map(method => ({
+                label: method.name,
+                type: toUniversalType(method.returnType.name),
+                value: JSON.stringify({
+                    isMethod: true, // Flag to identify this as a method
+                    parameters: method.parameters,
+                    accessModifier: method.accessModifier,
+                    isStatic: method.isStatic,
+                    isAsync: method.isAsync,
+                    isVirtual: method.isVirtual,
+                    isOverride: method.isOverride,
                 }),
             }));
 
             return {
                 label: cls.name,
-                properties: properties,
-                // Store class-specific metadata in the 'value' field as a JSON string.
+                properties: [...properties, ...methodsAsProperties], // Combine properties and methods
                 value: JSON.stringify({
                     type: cls.type,
                     accessModifier: cls.accessModifier,
@@ -41,32 +56,48 @@ export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
 
     async fromUniversalModel(model: UniversalModel): Promise<CSharpModel> {
         const classes: CSharpClass[] = model.entities.map(entity => {
-            // Skip any file-level metadata entities, if they were to be added.
-            if (entity.label === "@file") {
-                return null;
-            }
+            if (entity.label === "@file") return null;
 
             const classMeta = entity.value ? JSON.parse(entity.value) : {};
-            const properties: CSharpProperty[] = entity.properties.map(prop => {
+            const properties: CSharpProperty[] = [];
+            const methods: CSharpMethod[] = [];
+
+            // Differentiate between properties and methods when converting back
+            entity.properties.forEach(prop => {
                 const propMeta = prop.value ? JSON.parse(prop.value) : {};
-                return {
-                    name: prop.label,
-                    type: {
-                        name: fromUniversalType(prop.type),
-                        isNullable: propMeta.isNullable,
-                    },
-                    accessModifier: propMeta.accessModifier || "public",
-                };
+
+                if (propMeta.isMethod) {
+                    methods.push({
+                        name: prop.label,
+                        returnType: { name: fromUniversalType(prop.type) },
+                        parameters: propMeta.parameters || [],
+                        accessModifier: propMeta.accessModifier || "public",
+                        isStatic: propMeta.isStatic,
+                        isAsync: propMeta.isAsync,
+                        isVirtual: propMeta.isVirtual,
+                        isOverride: propMeta.isOverride,
+                    });
+                } else {
+                    properties.push({
+                        name: prop.label,
+                        type: {
+                            name: fromUniversalType(prop.type),
+                            isNullable: propMeta.isNullable,
+                        },
+                        accessModifier: propMeta.accessModifier || "public",
+                        isReadonly: propMeta.isReadonly,
+                    });
+                }
             });
 
             return {
                 name: entity.label,
                 type: classMeta.type || "class",
                 accessModifier: classMeta.accessModifier || "public",
-                properties: properties,
-                methods: [], // Methods are not part of this conversion.
+                properties,
+                methods,
             };
-        }).filter(Boolean) as CSharpClass[]; // Filter out any nulls.
+        }).filter(Boolean) as CSharpClass[];
 
         return { classes };
     }

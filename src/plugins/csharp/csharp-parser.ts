@@ -1,86 +1,100 @@
 import { DomainTextParser } from "../../data-model-api/domain-specific-model-api";
-import { CSharpModel, CSharpClass, CSharpProperty } from "./csharp-model";
+import { CSharpModel, CSharpClass, CSharpProperty, CSharpMethod, CSharpParameter } from "./csharp-model";
 
 /**
- * A parser for C# code strings into a CSharpModel.
- * This implementation uses regular expressions to extract class and property information.
+ * A more robust parser for C# code that correctly distinguishes between methods and properties.
  */
 export class CSharpTextParser implements DomainTextParser<CSharpModel> {
     async parseText(csharpString: string): Promise<CSharpModel> {
-        // First, perform a basic validation for balanced curly braces.
         if ((csharpString.match(/{/g) || []).length !== (csharpString.match(/}/g) || []).length) {
             throw new Error("Failed to parse C# source code: Mismatched curly braces.");
         }
-
-        try {
-            const classes: CSharpClass[] = this.parseClasses(csharpString);
-            return { classes: classes };
-        } catch (e: any) {
-            console.error("C# Parsing Error:", e.message);
-            throw new Error(`Failed to parse C# source code: ${e.message}`);
-        }
+        return { classes: this.parseClasses(csharpString) };
     }
 
     private parseClasses(csharpString: string): CSharpClass[] {
-        try {
-            const classes: CSharpClass[] = [];
+        const classes: CSharpClass[] = [];
+        const classRegex = /(public|private|protected|internal)?\s*class\s+(\w+)\s*{((?:[^{}]*|{(?:[^{}]*|{[^{}]*})*})*)}/gs;
+        let classMatch: RegExpExecArray | null;
 
-            // Regex to find class definitions: `[accessModifier] class [ClassName] { ... }`
-            // The `s` flag allows `.` to match newline characters.
-            const classRegex = /(public|private|protected|internal)?\s*class\s+(\w+)\s*{((?:[^{}]*|{(?:[^{}]*|{[^{}]*})*})*)}/g;
-            let classMatch: RegExpExecArray | null;
+        while ((classMatch = classRegex.exec(csharpString)) !== null) {
+            const accessModifier = classMatch[1] || "internal";
+            const className = classMatch[2];
+            let classContent = classMatch[3];
 
-            while ((classMatch = classRegex.exec(csharpString)) !== null) {
-                const accessModifier = classMatch[1] || "internal"; // Default to internal if not specified
-                const className = classMatch[2];
-                const classContent = classMatch[3];
+            const methods = this.parseMethods(classContent);
+            
+            classContent = classContent.replace(/(public|private|protected|internal)?\s*(static\s+)?(async\s+)?(virtual\s+)?(override\s+)?[\w<>?\[\],]+\s+\w+\s*\(.*?\)\s*\{[\s\S]*?\}/g, '');
 
-                const properties: CSharpProperty[] = this.parseProperties(classContent);
+            const properties = this.parseProperties(classContent);
 
-                classes.push({
-                    name: className,
-                    type: "class",
-                    accessModifier: accessModifier,
-                    properties: properties,
-                    methods: [], // Basic parser does not extract methods
-                });
-            }
-
-            return classes;
-        } catch (e: any) {
-            console.error("C# Parse Classes Error:", e.message);
-            throw new Error(`Failed to parse C# classes: ${e.message}`);
+            classes.push({
+                name: className,
+                type: "class",
+                accessModifier,
+                properties,
+                methods,
+            });
         }
+        return classes;
     }
 
     private parseProperties(classContent: string): CSharpProperty[] {
-        try {
-            const properties: CSharpProperty[] = [];
-            // Regex to find property definitions: `[accessModifier] [type] [PropertyName] { get; set; }` or `[accessModifier] [type] [PropertyName];`
-            const propertyRegex = /(public|private|protected|internal)?\s*([\w<>?]+)\s+(\w+)\s*(?:\{[^}]+\}|;)/g;
-            let propertyMatch: RegExpExecArray | null;
+        const properties: CSharpProperty[] = [];
+        const propertyRegex = /(public|private|protected|internal)\s+([\w<>?\[\]]+)\s+(\w+)\s*\{\s*get;\s*(?:set;)?\s*\}/g;
+        let propertyMatch: RegExpExecArray | null;
 
-            while ((propertyMatch = propertyRegex.exec(classContent)) !== null) {
-                const propertyAccessModifier = propertyMatch[1] || "internal";
-                let propertyType = propertyMatch[2];
-                const propertyName = propertyMatch[3];
+        while ((propertyMatch = propertyRegex.exec(classContent)) !== null) {
+            const accessModifier = propertyMatch[1];
+            const typeName = propertyMatch[2].replace('?', '');
+            const isNullable = propertyMatch[2].endsWith('?');
+            const name = propertyMatch[3];
 
-                // Handle nullable types (e.g., "decimal?") to match the expected output
-                if (propertyType.endsWith("?")) {
-                    propertyType = propertyType.slice(0, -1);
-                }
-
-                properties.push({
-                    name: propertyName,
-                    type: { name: propertyType },
-                    accessModifier: propertyAccessModifier,
-                });
-            }
-
-            return properties;
-        } catch (e: any) {
-            console.error("C# Parse Properties Error:", e.message);
-            throw new Error(`Failed to parse C# properties: ${e.message}`);
+            properties.push({
+                name,
+                type: { name: typeName, isNullable },
+                accessModifier,
+            });
         }
+        return properties;
+    }
+
+    private parseMethods(classContent: string): CSharpMethod[] {
+        const methods: CSharpMethod[] = [];
+        const methodRegex = /(?<access>public|private|protected|internal)?\s*(?<modifiers>(?:static|virtual|override|async|\s)*?)\s*(?<returnType>[\w<>\[\],]+)\s+(?<name>\w+)(?<generic><[^>]+>)?\s*\((?<params>[^)]*)\)/g;
+        let methodMatch: RegExpExecArray | null;
+
+        while ((methodMatch = methodRegex.exec(classContent)) !== null) {
+            // Use the named groups for clarity
+            const { access, modifiers, returnType, name,  params: paramsStr } = methodMatch.groups!;
+            
+            const modifierSet = new Set(modifiers.trim().split(/\s+/));
+
+            methods.push({
+                name: name,
+                returnType: { name: returnType.replace(/Task<|>/g, '') },
+                parameters: this.parseMethodParameters(paramsStr),
+                accessModifier: access || "internal",
+                isStatic: modifierSet.has('static'),
+                isAsync: modifierSet.has('async'),
+                isVirtual: modifierSet.has('virtual'),
+                isOverride: modifierSet.has('override'),
+            });
+        }
+        return methods;
+    }
+
+    private parseMethodParameters(parametersString: string): CSharpParameter[] {
+        if (!parametersString.trim()) {
+            return [];
+        }
+        const paramParts = parametersString.split(/,(?![^<]*>)/g);
+        
+        return paramParts.map(p => {
+            const parts = p.trim().split(/\s+/);
+            const name = parts.pop()!;
+            const type = parts.join(' ').replace(/^(ref|out|in)\s+/, ''); // Remove ref/out/in
+            return { name, type: { name: type } };
+        });
     }
 }

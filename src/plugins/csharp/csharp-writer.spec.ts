@@ -61,6 +61,7 @@ test("should generate C# for multiple classes", () => {
     public string Name { get; set; }
 }
 
+
 public class Post
 {
     public int PostId { get; set; }

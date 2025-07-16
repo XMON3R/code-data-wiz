@@ -3,6 +3,15 @@ import { UniversalModel } from "../data-model-api/index.ts";
 import { EditorType } from "../plugins/index.ts";
 import { encode } from 'plantuml-encoder';
 import { universalModelToPlantUml } from '../plugins/plant-uml/plant-uml-editor.tsx'; 
+import { SqlAdapter } from '../plugins/sql-vocabulary/sql-adapter.ts';
+import { JavaAdapter } from '../plugins/java/java-adapter.ts';
+import { JavaWriter } from '../plugins/java/java-writer.ts';
+import { CSharpAdapter } from '../plugins/csharp/csharp-adapter.ts';
+import { SimpleCSharpWriter } from '../plugins/csharp/csharp-writer.ts';
+import { LinkmlAdapter } from '../plugins/linkml/linkml-adapter.ts';
+import { LinkmlWriter } from '../plugins/linkml/linkml-writer.ts';
+import { JsonSchemaAdapter } from '../plugins/json-schema/json-schema-adapter.ts';
+import { JsonSchemaWriter } from '../plugins/json-schema/json-schema-writer.ts';
 
 // Function to determine file extension based on EditorType
 const getFileExtension = (type: EditorType): string => {
@@ -58,7 +67,72 @@ export const useDownloadHandler = () => {
                 setDownloadError("Failed to download PlantUML image URL.");
             }
         } else {
-            const fileContent = JSON.stringify(content, null, 2);
+            let fileContent: string;
+            switch (type) {
+                case EditorType.SQLQuery:
+                    try {
+                        const sqlAdapter = new SqlAdapter();
+                        const sqlDiagram = await sqlAdapter.fromUniversalModel(content);
+                        fileContent = JSON.stringify(sqlDiagram, null, 2); // Stringify the SQLDiagram
+                    } catch (e) {
+                        console.error("Error converting UniversalModel to SQLDiagram:", e);
+                        setDownloadError("Failed to convert to SQL format.");
+                        return; // Exit if conversion fails
+                    }
+                    break;
+                case EditorType.Java:
+                    try {
+                        const javaAdapter = new JavaAdapter();
+                        const javaModel = await javaAdapter.fromUniversalModel(content);
+                        const javaWriter = new JavaWriter();
+                        fileContent = await javaWriter.writeText(javaModel);
+                    } catch (e) {
+                        console.error("Error converting UniversalModel to Java:", e);
+                        setDownloadError("Failed to convert to Java format.");
+                        return; // Exit if conversion fails
+                    }
+                    break;
+                case EditorType.Csharp:
+                    try {
+                        const csharpAdapter = new CSharpAdapter();
+                        const csharpModel = await csharpAdapter.fromUniversalModel(content);
+                        const csharpWriter = new SimpleCSharpWriter();
+                        fileContent = csharpWriter.generateCode(csharpModel);
+                    } catch (e) {
+                        console.error("Error converting UniversalModel to C#:", e);
+                        setDownloadError("Failed to convert to C# format.");
+                        return; // Exit if conversion fails
+                    }
+                    break;
+                case EditorType.LinkML:
+                    try {
+                        const linkmlAdapter = new LinkmlAdapter();
+                        const linkmlModel = await linkmlAdapter.fromUniversalModel(content);
+                        const linkmlWriter = new LinkmlWriter();
+                        fileContent = await linkmlWriter.writeText(linkmlModel);
+                    } catch (e) {
+                        console.error("Error converting UniversalModel to LinkML:", e);
+                        setDownloadError("Failed to convert to LinkML format.");
+                        return; // Exit if conversion fails
+                    }
+                    break;
+                case EditorType.JsonSchema:
+                    try {
+                        const jsonSchemaAdapter = new JsonSchemaAdapter();
+                        const jsonSchemaModel = await jsonSchemaAdapter.fromUniversalModel(content);
+                        const jsonSchemaWriter = new JsonSchemaWriter();
+                        fileContent = await jsonSchemaWriter.writeText(jsonSchemaModel);
+                    } catch (e) {
+                        console.error("Error converting UniversalModel to JSON Schema:", e);
+                        setDownloadError("Failed to convert to JSON Schema format.");
+                        return; // Exit if conversion fails
+                    }
+                    break;
+                default:
+                    // For other types, stringify the UniversalModel directly
+                    fileContent = JSON.stringify(content, null, 2);
+            }
+            
             const blob = new Blob([fileContent], { type: "text/plain" }); 
             const url = URL.createObjectURL(blob);
 

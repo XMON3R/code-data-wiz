@@ -89,10 +89,10 @@ test("should convert a universal model with metadata to a C# model", async () =>
 
 test("should handle empty models", async () => {
     const emptyCSharpModel: CSharpModel = { classes: [] };
-    let universalModel = await adapter.toUniversalModel(emptyCSharpModel);
+    const universalModel = await adapter.toUniversalModel(emptyCSharpModel);
     expect(universalModel.entities).toEqual([]);
 
     const emptyUniversalModel: UniversalModel = { entities: [] };
-    let csharpModel = await adapter.fromUniversalModel(emptyUniversalModel);
+    const csharpModel = await adapter.fromUniversalModel(emptyUniversalModel);
     expect(csharpModel.classes).toEqual([]);
 });

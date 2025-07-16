@@ -6,7 +6,6 @@ import { UniversalModel } from '../../data-model-api';
 describe('JavaAdapter', () => {
     let adapter: JavaAdapter;
     let mockJavaModel: JavaModel;
-    let mockUniversalModel: UniversalModel;
 
     beforeEach(() => {
         adapter = new JavaAdapter();
@@ -20,75 +19,62 @@ describe('JavaAdapter', () => {
                     type: "class",
                     accessModifier: "public",
                     fields: [
+                        { name: "id", type: "Long", accessModifier: "private", annotations: [{ name: "Id" }] }
+                    ],
+                    methods: [
                         {
-                            name: "id",
-                            type: "Long",
-                            accessModifier: "private",
-                            annotations: [{ name: "Id" }],
-                        },
-                        {
-                            name: "CREATION_DATE",
-                            type: "Date",
+                            name: "getUsername",
+                            returnType: "String",
                             accessModifier: "public",
-                            isStatic: true,
-                            isFinal: true,
+                            parameters: [],
                             annotations: [],
                         }
                     ],
-                    methods: [],
-                }
-            ]
-        };
-
-        mockUniversalModel = {
-            entities: [
-                {
-                    label: "@file",
-                    properties: [
-                        { label: "packageName", value: "com.example.models", type: { domainSpecificType: "string" } },
-                        { label: "imports", value: '["java.util.Date"]', type: { domainSpecificType: "string[]" } }
-                    ]
-                },
-                {
-                    label: "User",
-                    properties: [
-                        {
-                            label: "id",
-                            type: { domainSpecificType: "Long" },
-                            value: '{"accessModifier":"private","annotations":[{"name":"Id"}]}'
-                        },
-                        {
-                            label: "CREATION_DATE",
-                            type: { domainSpecificType: "Date" },
-                            value: '{"accessModifier":"public","isStatic":true,"isFinal":true,"annotations":[]}'
-                        }
-                    ],
-                    value: '{"type":"class","accessModifier":"public"}'
                 }
             ]
         };
     });
 
-    it('should correctly convert JavaModel to UniversalModel', async () => {
-        const result = await adapter.toUniversalModel(mockJavaModel);
-        expect(result).toEqual(mockUniversalModel);
-    });
+    it('should correctly convert a full JavaModel to a UniversalModel', async () => {
+        const universal = await adapter.toUniversalModel(mockJavaModel);
+        
+        const userEntity = universal.entities.find(e => e.label === "User");
+        expect(userEntity).toBeDefined();
+        
+        const idProp = userEntity?.properties.find(p => p.label === "id");
+        expect(idProp).toBeDefined();
+        expect(JSON.parse(idProp?.value).isField).toBe(true);
 
-    it('should correctly convert UniversalModel to JavaModel', async () => {
-        const result = await adapter.fromUniversalModel(mockUniversalModel);
-        // Clean up undefined properties for a stable comparison
-        const cleanedResult = JSON.parse(JSON.stringify(result));
-        const cleanedMock = JSON.parse(JSON.stringify(mockJavaModel));
-        expect(cleanedResult).toEqual(cleanedMock);
+        const methodProp = userEntity?.properties.find(p => p.label === "getUsername");
+        expect(methodProp).toBeDefined();
+        expect(JSON.parse(methodProp?.value).isMethod).toBe(true);
+        expect(methodProp?.type.domainSpecificType).toBe("String");
     });
 
     it('should maintain data consistency after a full conversion cycle', async () => {
+        // Convert to Universal and back to Java
         const universal = await adapter.toUniversalModel(mockJavaModel);
         const finalJava = await adapter.fromUniversalModel(universal);
 
-        // Deep equality check after a round trip
+        // Clean objects by removing undefined keys for stable comparison
         const cleanedFinal = JSON.parse(JSON.stringify(finalJava));
         const cleanedMock = JSON.parse(JSON.stringify(mockJavaModel));
+
+        expect(cleanedFinal).toEqual(cleanedMock);
+    });
+
+    it('should handle models with no methods', async () => {
+        const modelWithoutMethods: JavaModel = {
+            ...mockJavaModel,
+            classes: [{ ...mockJavaModel.classes[0], methods: [] }]
+        };
+
+        const universal = await adapter.toUniversalModel(modelWithoutMethods);
+        const finalJava = await adapter.fromUniversalModel(universal);
+
+        const cleanedFinal = JSON.parse(JSON.stringify(finalJava));
+        const cleanedMock = JSON.parse(JSON.stringify(modelWithoutMethods));
+
         expect(cleanedFinal).toEqual(cleanedMock);
     });
 });

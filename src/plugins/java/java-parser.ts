@@ -1,8 +1,9 @@
 import { DomainTextParser } from "../../data-model-api/domain-specific-model-api";
-import { JavaModel, JavaClass, JavaField, JavaAnnotation } from "./java-model";
+import { JavaModel, JavaClass, JavaField, JavaAnnotation, JavaMethod } from "./java-model";
 
 /**
- * A parser for Java source code that extracts data model information.
+ * A more robust parser for Java source code that correctly distinguishes
+ * between methods and fields.
  */
 export class JavaParser implements DomainTextParser<JavaModel> {
 
@@ -21,59 +22,17 @@ export class JavaParser implements DomainTextParser<JavaModel> {
     }
 
     private parsePackage(text: string): string | undefined {
-        const packageLine = text.split(/\r?\n/).find(line => line.trim().startsWith('package'));
-        if (!packageLine) return undefined;
-
-        // FIX (Line 28): Removed unnecessary backslash from \.
-        const match = packageLine.trim().match(/^package\s+([\w.]+);$/);
-        if (!match) {
-            throw new Error(`Invalid package declaration syntax near "${packageLine.trim()}"`);
-        }
-        return match[1];
+        const match = text.match(/package\s+([\w.]+);/);
+        return match?.[1];
     }
 
     private parseImports(text: string): string[] {
-        const imports: string[] = [];
-        const lines = text.split(/\r?\n/);
-
-        for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (trimmedLine.startsWith('import')) {
-                const match = trimmedLine.match(/^import\s+([\w.*]+);$/);
-                if (!match) {
-                    throw new Error(`Invalid import statement syntax near "${trimmedLine}"`);
-                }
-                imports.push(match[1]);
-            }
-        }
-        return imports;
+        const importRegex = /import\s+([\w.*]+);/g;
+        const matches = text.matchAll(importRegex);
+        return Array.from(matches, match => match[1]);
     }
 
     private parseClasses(text: string): JavaClass[] {
-        const lines = text.split(/\r?\n/);
-
-        // First, check for incomplete class/interface/enum declarations that would otherwise be skipped
-        for (const line of lines) {
-            const trimmedLine = line.trim();
-            // Check if the line contains keywords indicating a class/interface/enum declaration
-            if (trimmedLine.includes("class") || trimmedLine.includes("interface") || trimmedLine.includes("enum")) {
-                // A more lenient regex to catch potential class declaration starts
-                const potentialDeclarationMatch = trimmedLine.match(/(public|private|protected)?\s*(class|interface|enum)\s*(\w*)/);
-                
-                if (potentialDeclarationMatch) {
-                    const fullClassRegex = /(public|private|protected)?\s*(class|interface|enum)\s+(\w+)\s*\{/;
-                    const fullMatch = trimmedLine.match(fullClassRegex);
-
-                    // If it's a potential declaration but not a full, valid one (e.g., missing name or brace)
-                    if (!fullMatch && trimmedLine.length > 0) {
-                        // Throw an error to prevent the line from vanishing
-                        throw new Error(`Incomplete class, interface, or enum declaration: "${trimmedLine}"`);
-                    }
-                }
-            }
-        }
-
-        // If no incomplete declarations caused an error, proceed with parsing complete classes
         const classRegex = /(public|private|protected)?\s*(class|interface|enum)\s+(\w+)\s*\{([\s\S]*?)\}/g;
         const matches = text.matchAll(classRegex);
 
@@ -81,16 +40,55 @@ export class JavaParser implements DomainTextParser<JavaModel> {
             const accessModifier = (match[1] || 'default') as "public" | "private" | "protected" | "default";
             const type = match[2] as "class" | "interface" | "enum";
             const name = match[3];
-            const body = match[4];
+            let body = match[4];
+
+            // --- THE FIX IS HERE ---
+            // 1. Parse methods from the original class body.
+            const methods = this.parseMethods(body);
+            
+            // 2. Remove the method bodies from the content string. This is crucial
+            //    to prevent the field parser from misinterpreting method parameters.
+            body = body.replace(/(?:@\w+\s*)*(public|private|protected)?\s*(static\s+)?\w+\s+\w+\s*\([^)]*\)\s*\{[\s\S]*?\}/g, '');
+
+            // 3. Parse fields from the remaining (cleaned) content.
+            const fields = this.parseFields(body);
 
             return {
                 name,
                 type,
                 accessModifier,
-                fields: this.parseFields(body),
-                methods: [],
+                fields,
+                methods,
             };
         });
+    }
+
+    private parseMethods(classBody: string): JavaMethod[] {
+        const methods: JavaMethod[] = [];
+        const methodRegex = /(?:(@\w+)\s*)*(public|private|protected)?\s*(static)?\s*(\w+)\s+(\w+)\s*\(([^)]*)\)\s*\{/g;
+        let match;
+        
+        while ((match = methodRegex.exec(classBody)) !== null) {
+            const annotations = (match[1] || '').split(/\s*@/).filter(Boolean).map(name => ({ name }));
+            const accessModifier = (match[2] || 'default') as "public" | "private" | "protected" | "default";
+            const returnType = match[4];
+            const name = match[5];
+            const paramsString = match[6];
+            
+            const parameters = paramsString.split(',')
+                .map(p => p.trim().split(/\s+/))
+                .filter(p => p.length === 2)
+                .map(([type, name]) => ({ type, name }));
+
+            methods.push({
+                name,
+                returnType,
+                accessModifier,
+                parameters,
+                annotations,
+            });
+        }
+        return methods;
     }
 
     private parseFields(classBody: string): JavaField[] {
@@ -100,44 +98,30 @@ export class JavaParser implements DomainTextParser<JavaModel> {
 
         for (const line of lines) {
             const trimmedLine = line.trim();
+            if (!trimmedLine) continue;
 
-            if (!trimmedLine) continue; // Skip empty lines
-
-            if (!trimmedLine.endsWith(';')) {
-                const annotationMatch = trimmedLine.match(/^@(\w+)/);
-                if (annotationMatch) {
-                    collectedAnnotations.push({ name: annotationMatch[1] });
-                } else {
-                    // If it's not an annotation and doesn't end with ';', it's an incomplete field declaration
-                    throw new Error(`Incomplete Java field declaration: "${trimmedLine}"`);
-                }
+            const annotationMatch = trimmedLine.match(/^@(\w+)/);
+            if (annotationMatch) {
+                collectedAnnotations.push({ name: annotationMatch[1] });
                 continue;
             }
 
+            if (!trimmedLine.endsWith(';')) continue;
+
             const declaration = trimmedLine.slice(0, -1).split('=')[0].trim();
             const parts = declaration.split(/\s+/);
-
-            if (parts.length < 2) {
-                throw new Error(`Malformed Java field declaration: "${trimmedLine}"`);
-            }
+            if (parts.length < 2) continue;
 
             const name = parts[parts.length - 1];
             const type = parts[parts.length - 2];
             const modifiers = parts.slice(0, -2);
 
-            const accessModifier = 
-                modifiers.find(m => m === 'public' || m === 'private' || m === 'protected') as 'public' | 'private' | 'protected' | 'default'
-                || 'default';
-            
-            const isStatic = modifiers.includes('static');
-            const isFinal = modifiers.includes('final');
-
             fields.push({
                 name,
                 type,
-                accessModifier,
-                isStatic,
-                isFinal,
+                accessModifier: (modifiers.find(m => ["public", "private", "protected"].includes(m)) || 'default') as any,
+                isStatic: modifiers.includes('static'),
+                isFinal: modifiers.includes('final'),
                 annotations: collectedAnnotations,
             });
 

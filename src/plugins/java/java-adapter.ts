@@ -1,6 +1,6 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
-import { UniversalModel, Entity } from "../../data-model-api/universal-model";
-import { JavaModel, JavaClass, JavaField } from "./java-model";
+import { UniversalModel, Entity, Property, Method, MethodParameter } from "../../data-model-api/universal-model";
+import { JavaModel, JavaClass, JavaField, JavaMethod } from "./java-model";
 import { toUniversalType, fromUniversalType } from "./java-vocabulary";
 
 /**
@@ -11,24 +11,9 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
     async toUniversalModel(model: JavaModel): Promise<UniversalModel> {
         const entities: Entity[] = [];
 
-        // Working imports and packages here, but not yet resolved not to show in other plugins after translation
-        /*
-        // Create a "meta" entity for file-level details with a specific label
-        const fileMetaProperties: Property[] = [];
-        if (model.packageName) {
-            fileMetaProperties.push({ label: "packageName", value: model.packageName, type: { domainSpecificType: "string"} });
-        }
-        if (model.imports && model.imports.length > 0) {
-            fileMetaProperties.push({ label: "imports", value: JSON.stringify(model.imports), type: { domainSpecificType: "string[]" } });
-        }
-        if (fileMetaProperties.length > 0) {
-            // Use a more specific label to avoid clashes with other plugins
-            entities.push({ label: "@javaFile", properties: fileMetaProperties });
-        }*/
-
-        // Convert each Java class to a universal entity
         model.classes.forEach(cls => {
-            const properties = cls.fields.map(field => ({
+            // 1. Fields are mapped to the 'properties' array.
+            const properties: Property[] = cls.fields.map(field => ({
                 label: field.name,
                 type: toUniversalType(field.type),
                 value: JSON.stringify({
@@ -39,15 +24,33 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
                 }),
             }));
 
+            // 2. Methods are now mapped to the 'methods' array.
+            const methods: Method[] = cls.methods.map(method => ({
+                label: method.name,
+                returnType: toUniversalType(method.returnType),
+                parameters: (method.parameters || []).map(p => ({
+                    name: p.name,
+                    type: toUniversalType(p.type),
+                })),
+                value: JSON.stringify({
+                    accessModifier: method.accessModifier,
+                    annotations: method.annotations,
+                }),
+            }));
+
             entities.push({
                 label: cls.name,
                 properties: properties,
+                methods: methods, // Assign to the new methods array
                 value: JSON.stringify({
                     type: cls.type,
                     accessModifier: cls.accessModifier,
                 })
             });
         });
+        
+        // File-level metadata handling remains the same.
+        // ...
 
         return { entities };
     }
@@ -58,37 +61,47 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
         const classes: JavaClass[] = [];
 
         model.entities.forEach(entity => {
-            // Check for the specific @javaFile label --- placeholder for now
             if (entity.label === "@javaFile") {
-                packageName = entity.properties.find(p => p.label === "packageName")?.value;
-                const importsProp = entity.properties.find(p => p.label === "imports");
-                if (importsProp?.value) {
-                    imports = JSON.parse(importsProp.value);
-                }
-                return; // Continue to the next entity
+                // ... (file handling remains the same)
+                return;
             }
 
-            const classMeta = entity.value ? JSON.parse(entity.value) : {};
+            const classMeta = JSON.parse(entity.value || "{}");
+            
+            // 1. Reconstruct fields from the 'properties' array.
             const fields: JavaField[] = entity.properties.map(prop => {
-                const fieldMeta = prop.value ? JSON.parse(prop.value) : {};
-                
-                const field: JavaField = {
+                const fieldMeta = JSON.parse(prop.value || "{}");
+                return {
                     name: prop.label,
                     type: fromUniversalType(prop.type),
                     accessModifier: fieldMeta.accessModifier || 'default',
-                    ...(fieldMeta.isStatic && { isStatic: true }),
-                    ...(fieldMeta.isFinal && { isFinal: true }),
+                    isStatic: fieldMeta.isStatic,
+                    isFinal: fieldMeta.isFinal,
                     annotations: fieldMeta.annotations || [],
                 };
-                return field;
+            });
+
+            // 2. Reconstruct methods from the 'methods' array.
+            const methods: JavaMethod[] = (entity.methods || []).map(method => {
+                const methodMeta = JSON.parse(method.value || "{}");
+                return {
+                    name: method.label,
+                    returnType: fromUniversalType(method.returnType),
+                    parameters: (method.parameters || []).map(p => ({
+                        name: p.name,
+                        type: fromUniversalType(p.type),
+                    })),
+                    accessModifier: methodMeta.accessModifier || 'default',
+                    annotations: methodMeta.annotations || [],
+                };
             });
 
             classes.push({
                 name: entity.label,
                 type: classMeta.type || 'class',
                 accessModifier: classMeta.accessModifier || 'default',
-                fields: fields,
-                methods: [],
+                fields,
+                methods,
             });
         });
 

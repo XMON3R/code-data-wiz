@@ -1,5 +1,5 @@
 import { DomainTextWriter } from "../../data-model-api/domain-specific-model-api";
-import { JavaModel, JavaClass, JavaField } from "./java-model";
+import { JavaModel, JavaClass, JavaField, JavaMethod } from "./java-model";
 
 /**
  * A writer that converts a JavaModel object into a formatted Java code string.
@@ -26,32 +26,45 @@ export class JavaWriter implements DomainTextWriter<JavaModel> {
     }
 
     private writeClass(cls: JavaClass): string {
-        const classParts: string[] = [];
         const modifier = cls.accessModifier === 'default' ? '' : `${cls.accessModifier} `;
-        classParts.push(`${modifier}${cls.type} ${cls.name} {`);
+        let classContent = `${modifier}${cls.type} ${cls.name} {\n`;
 
         if (cls.fields && cls.fields.length > 0) {
-            classParts.push(cls.fields.map(f => `\n${this.writeField(f)}`).join(''));
+            classContent += cls.fields.map(f => this.writeField(f)).join('\n\n') + '\n';
         }
 
-        classParts.push("\n}");
-        return classParts.join('');
+        // --- FIX IS HERE ---
+        // Add method generation logic
+        if (cls.methods && cls.methods.length > 0) {
+             if (cls.fields.length > 0) classContent += '\n'; // Add separator
+             classContent += cls.methods.map(m => this.writeMethod(m)).join('\n\n') + '\n';
+        }
+
+        classContent += "}";
+        return classContent;
     }
 
     private writeField(field: JavaField): string {
-        const fieldParts: string[] = [];
-        
-        if (field.annotations && field.annotations.length > 0) {
-            fieldParts.push(field.annotations.map(a => `    @${a.name}`).join('\n'));
-        }
-
+        const annotations = (field.annotations || []).map(a => `    @${a.name}`).join('\n');
         const modifier = field.accessModifier === 'default' ? '' : `${field.accessModifier} `;
         const staticMod = field.isStatic ? 'static ' : '';
         const finalMod = field.isFinal ? 'final ' : '';
-        
         const line = `    ${modifier}${staticMod}${finalMod}${field.type} ${field.name};`;
-        fieldParts.push(line);
+        
+        return (annotations ? annotations + '\n' : '') + line;
+    }
 
-        return fieldParts.join('\n');
+    /**
+     * Generates a string representation of a Java method.
+     */
+    private writeMethod(method: JavaMethod): string {
+        const annotations = (method.annotations || []).map(a => `    @${a.name}`).join('\n');
+        const modifier = method.accessModifier === 'default' ? '' : `${method.accessModifier} `;
+        const params = (method.parameters || []).map(p => `${p.type} ${p.name}`).join(', ');
+        
+        let methodCode = `    ${modifier}${method.returnType} ${method.name}(${params}) {\n`;
+        methodCode += `        // Method body\n    }`;
+
+        return (annotations ? annotations + '\n' : '') + methodCode;
     }
 }

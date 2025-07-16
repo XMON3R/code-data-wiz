@@ -12,8 +12,8 @@ export interface ApllicationState {
 
 export function createDefaultApplicationState(): ApllicationState {
     return {
-        leftEditorType: EditorType.ClassDiagram,
-        rightEditorType: EditorType.ClassDiagram,
+        leftEditorType: EditorType.SQLQuery,
+        rightEditorType: EditorType.Csharp,
         value: {
             entities: []
         }

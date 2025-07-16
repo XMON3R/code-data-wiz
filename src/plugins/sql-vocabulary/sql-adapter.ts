@@ -1,6 +1,7 @@
-import { UniversalModel, Entity, Property } from "../../data-model-api/universal-model";
+import { UniversalModel, Entity, Property, Relationship } from "../../data-model-api/universal-model";
 import { SQLDiagram, SQLTable, SQLColumn, SQLDataType } from "./sql-model";
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
+import { toUniversalType, fromUniversalType } from "./sql-vocabulary";
 
 export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
     /**
@@ -21,9 +22,7 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
 
                     const prop: Property = {
                         label: column.name,
-                        type: {
-                            domainSpecificType: typeString
-                        },
+                        type: toUniversalType(typeString),
                     };
 
                     // Create a value object only if there are properties to add
@@ -54,7 +53,25 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
             return entity;
         });
 
-        return { entities };
+        const relationships: Relationship[] = [];
+
+        domainModel.tables.forEach(table => {
+            if (table.constraints) {
+                table.constraints.forEach(constraint => {
+                    if (constraint.type === 'FOREIGN KEY' && constraint.references) {
+                        relationships.push({
+                            sourceEntityLabel: table.name,
+                            targetEntityLabel: constraint.references.table,
+                            type: "association", // Default to association, can be refined if more info is available
+                            label: constraint.name, // Use constraint name as relationship label
+                            // Cardinalities can be inferred or added if SQL model provides more detail
+                        });
+                    }
+                });
+            }
+        });
+
+        return { entities, relationships };
     }
 
     /**
@@ -69,7 +86,7 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
                 columns: entity.properties.map((prop): SQLColumn => {
                     const sqlColumn: SQLColumn = {
                         name: prop.label,
-                        type: this.parseDataTypeFromString(prop.type.domainSpecificType)
+                        type: this.parseDataTypeFromString(fromUniversalType(prop.type))
                     };
 
                     // Parse isNullable and defaultValue from the universal model's value field.

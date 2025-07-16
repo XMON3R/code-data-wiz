@@ -3,6 +3,19 @@
  */
 export interface UniversalModel {
     entities: Entity[];
+    relationships?: Relationship[];
+}
+
+/**
+ * Represents a relationship between two entities.
+ */
+export interface Relationship {
+    sourceEntityLabel: string;
+    targetEntityLabel: string;
+    type: "association" | "composition" | "aggregation" | "inheritance" | "dependency";
+    label?: string;
+    sourceCardinality?: string;
+    targetCardinality?: string;
 }
 
 /**
@@ -41,5 +54,6 @@ export interface Type {
      * e.g., "VARCHAR(255)", "string", "Long"
      */
     domainSpecificType: string;
-    format?: string;
+    universalType?: "string" | "number" | "boolean" | "date" | "datetime" | "other";
+    format?: "double" | "long" | "decimal" | "uuid" | "byte" | "uri" | "curie" | "time" | string;
 }

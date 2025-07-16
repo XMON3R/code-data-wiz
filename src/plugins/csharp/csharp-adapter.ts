@@ -7,6 +7,7 @@ import {
     DomainModelAdapter,
 } from "../../data-model-api/domain-specific-model-api";
 import { CSharpModel, CSharpClass, CSharpProperty } from "./csharp-model";
+import { toUniversalType, fromUniversalType } from "./csharp-vocabulary";
 
 /**
  * An adapter to translate between the CSharpModel and the UniversalModel,
@@ -17,9 +18,7 @@ export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
         const entities: Entity[] = model.classes.map(cls => {
             const properties: Property[] = cls.properties.map(prop => ({
                 label: prop.name,
-                // The domain-specific type is stored for a richer representation.
-                type: { domainSpecificType: prop.type.name },
-                // Store property-specific metadata in the 'value' field as a JSON string.
+                type: toUniversalType(prop.type.name),
                 value: JSON.stringify({
                     accessModifier: prop.accessModifier,
                     isNullable: prop.type.isNullable || false,
@@ -53,7 +52,7 @@ export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
                 return {
                     name: prop.label,
                     type: {
-                        name: prop.type.domainSpecificType,
+                        name: fromUniversalType(prop.type),
                         isNullable: propMeta.isNullable,
                     },
                     accessModifier: propMeta.accessModifier || "public",

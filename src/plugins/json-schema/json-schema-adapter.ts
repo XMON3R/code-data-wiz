@@ -1,6 +1,7 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
 import { UniversalModel, Entity, Property } from "../../data-model-api/universal-model";
 import { JsonSchemaModel, JsonSchemaDefinition, JsonSchemaProperty } from "./json-schema-model";
+import { toUniversalType, fromUniversalType } from "./json-schema-vocabulary";
 
 export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
   async toUniversalModel(jsonSchemaModel: JsonSchemaModel): Promise<UniversalModel> {
@@ -20,11 +21,11 @@ export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
         const prop = schema.properties[key];
         const universalProperty: Property = {
           label: key,
-          type: {
-            domainSpecificType: Array.isArray(prop.type) ? prop.type.join(" | ") : prop.type || "any",
-            format: prop.format, // Map format from JSON Schema to UniversalModel
-          },
+          type: toUniversalType(Array.isArray(prop.type) ? prop.type.join(" | ") : prop.type || "any"),
         };
+        if (prop.format) {
+          universalProperty.type.format = prop.format;
+        }
         entity.properties.push(universalProperty);
       }
       universalModel.entities.push(entity);
@@ -50,7 +51,7 @@ export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
       for (const prop of mainEntity.properties) {
         const jsonSchemaProperty: JsonSchemaProperty = {
           name: prop.label,
-          type: prop.type.domainSpecificType,
+          type: fromUniversalType(prop.type),
           format: prop.type.format, // Map format from UniversalModel back to JSON Schema
         };
         if (jsonSchemaDefinition.properties) {

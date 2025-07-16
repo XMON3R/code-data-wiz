@@ -1,6 +1,7 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
-import { UniversalModel, Entity, /*Property*/ } from "../../data-model-api/universal-model";
+import { UniversalModel, Entity } from "../../data-model-api/universal-model";
 import { JavaModel, JavaClass, JavaField } from "./java-model";
+import { toUniversalType, fromUniversalType } from "./java-vocabulary";
 
 /**
  * An adapter to translate between the JavaModel and the UniversalModel.
@@ -29,7 +30,7 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
         model.classes.forEach(cls => {
             const properties = cls.fields.map(field => ({
                 label: field.name,
-                type: { domainSpecificType: field.type },
+                type: toUniversalType(field.type),
                 value: JSON.stringify({
                     accessModifier: field.accessModifier,
                     isStatic: field.isStatic,
@@ -73,7 +74,7 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
                 
                 const field: JavaField = {
                     name: prop.label,
-                    type: prop.type.domainSpecificType,
+                    type: fromUniversalType(prop.type),
                     accessModifier: fieldMeta.accessModifier || 'default',
                     ...(fieldMeta.isStatic && { isStatic: true }),
                     ...(fieldMeta.isFinal && { isFinal: true }),

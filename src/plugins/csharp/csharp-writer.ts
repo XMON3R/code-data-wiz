@@ -20,7 +20,10 @@ export class SimpleCSharpWriter implements CSharpWriter {
 
         if (csharpClass.properties.length > 0) {
             const propertyDefinitions = csharpClass.properties
-                .map(property => `    public ${this.formatCSharpType(property.type)} ${property.name} { get; set; }`)
+                .map(property => {
+                    const accessModifier = property.accessModifier ? `${property.accessModifier} ` : 'public '; // Default to public if not specified
+                    return `    ${accessModifier}${this.formatCSharpType(property.type)} ${property.name} { get; set; }`;
+                })
                 .join("\n");
             classCode += `${propertyDefinitions}\n`;
         }

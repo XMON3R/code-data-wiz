@@ -11,9 +11,10 @@ interface EditorHeaderProps {
     isReadOnly?: boolean;
     onDownload: () => void; 
     onToggleSettings?: () => void; // placeholder for toggling settings/config 
+    isDevMode: boolean;
 }
 
-export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isReadOnly, onDownload, onToggleSettings }) => {
+export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isReadOnly, onDownload, onToggleSettings, isDevMode }) => {
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value as EditorType;
@@ -29,7 +30,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
         <div className={`flex items-center p-2 border-b border-gray-800 ${className}`}>
             <label htmlFor="editor-type" className="mr-2">Editor Type:</label>
             <select id="editor-type" value={type} onChange={handleTypeChange} className="bg-gray-700 text-white rounded-md p-1">
-                <option value={EditorType.ClassDiagram}>Class Diagram</option>
+                {isDevMode && <option value={EditorType.ClassDiagram}>Class Diagram</option>}
                 <option value={EditorType.SQLQuery}>SQL Query</option>
                 <option value={EditorType.Java}>Java</option>
                 <option value={EditorType.Csharp}>C#</option>

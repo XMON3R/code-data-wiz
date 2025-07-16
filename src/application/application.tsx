@@ -12,6 +12,11 @@ export const App: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [autoRefreshRightEditor, setAutoRefreshRightEditor] = useState(true);
     const [rightEditorDisplayedContent, setRightEditorDisplayedContent] = useState(state.value);
+    const [isDevMode, setIsDevMode] = useState(false);
+
+    useEffect(() => {
+        setIsDevMode(window.location.href.includes("dev"));
+    }, []);
 
     // Use the custom hook for download handling
     const { handleDownload, downloadError } = useDownloadHandler();
@@ -68,6 +73,7 @@ export const App: React.FC = () => {
                     isReadOnly={false}
                     onDownload={handleDownload} // Pass the handler from the hook
                     onToggleSettings={() => { /* Placeholder for now */ }} // Pass a placeholder function
+                    isDevMode={isDevMode}
                 />
                 <Editor
                     type={state.rightEditorType}
@@ -81,6 +87,7 @@ export const App: React.FC = () => {
                     onToggleAutoRefresh={handleToggleRightEditorAutoRefresh}
                     onTranslateClick={handleTranslateRightEditorClick}
                     onDownload={handleDownload} // Pass the handler from the hook
+                    isDevMode={isDevMode}
                 />
             </VerticalSplitter>
         </div>

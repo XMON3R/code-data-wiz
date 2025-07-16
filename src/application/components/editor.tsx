@@ -22,13 +22,14 @@ export interface EditorProps {
   onTranslateClick?: () => void;
   onDownload?: (content: UniversalModel, type: EditorType) => void; // New prop
   onToggleSettings?: () => void; // New prop for toggling settings
+  isDevMode?: boolean;
 }
 
 /**
  * Editor component that contains a header and the actual editor content.
  * This component itself is now scrollable, and its header will stick to the top.
  */
-export function Editor({ value, onChange, isReadOnly, className, type, onChangeType, error, onError, autoRefresh, onToggleAutoRefresh, onTranslateClick, onDownload, onToggleSettings }: EditorProps) {
+export function Editor({ value, onChange, isReadOnly, className, type, onChangeType, error, onError, autoRefresh, onToggleAutoRefresh, onTranslateClick, onDownload, onToggleSettings, isDevMode }: EditorProps) {
   const handleDownload = () => {
     if (onDownload) {
       onDownload(value, type);
@@ -48,6 +49,7 @@ export function Editor({ value, onChange, isReadOnly, className, type, onChangeT
         onTranslateClick={onTranslateClick || (() => {})}
         onDownload={handleDownload} // Pass the handler
         onToggleSettings={!isReadOnly ? onToggleSettings : undefined} // Pass for left editor only
+        isDevMode={isDevMode || false}
       />
       {/* EditorWrap - takes remaining space and contains the CodeMirror editor */}
       {error ? (

@@ -8,16 +8,15 @@ export class JavaParser implements DomainTextParser<JavaModel> {
 
     async parseText(text: string): Promise<JavaModel> {
         try {
-            // By parsing in order, we ensure that a syntax error in an early part
-            // (like 'package') stops the process immediately.
             const packageName = this.parsePackage(text);
             const imports = this.parseImports(text);
             const classes = this.parseClasses(text);
 
             return { packageName, imports, classes };
-        } catch (e: any) {
-            console.error("Java Parsing Error:", e.message);
-            throw new Error(`Failed to parse Java source code: ${e.message}`);
+        } catch (e) {
+            const error = e as Error;
+            console.error("Java Parsing Error:", error.message);
+            throw new Error(`Failed to parse Java source code: ${error.message}`);
         }
     }
 
@@ -25,7 +24,8 @@ export class JavaParser implements DomainTextParser<JavaModel> {
         const packageLine = text.split(/\r?\n/).find(line => line.trim().startsWith('package'));
         if (!packageLine) return undefined;
 
-        const match = packageLine.trim().match(/^package\s+([\w\.]+);$/);
+        // FIX (Line 28): Removed unnecessary backslash from \.
+        const match = packageLine.trim().match(/^package\s+([\w.]+);$/);
         if (!match) {
             throw new Error(`Invalid package declaration syntax near "${packageLine.trim()}"`);
         }
@@ -39,8 +39,7 @@ export class JavaParser implements DomainTextParser<JavaModel> {
         for (const line of lines) {
             const trimmedLine = line.trim();
             if (trimmedLine.startsWith('import')) {
-                // If a line starts with 'import', it MUST be valid.
-                const match = trimmedLine.match(/^import\s+([\w\.\*]+);$/);
+                const match = trimmedLine.match(/^import\s+([\w.*]+);$/);
                 if (!match) {
                     throw new Error(`Invalid import statement syntax near "${trimmedLine}"`);
                 }

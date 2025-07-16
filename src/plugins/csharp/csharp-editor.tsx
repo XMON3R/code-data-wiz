@@ -17,6 +17,7 @@ export function CSharpEditor(props: {
     isReadOnly?: boolean;
     onError?: (error: string | null) => void;
 }) {
+    const { onChange, onError } = props;
     // Use single instances of the adapter, writer, and parser.
     const [writer] = useState(() => new SimpleCSharpWriter());
     const [adapter] = useState(() => new CSharpAdapter());
@@ -31,24 +32,24 @@ export function CSharpEditor(props: {
         debounce(async (text: string) => {
             try {
                 if (text.trim() === '') {
-                    props.onChange({ entities: [] });
-                    props.onError?.(null);
+                    onChange({ entities: [] });
+                    onError?.(null);
                     return;
                 }
 
                 const domainModel = await parser.parseText(text);
                 const newUniversalModel = await adapter.toUniversalModel(domainModel);
-                props.onError?.(null); // Clear previous errors on success
-                props.onChange(newUniversalModel);
+                onError?.(null); // Clear previous errors on success
+                onChange(newUniversalModel);
             } catch (e) {
                 const error = e as Error;
-                props.onError?.(error.message);
+                onError?.(error.message);
                 // On error, we DO NOT call props.onChange.
                 // This prevents the UniversalModel from being updated, and the
                 // other editor pane will remain unchanged.
             }
         }, 500),
-        [parser, adapter, props.onChange, props.onError]
+        [parser, adapter, onChange, onError]
     );
 
     // This is the immediate handler for when the user types.

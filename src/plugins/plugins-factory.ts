@@ -1,7 +1,7 @@
 //import { csharpEditor } from "./csharp/csharp-editor";
-import { sqlEditor } from "./sql-vocabulary/sql-editor";
+import { SqlEditor } from "./sql-vocabulary/sql-editor";
 import { EditorType } from "./plugins-codelist";
-import { mockEditor } from "./mockEditor";
+import { MockEditor } from "./mockEditor";
 import { PlantUmlEditor } from "./plant-uml/plant-uml-editor";
 import { LinkmlEditor } from "./linkml/linkml-editor";
 import { JsonSchemaEditor } from "./json-schema/json-schema-editor";
@@ -30,9 +30,9 @@ export function listPluginMetadata() {
 export function createEditor(type: EditorType) {
     switch (type) {
         case EditorType.ClassDiagram:
-            return mockEditor;
+            return MockEditor;
         case EditorType.SQLQuery:
-            return sqlEditor;
+            return SqlEditor;
         case EditorType.Java:
             return JavaEditor;
         case EditorType.Csharp:

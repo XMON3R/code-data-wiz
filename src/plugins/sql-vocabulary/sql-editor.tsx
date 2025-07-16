@@ -1,37 +1,41 @@
 import { sql } from "@codemirror/lang-sql";
 import { UniversalModel } from "../../data-model-api";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { CodeMirrorEditor } from "../components/code-mirror-editor";
 import { debounce } from "../../application/components/debounce";
 import { SqlAdapter } from "./sql-adapter";
 import SimpleSQLParser from "./sql-parser";
 import { SimpleSQLWriter } from "./sql-writer";
 
-export function sqlEditor(props: {
+/**
+ * An editor component for SQL
+ */
+export function SqlEditor(props: {
     value: UniversalModel;
     onChange: (value: UniversalModel) => void;
     isReadOnly?: boolean;
     onError?: (error: string | null) => void;
 }) {
-    const writer = new SimpleSQLWriter();
-    const adapter = new SqlAdapter();
-    const reader = new SimpleSQLParser();
+    const writer = useMemo(() => new SimpleSQLWriter(), []);
+    const adapter = useMemo(() => new SqlAdapter(), []);
+    const reader = useMemo(() => new SimpleSQLParser(), []);
 
-    const handleEditorChange = useCallback(
-        debounce(async (value: string) => {
-            try {
-                const domainModel = reader.parse(value);
-                if (domainModel.tables.length > 0 || value.trim() === '') {
-                    const newUniversalModel = await adapter.toUniversalModel(domainModel);
-                    props.onError?.(null);
-                    props.onChange(newUniversalModel);
+    const handleEditorChange = useMemo(
+        () =>
+            debounce(async (value: string) => {
+                try {
+                    const domainModel = reader.parse(value);
+                    if (domainModel.tables.length > 0 || value.trim() === "") {
+                        const newUniversalModel = await adapter.toUniversalModel(domainModel);
+                        props.onError?.(null);
+                        props.onChange(newUniversalModel);
+                    }
+                } catch (e) {
+                    const error = e as Error;
+                    props.onError?.(error.message);
+                    console.error("Error handling editor change:", error);
                 }
-            } catch (e) {
-                const error = e as Error;
-                props.onError?.(error.message);
-                console.error("Error handling editor change:", error);
-            }
-        }, 500),
+            }, 500),
         [adapter, reader, props.onChange, props.onError]
     );
 
@@ -46,8 +50,7 @@ export function sqlEditor(props: {
             }
         }
         updateEditorValue();
-    }, [props.value, adapter, writer, props.isReadOnly]);
-
+    }, [props.value, adapter, writer, props.isReadOnly]); 
 
     return (
         <CodeMirrorEditor

@@ -46,7 +46,7 @@ class MockVocabularyReader {
 }
 
 
-export function mockEditor(props: {
+export function MockEditor(props: {
     value: UniversalModel;
     onChange: (value: UniversalModel) => void;
     readonly?: boolean;

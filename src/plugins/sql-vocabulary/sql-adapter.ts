@@ -101,10 +101,10 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
                     }
 
                     if (propValue && typeof propValue === 'object') {
-                        if (propValue.hasOwnProperty('isNullable')) {
+                        if (Object.prototype.hasOwnProperty.call(propValue, 'isNullable')) {
                             sqlColumn.isNullable = propValue.isNullable;
                         }
-                        if (propValue.hasOwnProperty('defaultValue')) {
+                        if (Object.prototype.hasOwnProperty.call(propValue, 'defaultValue')) {
                             sqlColumn.defaultValue = propValue.defaultValue;
                         }
                     }

@@ -30,13 +30,14 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
         <div className={`flex items-center p-2 border-b border-gray-800 ${className}`}>
             <label htmlFor="editor-type" className="mr-2">Editor Type:</label>
             <select id="editor-type" value={type} onChange={handleTypeChange} className="bg-gray-700 text-white rounded-md p-1">
-                {isDevMode && <option value={EditorType.ClassDiagram}>Class Diagram</option>}
-                <option value={EditorType.SQLQuery}>SQL Query</option>
-                <option value={EditorType.Java}>Java</option>
                 <option value={EditorType.Csharp}>C#</option>
-                <option value={EditorType.LinkML}>LinkML</option>
+                {isDevMode && <option value={EditorType.ClassDiagram}>Class Diagram</option>}
+                <option value={EditorType.Java}>Java</option>
                 <option value={EditorType.JsonSchema}>JsonSchema</option>
+                <option value={EditorType.LinkML}>LinkML</option>
                 <option value={EditorType.PlantUML}>PlantUML Diagram</option>
+                <option value={EditorType.SQLQuery}>SQL Query</option>
+                
             </select>
 
             {isReadOnly && ( // Conditionally render for right editor only

@@ -22,15 +22,16 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
 
         // Process slots defined directly within the class (attributes)
         if (linkmlClass.attributes) {
-          for (const slotName in linkmlClass.attributes) {
-            const slot = linkmlClass.attributes[slotName];
-            const universalProperty: Property = {
-              label: slotName,
-              type: toUniversalType(slot.range || "any"),
-            };
-            entity.properties.push(universalProperty);
+            for (const slotName in linkmlClass.attributes) {
+              // Ensure slot is not null, defaulting to an empty object if it is
+              const slot = linkmlClass.attributes[slotName] || {};
+              const universalProperty: Property = {
+                label: slotName,
+                type: toUniversalType(slot.range || "any"),
+              };
+              entity.properties.push(universalProperty);
+            }
           }
-        }
 
         // Process slots referenced by the class from the top-level schema slots
         if (linkmlClass.slots && schema.slots) {

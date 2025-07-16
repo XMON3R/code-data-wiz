@@ -5,17 +5,14 @@ import { LinkmlModel } from "./linkml-model";
 export class LinkmlParser implements DomainTextParser<LinkmlModel> {
     async parseText(text: string): Promise<LinkmlModel> {
         try {
-            const schema = yaml.load(text);
+            const documents = yaml.loadAll(text);
+            const lastDocument = documents[documents.length - 1];
 
-            // --- VALIDATION ADDED ---
-            // A valid LinkML schema must have an object as its root.
-            // If the parsed result is not an object (e.g., it's null, undefined, a string),
-            // it's not a valid schema, so we should throw an error.
-            if (schema === null || typeof schema !== 'object') {
+            if (lastDocument === null || typeof lastDocument !== 'object') {
                 throw new Error("Invalid LinkML structure: The root of the schema must be an object.");
             }
 
-            return { schema };
+            return { schema: lastDocument };
         } catch (e: any) {
             // Re-throw with a consistent error message for the tests to catch.
             console.error("LinkML Parsing Error:", e.message);

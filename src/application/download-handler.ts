@@ -4,6 +4,7 @@ import { EditorType } from "../plugins/index.ts";
 import { encode } from 'plantuml-encoder';
 import { universalModelToPlantUml } from '../plugins/plant-uml/plant-uml-editor.tsx'; 
 import { SqlAdapter } from '../plugins/sql-vocabulary/sql-adapter.ts';
+import { SQLDiagram } from '../plugins/sql-vocabulary/sql-model';
 import { JavaAdapter } from '../plugins/java/java-adapter.ts';
 import { JavaWriter } from '../plugins/java/java-writer.ts';
 import { CSharpAdapter } from '../plugins/csharp/csharp-adapter.ts';
@@ -32,6 +33,59 @@ const getFileExtension = (type: EditorType): string => {
             return ".txt"; 
     }
 };
+
+// Function to generate SQL string from SQLDiagram
+const generateSqlString = (sqlDiagram: SQLDiagram): string => {
+    if (!sqlDiagram || !sqlDiagram.tables) {
+        return "-- No SQL diagram data available";
+    }
+
+    const sqlStatements: string[] = [];
+
+    sqlDiagram.tables.forEach((table) => {
+        const columns: string[] = [];
+        table.columns.forEach((column) => {
+            let columnDefinition = `    ${column.name} ${column.type.name}`;
+            if (column.type.parameters && column.type.parameters.length > 0) {
+                columnDefinition += `(${column.type.parameters.join(", ")})`;
+            }
+            if (column.isNullable === false) { // Explicitly check for false, as undefined might mean nullable
+                columnDefinition += " NOT NULL";
+            }
+            if (column.defaultValue !== undefined) {
+                // Handle string defaults by quoting them
+                const defaultValue = typeof column.defaultValue === 'string' ? `'${column.defaultValue}'` : column.defaultValue;
+                columnDefinition += ` DEFAULT ${defaultValue}`;
+            }
+            columns.push(columnDefinition);
+        });
+
+        // Basic constraint handling (e.g., Primary Key) - can be expanded
+        // For simplicity, we'll assume primary keys are handled within column definitions if possible,
+        // or we'd need to parse constraints from entity.value if they were stored there.
+        // The SqlAdapter stores constraints in the `constraints` property of the table.
+        const tableConstraints = table.constraints || [];
+
+        // Add primary key constraint if defined
+        const primaryKeyConstraint = tableConstraints.find(c => c.type === 'PRIMARY KEY');
+        if (primaryKeyConstraint && primaryKeyConstraint.columns) {
+            columns.push(`    PRIMARY KEY (${primaryKeyConstraint.columns.join(", ")})`);
+        }
+
+        // Add foreign key constraints
+        tableConstraints.filter(c => c.type === 'FOREIGN KEY').forEach(fkConstraint => {
+            if (fkConstraint.columns && fkConstraint.references) {
+                columns.push(`    FOREIGN KEY (${fkConstraint.columns.join(", ")}) REFERENCES ${fkConstraint.references.table}(${fkConstraint.references.columns.join(", ")})`);
+            }
+        });
+
+        const createTableStatement = `CREATE TABLE ${table.name} (\n${columns.join(",\n")}\n);`;
+        sqlStatements.push(createTableStatement);
+    });
+
+    return sqlStatements.join("\n\n");
+};
+
 
 export const useDownloadHandler = () => {
     const [downloadError, setDownloadError] = useState<string | null>(null);
@@ -73,7 +127,7 @@ export const useDownloadHandler = () => {
                     try {
                         const sqlAdapter = new SqlAdapter();
                         const sqlDiagram = await sqlAdapter.fromUniversalModel(content);
-                        fileContent = JSON.stringify(sqlDiagram, null, 2); // Stringify the SQLDiagram
+                        fileContent = generateSqlString(sqlDiagram); // Use the new function to generate SQL string
                     } catch (e) {
                         console.error("Error converting UniversalModel to SQLDiagram:", e);
                         setDownloadError("Failed to convert to SQL format.");

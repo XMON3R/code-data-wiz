@@ -7,12 +7,45 @@ export interface UniversalModel {
 }
 
 /**
+ * Enum defining the types of relationships between entities.
+ */
+export enum RelationshipType {
+    /**
+     * A structural link between two peer entities.
+     * Example: A User has a Profile.
+     */
+    Association = "association",
+    /**
+     * A strong "whole-part" relationship where the part cannot exist without the whole.
+     * If the whole is deleted, the part is also deleted.
+     * Example: A House is composed of Rooms.
+     */
+    Composition = "composition",
+    /**
+     * A "whole-part" relationship where the part can exist independently of the whole.
+     * Example: A Department has Employees.
+     */
+    Aggregation = "aggregation",
+    /**
+     * An "is-a" relationship where one entity inherits properties from another.
+     * Example: A Dog is an Animal.
+     */
+    Inheritance = "inheritance",
+    /**
+     * A relationship where one entity depends on another, but not as a structural part.
+     * A change in the independent entity may affect the dependent entity.
+     * Example: A Service uses a Logger.
+     */
+    Dependency = "dependency",
+}
+
+/**
  * Represents a relationship between two entities.
  */
 export interface Relationship {
     sourceEntityLabel: string;
     targetEntityLabel: string;
-    type: "association" | "composition" | "aggregation" | "inheritance" | "dependency";
+    type: RelationshipType;
     label?: string;
     sourceCardinality?: string;
     targetCardinality?: string;

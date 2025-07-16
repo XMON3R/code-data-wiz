@@ -1,4 +1,4 @@
-import { UniversalModel, Entity, Property, Relationship } from "../../data-model-api/universal-model";
+import { UniversalModel, Entity, Property, Relationship, RelationshipType } from "../../data-model-api/universal-model";
 import { SQLDiagram, SQLTable, SQLColumn, SQLDataType } from "./sql-model";
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
 import { toUniversalType, fromUniversalType } from "./sql-vocabulary";
@@ -62,7 +62,7 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
                         relationships.push({
                             sourceEntityLabel: table.name,
                             targetEntityLabel: constraint.references.table,
-                            type: "association", // Default to association, can be refined if more info is available
+                            type: RelationshipType.Association, // Default to association, can be refined if more info is available
                             label: constraint.name, // Use constraint name as relationship label
                             // Cardinalities can be inferred or added if SQL model provides more detail
                         });

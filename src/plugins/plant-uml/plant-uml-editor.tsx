@@ -1,5 +1,5 @@
 import { encode } from 'plantuml-encoder';
-import { UniversalModel } from '../../data-model-api';
+import { UniversalModel, RelationshipType } from '../../data-model-api';
 
 export function universalModelToPlantUml(model: UniversalModel): string {
   let plantUmlCode = "@startuml\n";
@@ -47,17 +47,17 @@ skinparam classAttributeFontColor #ffffff
   return plantUmlCode;
 }
 
-function getPlantUmlRelationshipSyntax(type: "association" | "composition" | "aggregation" | "inheritance" | "dependency"): string {
+function getPlantUmlRelationshipSyntax(type: RelationshipType): string {
   switch (type) {
-    case "association":
+    case RelationshipType.Association:
       return "-->";
-    case "composition":
+    case RelationshipType.Composition:
       return "--*";
-    case "aggregation":
+    case RelationshipType.Aggregation:
       return "--o";
-    case "inheritance":
+    case RelationshipType.Inheritance:
       return "--|>";
-    case "dependency":
+    case RelationshipType.Dependency:
       return "..>";
     default:
       return "-->";

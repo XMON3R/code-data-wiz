@@ -15,7 +15,8 @@ export const App: React.FC = () => {
     const [isDevMode, setIsDevMode] = useState(false);
 
     useEffect(() => {
-        setIsDevMode(window.location.href.includes("dev"));
+        const searchParams = new URLSearchParams(window.location.search);
+        setIsDevMode(searchParams.has("dev"));
     }, []);
 
     // Use the custom hook for download handling

@@ -9,9 +9,9 @@ export const ofnKeyMap: { [key: string]: string } = {
     updatedAt: "aktualizováno",
     concepts: "pojmy",
     "createdAt.type": "vytvořeno.typ",
-    "createdAt.date": "vytvořeno.datum",
+    "createdAt.date": "datum",
     "updatedAt.type": "aktualizováno.typ",
-    "updatedAt.dateTime": "aktualizováno.datum_a_čas",
+    "updatedAt.dateTime": "datum_a_čas",
     // Mappings for concept properties
     "concepts.iri": "iri",
     "concepts.type": "typ",
@@ -25,6 +25,10 @@ export const ofnKeyMap: { [key: string]: string } = {
     "concepts.domain": "definiční-obor",
     "concepts.range": "obor-hodnot",
     "concepts.ignored": "ignored", // Not a real OFN key, but used for internal tracking
+    "concepts.name.cs": "cs",
+    "concepts.name.en": "en",
+    "concepts.definition.cs": "cs",
+    "concepts.definition.en": "en",
 };
 
 // Inverse mapping for converting Czech keys back to English

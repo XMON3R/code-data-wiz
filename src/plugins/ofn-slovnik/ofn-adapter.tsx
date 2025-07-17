@@ -79,7 +79,16 @@ export class OfnAdapter implements DomainModelAdapter<OfnModel> {
      * Converts the UniversalModel back into an OfnModel.
      */
     async fromUniversalModel(mainModel: UniversalModel): Promise<OfnModel> {
-        const ofnData: Partial<OfnModel> = {};
+        const ofnData: OfnModel = { // Initialize as OfnModel with default values for required properties
+            name: { en: "Converted from Universal Model" },
+            description: { en: "This model was generated from a UniversalModel." },
+            concepts: [],
+            context: undefined,
+            iri: undefined,
+            type: undefined,
+            createdAt: undefined,
+            updatedAt: undefined,
+        };
 
         if (mainModel.entities) {
             const vocabularyEntity = mainModel.entities.find(e => e.label === "OFN Vocabulary");

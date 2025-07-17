@@ -7,11 +7,13 @@ export class OfnParser implements DomainTextParser<OfnModel> {
           const rawData = JSON.parse(text);
 
           const ofnModel: OfnModel = {
+              context: rawData["@context"],
               iri: rawData.iri,
+              type: rawData.typ,
               name: rawData.název,
               description: rawData.popis,
-              createdAt: rawData.vytvořeno?.datum || rawData.vytvořeno?.datum_a_čas,
-              updatedAt: rawData.aktualizováno?.datum || rawData.aktualizováno?.datum_a_čas,
+              createdAt: rawData.vytvořeno ? { type: rawData.vytvořeno.typ, date: rawData.vytvořeno.datum || rawData.vytvořeno.datum_a_čas } : undefined,
+              updatedAt: rawData.aktualizováno ? { type: rawData.aktualizováno.typ, dateTime: rawData.aktualizováno.datum || rawData.aktualizováno.datum_a_čas } : undefined,
               concepts: [],
           };
 

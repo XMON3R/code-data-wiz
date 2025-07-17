@@ -8,7 +8,9 @@ describe("OfnWriter", () => {
 
   it("should convert a full OfnModel to a formatted JSON string with Czech keys", async () => {
     const fullModel: OfnModel = {
+      context: "https://ofn.gov.cz/slovníky/draft/kontexty/slovníky.jsonld",
       iri: "https://example.com/vocabulary/1",
+      type: ["Slovník", "Tezaurus"],
       name: {
         cs: "Testovací slovník",
         en: "Test Vocabulary",
@@ -16,6 +18,14 @@ describe("OfnWriter", () => {
       description: {
         cs: "Toto je popis.",
         en: "This is a description.",
+      },
+      createdAt: {
+        type: "Časový okamžik",
+        date: "2025-01-15T10:00:00Z",
+      },
+      updatedAt: {
+        type: "Časový okamžik",
+        dateTime: "2025-01-16T12:30:00Z",
       },
       concepts: [
         {
@@ -28,7 +38,9 @@ describe("OfnWriter", () => {
     };
 
     const expectedCzechJson = {
+      "@context": "https://ofn.gov.cz/slovníky/draft/kontexty/slovníky.jsonld",
       "iri": "https://example.com/vocabulary/1",
+      "typ": ["Slovník", "Tezaurus"],
       "název": {
         "cs": "Testovací slovník",
         "en": "Test Vocabulary",
@@ -37,14 +49,22 @@ describe("OfnWriter", () => {
         "cs": "Toto je popis.",
         "en": "This is a description.",
       },
+      "vytvořeno": {
+        "typ": "Časový okamžik",
+        "datum": "2025-01-15T10:00:00Z"
+      },
+      "aktualizováno": {
+        "typ": "Časový okamžik",
+        "datum_a_čas": "2025-01-16T12:30:00Z"
+      },
       "pojmy": [
         {
           "iri": "http://example.com/concept1",
           "typ": ["Třída"],
           "název": { "en": "MyClass" },
-          "nadřazená-třída": ["http://example.com/superClass"],
-        },
-      ],
+          "nadřazená-třída": ["http://example.com/superClass"]
+        }
+      ]
     };
 
     const actualJson = await writer.writeText(fullModel);

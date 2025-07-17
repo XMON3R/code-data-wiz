@@ -6,7 +6,8 @@ interface SQLTypeMapping {
 }
 
 /**
- * A vocabulary of common SQL types.
+ * A vocabulary of common SQL types mapped to universal types.
+ * This allows translation between SQL-specific column types and abstract universal types.
  */
 export const SQLVocabulary: Record<string, SQLTypeMapping> = {
     // Integer types
@@ -34,10 +35,10 @@ export const SQLVocabulary: Record<string, SQLTypeMapping> = {
     "blob": { universalType: UniversalType.String, format: UniversalFormat.Byte },
 
     // Real and double precision types
-    "real": { universalType: UniversalType.Number, format: UniversalFormat.Double }, // Assuming float maps to double for now
+    "real": { universalType: UniversalType.Number, format: UniversalFormat.Double },
     "double": { universalType: UniversalType.Number, format: UniversalFormat.Double },
     "double precision": { universalType: UniversalType.Number, format: UniversalFormat.Double },
-    "float": { universalType: UniversalType.Number, format: UniversalFormat.Double }, // Assuming float maps to double for now
+    "float": { universalType: UniversalType.Number, format: UniversalFormat.Double },
 
     // Numeric types
     "numeric": { universalType: UniversalType.Number },
@@ -55,30 +56,36 @@ export const SQLVocabulary: Record<string, SQLTypeMapping> = {
 };
 
 /**
- * Translates a SQL type to a universal type.
- * @param sqlType The SQL type to translate.
- * @returns The universal type representation.
+ * Translates a SQL type string (e.g., "VARCHAR(255)") into a universal Type object.
+ * This enables mapping raw SQL column definitions to a common format for interoperability.
+ * 
+ * @param sqlType - The SQL type to translate (e.g., "VARCHAR(255)").
+ * @returns A Type object representing the corresponding universal type.
  */
 export function toUniversalType(sqlType: string): Type {
-    const baseType = sqlType.split("(")[0].trim().toLowerCase();
+    const baseType = sqlType.split("(")[0].trim().toLowerCase(); // Strip parameters
     const mapping = SQLVocabulary[baseType];
     if (mapping) {
         return {
             domainSpecificType: sqlType,
             universalType: mapping.universalType,
-            ...(mapping.format && { format: mapping.format as UniversalFormat }), // Cast format to UniversalFormat
+            ...(mapping.format && { format: mapping.format as UniversalFormat }),
         };
     }
+    // If not found in known types, default to 'Other' with original type string preserved
     return { domainSpecificType: sqlType, universalType: UniversalType.Other };
 }
 
 /**
- * Translates a universal type to a SQL type.
- * @param universalType The universal type to translate.
- * @returns The SQL type representation.
+ * Converts a universal Type object into its closest SQL type string.
+ * If a domain-specific type is provided and valid, it's used directly.
+ * Otherwise, attempts to match based on universal type and optional format.
+ * 
+ * @param universalType - The universal Type object to convert.
+ * @returns The SQL type string (e.g., "VARCHAR", "BIGINT", etc.)
  */
 export function fromUniversalType(universalType: Type): string {
-    // Attempt to use the domainSpecificType directly if it's a known SQL type
+    // Use original domain-specific type if it matches a known SQL type
     if (universalType.domainSpecificType) {
         const baseType = universalType.domainSpecificType.split("(")[0].trim().toLowerCase();
         if (SQLVocabulary[baseType]) {
@@ -86,14 +93,17 @@ export function fromUniversalType(universalType: Type): string {
         }
     }
 
-    // Fallback to universal type mapping
+    // Fallback: match based on universalType and optional format
     if (universalType.universalType) {
         for (const sqlType in SQLVocabulary) {
             const mapping = SQLVocabulary[sqlType];
-            if (mapping.universalType === universalType.universalType && (!mapping.format || mapping.format === universalType.format)) {
+            const formatMatch = !mapping.format || mapping.format === universalType.format;
+            if (mapping.universalType === universalType.universalType && formatMatch) {
                 return sqlType;
             }
         }
     }
+
+    // Default fallback
     return universalType.domainSpecificType || "VARCHAR";
 }

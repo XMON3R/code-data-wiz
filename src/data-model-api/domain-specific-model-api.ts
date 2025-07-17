@@ -8,8 +8,6 @@ import { UniversalModel } from "./universal-model";
 export interface DomainSpecificModel {
     // Example: A common identifier for all domain models, if applicable
     // id?: string;
-
-    //this will be used to make universal model
 }
 
 /**

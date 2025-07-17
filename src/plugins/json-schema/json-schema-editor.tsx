@@ -8,21 +8,34 @@ import { JsonSchemaParser } from "./json-schema-parser";
 import { JsonSchemaWriter } from "./json-schema-writer";
 
 /**
+ * Props for the JsonSchemaEditor component.
+ */
+interface JsonSchemaEditorProps {
+    /** The current value of the editor in UniversalModel format. */
+    value: UniversalModel;
+    /** Callback function when the editor value changes, providing the updated UniversalModel. */
+    onChange: (value: UniversalModel) => void;
+    /** Whether the editor is read-only. */
+    isReadOnly?: boolean;
+    /** Callback function for reporting errors during parsing or conversion. */
+    onError?: (error: string | null) => void;
+}
+
+/**
  * An editor component for JSON Schema that handles the full round-trip
  * conversion between text and the UniversalModel.
+ * @param props The props for the JsonSchemaEditor component.
  */
-export function JsonSchemaEditor(props: {
-    value: UniversalModel;
-    onChange: (value: UniversalModel) => void;
-    isReadOnly?: boolean;
-    onError?: (error: string | null) => void;
-}) {
+export function JsonSchemaEditor(props: JsonSchemaEditorProps) {
     // Instantiate the JSON Schema-specific tools
     const writer = new JsonSchemaWriter();
     const adapter = new JsonSchemaAdapter();
     const parser = new JsonSchemaParser();
 
-    // Debounced handler for when the user types in the editor
+    /**
+     * Debounced handler for when the user types in the editor.
+     * It parses the JSON Schema text and propagates the change to the UniversalModel.
+     */
     const handleEditorChange = useCallback(
         debounce(async (value: string) => {
             try {

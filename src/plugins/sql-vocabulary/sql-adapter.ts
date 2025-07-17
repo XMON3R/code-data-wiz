@@ -3,9 +3,16 @@ import { SQLDiagram, SQLTable, SQLColumn, SQLDataType } from "./sql-model";
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
 import { toUniversalType, fromUniversalType } from "./sql-vocabulary";
 
+/**
+ * Adapter that converts between domain-specific SQLDiagram models
+ * and a generic UniversalModel format used for visualization and translation.
+ */
 export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
+
     /**
      * Converts a domain-specific SQLDiagram into a generic UniversalModel.
+     * Useful for visualization and translation into other formats.
+     *
      * @param domainModel The SQLDiagram to convert.
      * @returns A promise that resolves to the UniversalModel.
      */
@@ -14,9 +21,9 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
             const entity: Entity = {
                 label: table.name,
                 properties: table.columns.map((column): Property => {
-                    // Format the structured type back into a string for the universal model
+                    // Create string representation of the type (e.g., VARCHAR(255))
                     let typeString = column.type.name;
-                    if (column.type.parameters && column.type.parameters.length > 0) {
+                    if (column.type.parameters?.length) {
                         typeString += `(${column.type.parameters.join(", ")})`;
                     }
 
@@ -25,15 +32,10 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
                         type: toUniversalType(typeString),
                     };
 
-                    // Create a value object only if there are properties to add
+                    // Serialize additional property metadata like nullability and default value
                     const value: any = {};
-                    if (column.isNullable !== undefined) {
-                        value.isNullable = column.isNullable;
-                    }
-                    if (column.defaultValue !== undefined) {
-                        value.defaultValue = column.defaultValue;
-                    }
-
+                    if (column.isNullable !== undefined) value.isNullable = column.isNullable;
+                    if (column.defaultValue !== undefined) value.defaultValue = column.defaultValue;
                     if (Object.keys(value).length > 0) {
                         prop.value = JSON.stringify(value);
                     }
@@ -42,10 +44,10 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
                 })
             };
 
-            // Add constraints to the entity's value property for round-tripping
-            if (table.constraints && table.constraints.length > 0) {
+            // Serialize table-level constraints into entity.value
+            if (table.constraints?.length) {
                 entity.value = JSON.stringify({
-                    ...(entity.value || {}), // Ensure entity.value is an object if it exists
+                    ...(entity.value || {}),
                     constraints: table.constraints,
                 });
             }
@@ -55,20 +57,18 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
 
         const relationships: Relationship[] = [];
 
+        // Convert foreign key constraints into relationships
         domainModel.tables.forEach(table => {
-            if (table.constraints) {
-                table.constraints.forEach(constraint => {
-                    if (constraint.type === 'FOREIGN KEY' && constraint.references) {
-                        relationships.push({
-                            sourceEntityLabel: table.name,
-                            targetEntityLabel: constraint.references.table,
-                            type: RelationshipType.Association, // Default to association, can be refined if more info is available
-                            label: constraint.name, // Use constraint name as relationship label
-                            // Cardinalities can be inferred or added if SQL model provides more detail
-                        });
-                    }
-                });
-            }
+            table.constraints?.forEach(constraint => {
+                if (constraint.type === 'FOREIGN KEY' && constraint.references) {
+                    relationships.push({
+                        sourceEntityLabel: table.name,
+                        targetEntityLabel: constraint.references.table,
+                        type: RelationshipType.Association,
+                        label: constraint.name,
+                    });
+                }
+            });
         });
 
         return { entities, relationships };
@@ -76,6 +76,8 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
 
     /**
      * Converts a generic UniversalModel back into a domain-specific SQLDiagram.
+     * Useful for exporting edited models or regenerating SQL code.
+     *
      * @param universalModel The UniversalModel to convert.
      * @returns A promise that resolves to the SQLDiagram.
      */
@@ -85,60 +87,60 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
                 name: entity.label,
                 columns: entity.properties
                     .filter(prop => {
+                        // Filter out methods (not actual DB columns)
                         let isMethod = false;
                         if (prop.value) {
                             try {
                                 const propMeta = JSON.parse(prop.value);
-                                if (propMeta.isMethod) {
-                                    isMethod = true;
-                                }
+                                isMethod = propMeta.isMethod === true;
                             } catch (e) {
                                 console.error(`Failed to parse prop.value for ${prop.label}:`, e);
                             }
                         }
-                        return !isMethod; // Keep if not a method
+                        return !isMethod;
                     })
                     .map((prop): SQLColumn => {
-            const sqlColumn: SQLColumn = {
-                name: prop.label,
-                type: this.parseDataTypeFromString(fromUniversalType(prop.type))
+                        const sqlColumn: SQLColumn = {
+                            name: prop.label,
+                            type: this.parseDataTypeFromString(fromUniversalType(prop.type)),
+                        };
+
+                        // Restore nullable/default metadata
+                        let propValue = prop.value;
+                        if (typeof propValue === 'string') {
+                            try {
+                                propValue = JSON.parse(propValue);
+                            } catch (e) {
+                                console.error(`Failed to parse prop.value for ${prop.label}:`, e);
+                                propValue = {};
+                            }
+                        }
+
+                        if (propValue && typeof propValue === 'object') {
+                            if ('isNullable' in propValue) {
+                                sqlColumn.isNullable = propValue.isNullable;
+                            }
+                            if ('defaultValue' in propValue) {
+                                sqlColumn.defaultValue = propValue.defaultValue;
+                            }
+                        }
+
+                        return sqlColumn;
+                    })
             };
 
-                    // Parse isNullable and defaultValue from the universal model's value field.
-                    let propValue = prop.value;
-                    if (typeof propValue === 'string') {
-                        try {
-                            propValue = JSON.parse(propValue);
-                        } catch (e) {
-                            console.error(`Failed to parse prop.value for ${prop.label}:`, e);
-                            propValue = {}; // Reset to empty object on parse error
-                        }
-                    }
-
-                    if (propValue && typeof propValue === 'object') {
-                        if (Object.prototype.hasOwnProperty.call(propValue, 'isNullable')) {
-                            sqlColumn.isNullable = propValue.isNullable;
-                        }
-                        if (Object.prototype.hasOwnProperty.call(propValue, 'defaultValue')) {
-                            sqlColumn.defaultValue = propValue.defaultValue;
-                        }
-                    }
-                    return sqlColumn;
-                })
-            };
-
-            // Restore constraints from the entity's value property
+            // Restore constraints from entity.value
             let entityValue = entity.value;
             if (typeof entityValue === 'string') {
                 try {
                     entityValue = JSON.parse(entityValue);
                 } catch (e) {
                     console.error(`Failed to parse entity.value for ${entity.label}:`, e);
-                    entityValue = {}; // Reset to empty object on parse error
+                    entityValue = {};
                 }
             }
 
-            if (entityValue && entityValue.constraints) {
+            if (entityValue?.constraints) {
                 table.constraints = entityValue.constraints;
             }
 
@@ -149,20 +151,23 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
     }
 
     /**
-     * Helper to parse a string like "VARCHAR(255)" into a structured SQLDataType object.
-     * @param typeString The string representation of the data type.
-     * @returns A structured SQLDataType object.
+     * Parses a SQL type string like "VARCHAR(255)" into a structured SQLDataType.
+     *
+     * @param typeString The type string to parse.
+     * @returns The SQLDataType object.
      */
     private parseDataTypeFromString(typeString: string): SQLDataType {
         const match = typeString.match(/(\w+)(?:\(([^)]+)\))?/);
         if (match) {
             const name = match[1].toUpperCase();
-            const params = match[2] ? match[2].split(',').map(p => p.trim()) : [];
-            const parsedParams = params.map(p => {
-                const num = Number(p);
-                return isNaN(num) ? p : num;
-            });
-            return { name, parameters: parsedParams.length > 0 ? parsedParams : undefined };
+            const params = match[2]
+                ? match[2].split(',').map(p => {
+                    const trimmed = p.trim();
+                    const num = Number(trimmed);
+                    return isNaN(num) ? trimmed : num;
+                })
+                : [];
+            return { name, parameters: params.length > 0 ? params : undefined };
         }
         return { name: typeString.toUpperCase() };
     }

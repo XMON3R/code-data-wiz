@@ -3,7 +3,15 @@ import { UniversalModel, Entity, Property, RelationshipType } from "../../data-m
 import { LinkmlModel, LinkmlSchema, LinkmlClassDefinition, LinkmlSlotDefinition } from "./linkml-model";
 import { toUniversalType, fromUniversalType } from "./linkml-vocabulary";
 
+/**
+ * An adapter to translate between the LinkmlModel and the UniversalModel.
+ */
 export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
+  /**
+   * Converts a LinkmlModel instance into the application's UniversalModel.
+   * @param linkmlModel The LinkmlModel to convert.
+   * @returns A Promise that resolves with the UniversalModel representation.
+   */
   async toUniversalModel(linkmlModel: LinkmlModel): Promise<UniversalModel> {
     const universalModel: UniversalModel = {
       id: linkmlModel.schema.id, // Populate id from LinkmlSchema
@@ -66,6 +74,11 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
     return universalModel;
   }
 
+  /**
+   * Converts the application's UniversalModel into a LinkmlModel.
+   * @param universalModel The UniversalModel to convert.
+   * @returns A Promise that resolves with the LinkmlModel representation.
+   */
   async fromUniversalModel(universalModel: UniversalModel): Promise<LinkmlModel> {
     const linkmlSchema: LinkmlSchema = {
       id: universalModel.id || "http://example.com/linkml-schema", // Use id from UniversalModel or default

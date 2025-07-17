@@ -1,4 +1,7 @@
-//import { csharpEditor } from "./csharp/csharp-editor";
+// Central registry for all vocabulary editors by type.
+// `createEditor` dynamically returns the appropriate editor component,
+// and `listPluginMetadata` defines editor metadata (used e.g. in UI dropdowns).
+
 import { SqlEditor } from "./sql-vocabulary/sql-editor";
 import { EditorType } from "./plugins-codelist";
 import { MockEditor } from "./mockEditor";
@@ -8,7 +11,6 @@ import { JsonSchemaEditor } from "./json-schema/json-schema-editor";
 import { JavaEditor } from "./java/java-editor";
 import { CSharpEditor } from "./csharp/csharp-editor";
 import { OfnEditor } from "./ofn-slovnik/ofn-editor";
-
 
 export function listPluginMetadata() {
     return [
@@ -26,8 +28,6 @@ export function listPluginMetadata() {
         }
     ];
 }
-
-
 
 export function createEditor(type: EditorType) {
     switch (type) {

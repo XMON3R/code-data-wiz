@@ -1,51 +1,87 @@
 /**
- * A base interface for domain-specific models.
+ * SQL Domain Model Definitions
+ * ----------------------------
+ * These interfaces define a simplified abstract representation of SQL schemas,
+ * which can be used to parse, manipulate, and serialize SQL-based models.
+ * 
+ * See: https://www.w3schools.com/sql/sql_datatypes.asp for reference on SQL types.
+ */
+
+/**
+ * A base interface for domain-specific models (e.g., SQL, OFN).
  */
 export interface DomainSpecificModel {}
 
 /**
- * Represents a full SQL diagram, containing multiple tables.
+ * Represents a full SQL diagram (i.e., a database schema) containing multiple tables.
  */
 export interface SQLDiagram extends DomainSpecificModel {
- tables: SQLTable[];
+  /** List of tables in the SQL diagram */
+  tables: SQLTable[];
 }
 
 /**
- * Represents a single SQL table with its name, columns, and constraints.
+ * Represents a single SQL table with its name, columns, and optional constraints.
  */
 export interface SQLTable {
- name: string;
- columns: SQLColumn[];
- constraints?: SQLConstraint[];
+  /** Name of the table */
+  name: string;
+
+  /** List of column definitions */
+  columns: SQLColumn[];
+
+  /** Optional table-level constraints (e.g. PK, FK, UNIQUE) */
+  constraints?: SQLConstraint[];
 }
 
 /**
  * Represents a single column within a SQL table.
  */
 export interface SQLColumn {
- name: string;
- type: SQLDataType;
- isNullable?: boolean;
- defaultValue?: string | number | boolean | null;
+  /** Name of the column */
+  name: string;
+
+  /** Data type of the column (e.g. INT, VARCHAR) */
+  type: SQLDataType;
+
+  /** Whether the column allows NULL values */
+  isNullable?: boolean;
+
+  /** Default value for the column (if any) */
+  defaultValue?: string | number | boolean | null;
 }
 
 /**
- * Represents a constraint on a SQL table (e.g., PRIMARY KEY, FOREIGN KEY).
+ * Represents a constraint on a SQL table, such as PRIMARY KEY or FOREIGN KEY.
  */
 export interface SQLConstraint {
- type: 'PRIMARY KEY' | 'FOREIGN KEY' | 'UNIQUE';
- name?: string;
- columns: string[];
- references?: {
-  table: string;
+  /** Type of constraint */
+  type: 'PRIMARY KEY' | 'FOREIGN KEY' | 'UNIQUE';
+
+  /** Optional name for the constraint */
+  name?: string;
+
+  /** List of columns the constraint applies to */
   columns: string[];
- };
+
+  /** If FOREIGN KEY, reference to another table and columns */
+  references?: {
+    /** Referenced table name */
+    table: string;
+
+    /** Referenced columns */
+    columns: string[];
+  };
 }
 
 /**
- * Represents the data type of a SQL column, including its name and any parameters.
+ * Represents the data type of a SQL column.
+ * Examples include: VARCHAR(255), INT, BOOLEAN, etc.
  */
 export interface SQLDataType {
- name: string;
- parameters?: (string | number)[];
+  /** Name of the SQL data type (e.g., VARCHAR, INT) */
+  name: string;
+
+  /** Optional parameters (e.g., VARCHAR(255) → parameters: [255]) */
+  parameters?: (string | number)[];
 }

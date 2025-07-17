@@ -1,8 +1,5 @@
 
 interface HeaderProps { 
-  /**
-   * ADD
-   */
   className?: string; 
 }
 

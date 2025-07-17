@@ -15,6 +15,11 @@ import { toUniversalType, fromUniversalType } from "./csharp-vocabulary";
  * An adapter to translate between the CSharpModel and the UniversalModel.
  */
 export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
+    /**
+     * Converts a CSharpModel instance into the application's UniversalModel.
+     * @param model The CSharpModel to convert.
+     * @returns A Promise that resolves with the UniversalModel representation.
+     */
     async toUniversalModel(model: CSharpModel): Promise<UniversalModel> {
         const entities: Entity[] = model.classes.map(cls => {
             const properties: Property[] = cls.properties.map(prop => ({
@@ -70,6 +75,11 @@ export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
         return { entities, relationships };
     }
 
+    /**
+     * Converts the application's UniversalModel into a CSharpModel.
+     * @param model The UniversalModel to convert.
+     * @returns A Promise that resolves with the CSharpModel representation.
+     */
     async fromUniversalModel(model: UniversalModel): Promise<CSharpModel> {
         const classes: CSharpClass[] = model.entities.map(entity => {
             if (entity.label === "@file") return null;

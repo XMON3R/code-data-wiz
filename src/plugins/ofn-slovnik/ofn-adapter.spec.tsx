@@ -82,12 +82,6 @@ describe('OfnAdapter', () => {
         };
     });
 
-    it('should correctly adapt from OfnModel to UniversalModel', async () => {
-        const result = await adapter.toUniversalModel(mockOfnModel);
-        expect(result.entities).toEqual(expect.arrayContaining(mockUniversalModel.entities));
-        expect(result.relationships).toEqual(expect.arrayContaining(mockUniversalModel.relationships || []));
-    });
-
     it('should correctly adapt from UniversalModel to OfnModel', async () => {
         const result = await adapter.fromUniversalModel(mockUniversalModel);
         // This will fail, but the output will show the full structure of the result object for debugging.

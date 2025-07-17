@@ -5,6 +5,12 @@ import { JsonSchemaModel, JsonSchemaDefinition, JsonSchemaProperty } from "./jso
  * A parser for JSON Schema strings into a JsonSchemaModel.
  */
 export class JsonSchemaParser implements DomainTextParser<JsonSchemaModel> {
+    /**
+     * Parses a JSON Schema string into a JsonSchemaModel.
+     * @param jsonSchemaString The JSON Schema as a string.
+     * @returns A Promise resolving to the JsonSchemaModel.
+     * @throws Error if the JSON Schema string is invalid.
+     */
     async parseText(jsonSchemaString: string): Promise<JsonSchemaModel> {
         try {
             const parsedSchema: any = JSON.parse(jsonSchemaString);
@@ -16,6 +22,12 @@ export class JsonSchemaParser implements DomainTextParser<JsonSchemaModel> {
         }
     }
 
+    /**
+     * Maps a parsed JSON object to a JsonSchemaDefinition.
+     * This method recursively processes properties and definitions.
+     * @param parsed The parsed JSON object.
+     * @returns A JsonSchemaDefinition object.
+     */
     private mapToSchemaDefinition(parsed: any): JsonSchemaDefinition {
         const definition: JsonSchemaDefinition = {
             type: parsed.type,
@@ -48,6 +60,13 @@ export class JsonSchemaParser implements DomainTextParser<JsonSchemaModel> {
         return definition;
     }
 
+    /**
+     * Maps a parsed JSON object to a JsonSchemaProperty.
+     * This method handles nested properties and array items.
+     * @param name The name of the property.
+     * @param parsed The parsed JSON object representing the property.
+     * @returns A JsonSchemaProperty object.
+     */
     private mapToSchemaProperty(name: string, parsed: any): JsonSchemaProperty {
         const property: JsonSchemaProperty = {
             name: name,

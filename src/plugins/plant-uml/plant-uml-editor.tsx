@@ -1,6 +1,16 @@
 import { encode } from 'plantuml-encoder';
 import { UniversalModel, RelationshipType } from '../../data-model-api';
 
+/**
+ * Converts a UniversalModel into PlantUML code representing the class diagram.
+ *
+ * - Each entity becomes a UML class with its properties.
+ * - Relationships (association, composition, etc.) are drawn with correct syntax and optional cardinalities.
+ * - Styling is applied for dark background and modern look.
+ *
+ * @param {UniversalModel} model - The universal model to render as PlantUML.
+ * @returns {string} The generated PlantUML source code.
+ */
 export function universalModelToPlantUml(model: UniversalModel): string {
   let plantUmlCode = "@startuml\n";
   plantUmlCode += `title "Model Visualization"
@@ -47,6 +57,12 @@ skinparam classAttributeFontColor #ffffff
   return plantUmlCode;
 }
 
+/**
+ * Maps a RelationshipType to its corresponding PlantUML syntax.
+ *
+ * @param {RelationshipType} type - The type of relationship.
+ * @returns {string} PlantUML connector for the relationship.
+ */
 function getPlantUmlRelationshipSyntax(type: RelationshipType): string {
   switch (type) {
     case RelationshipType.Association:
@@ -64,15 +80,32 @@ function getPlantUmlRelationshipSyntax(type: RelationshipType): string {
   }
 }
 
+/**
+ * React component that renders a UniversalModel as a PlantUML diagram using a live image from plantuml.com.
+ *
+ * @param props.value - The model to visualize.
+ * @returns A centered image displaying the class diagram.
+ */
 export function PlantUmlEditor(props: {
-    value: UniversalModel;
+  value: UniversalModel;
 }) {
   const plantUmlCode = universalModelToPlantUml(props.value);
   const encodedPlantUml = encode(plantUmlCode);
   const imageUrl = `http://www.plantuml.com/plantuml/svg/${encodedPlantUml}`;
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100%', padding: '1rem', boxSizing: 'border-box', backgroundColor: '#101828', overflow: 'auto' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        height: '100%',
+        padding: '1rem',
+        boxSizing: 'border-box',
+        backgroundColor: '#101828',
+        overflow: 'auto'
+      }}
+    >
       <img src={imageUrl} alt="Model Visualization" style={{ maxWidth: '100%', maxHeight: '100%' }} />
     </div>
   );

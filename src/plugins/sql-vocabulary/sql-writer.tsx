@@ -1,10 +1,20 @@
-// src/plugins/sql-vocabulary/sql-writer.tsx
 import { SQLDiagram, SQLDataType } from "./sql-model";
 
+/**
+ * Interface for SQL code generators from SQL diagrams.
+ */
 export interface SQLWriter {
+  /**
+   * Generates SQL code from a parsed SQL diagram.
+   * @param parsed The parsed SQLDiagram object.
+   * @returns SQL string representing the schema.
+   */
   generateCode(parsed: SQLDiagram): string;
 }
 
+/**
+ * A simple SQL writer that converts SQLDiagram objects into SQL DDL statements.
+ */
 export class SimpleSQLWriter implements SQLWriter {
   generateCode(parsed: SQLDiagram): string {
     let sqlStatements = "";
@@ -13,7 +23,7 @@ export class SimpleSQLWriter implements SQLWriter {
       sqlStatements += `CREATE TABLE ${table.name} (\n`;
       const columnDefinitions: string[] = [];
 
-      // Process columns
+      // Generate column definitions
       for (const column of table.columns) {
         let columnDef = `  ${column.name} ${this.formatDataType(column.type)}`;
         if (column.isNullable === false) {
@@ -25,13 +35,14 @@ export class SimpleSQLWriter implements SQLWriter {
         columnDefinitions.push(columnDef);
       }
 
-      // Process table-level constraints
+      // Generate table-level constraints
       if (table.constraints && table.constraints.length > 0) {
         for (const constraint of table.constraints) {
           let constraintDef = `  `;
           if (constraint.name) {
             constraintDef += `CONSTRAINT ${constraint.name} `;
           }
+
           switch (constraint.type) {
             case 'PRIMARY KEY':
               constraintDef += `PRIMARY KEY (${constraint.columns.join(", ")})`;
@@ -44,15 +55,14 @@ export class SimpleSQLWriter implements SQLWriter {
                 constraintDef += `FOREIGN KEY (${constraint.columns.join(", ")}) REFERENCES ${constraint.references.table} (${constraint.references.columns.join(", ")})`;
               } else {
                 console.warn(`FOREIGN KEY constraint "${constraint.name || ''}" is missing references.`);
-                // Optionally, decide how to handle this case: skip, throw error, etc.
-                // For now, we'll just not add the constraint definition if references are missing.
-                continue; // Skip adding this constraint definition
+                continue; // Skip adding this constraint if references are not provided
               }
               break;
             default:
               console.warn(`Unknown constraint type: ${constraint.type}`);
-              continue; // Skip if unknown
+              continue; // Skip unknown constraints
           }
+
           columnDefinitions.push(constraintDef);
         }
       }
@@ -65,8 +75,9 @@ export class SimpleSQLWriter implements SQLWriter {
   }
 
   /**
-   * Formats the SQLDataType object back into a string representation.
-   * e.g., { name: 'VARCHAR', parameters: [255] } -> "VARCHAR(255)"
+   * Formats a SQLDataType object to a string.
+   * Example: { name: 'VARCHAR', parameters: [255] } => "VARCHAR(255)"
+   * @param type The SQL data type object.
    */
   private formatDataType(type: SQLDataType): string {
     let formattedType = type.name;
@@ -77,22 +88,23 @@ export class SimpleSQLWriter implements SQLWriter {
   }
 
   /**
-   * Formats a default value for SQL.
+   * Formats a default value into SQL syntax.
+   * @param value The default value.
    */
   private formatDefaultValue(value: any): string {
     if (value === null) {
       return "NULL";
     } else if (typeof value === 'string') {
-      // Escape single quotes within the string and wrap in single quotes
+      // Escape single quotes and wrap in single quotes
       return `'${value.replace(/'/g, "''")}'`;
     } else if (typeof value === 'boolean') {
       return value ? 'TRUE' : 'FALSE';
     } else if (typeof value === 'number') {
       return String(value);
-    } else if (value === 'CURRENT_TIMESTAMP') { // Handle specific keywords
+    } else if (value === 'CURRENT_TIMESTAMP') {
       return 'CURRENT_TIMESTAMP';
     }
-    // Fallback for other types, though ideally handled by specific cases
+
     console.warn(`Unsupported default value type: ${typeof value}. Value: ${value}`);
     return String(value);
   }

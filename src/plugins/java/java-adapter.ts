@@ -1,5 +1,5 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
-import { UniversalModel, Entity, Relationship, RelationshipType } from "../../data-model-api/universal-model";
+import { UniversalModel, Entity, Relationship, RelationshipType, /*Property*/ } from "../../data-model-api/universal-model";
 import { JavaModel, JavaClass, JavaField } from "./java-model";
 import { toUniversalType, fromUniversalType } from "./java-vocabulary";
 
@@ -8,10 +8,15 @@ import { toUniversalType, fromUniversalType } from "./java-vocabulary";
  */
 export class JavaAdapter implements DomainModelAdapter<JavaModel> {
 
+    /**
+     * Converts a JavaModel instance into the application's UniversalModel.
+     * @param model The JavaModel to convert.
+     * @returns A Promise that resolves with the UniversalModel representation.
+     */
     async toUniversalModel(model: JavaModel): Promise<UniversalModel> {
         const entities: Entity[] = [];
 
-        // Working imports and packages here, but not yet resolved not to show in other plugins after translation
+        // Commented out: Working imports and packages here, but not yet resolved not to show in other plugins after translation
         /*
         // Create a "meta" entity for file-level details with a specific label
         const fileMetaProperties: Property[] = [];
@@ -66,7 +71,13 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
         return { entities, relationships };
     }
 
+    /**
+     * Converts the application's UniversalModel into a JavaModel.
+     * @param model The UniversalModel to convert.
+     * @returns A Promise that resolves with the JavaModel representation.
+     */
     async fromUniversalModel(model: UniversalModel): Promise<JavaModel> {
+        // Commented out: packageName and imports are not currently processed.
         /*
         let packageName: string | undefined;
         let imports: string[] = [];
@@ -105,7 +116,7 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
                 type: classMeta.type || 'class',
                 accessModifier: classMeta.accessModifier || 'default',
                 fields: fields,
-                methods: [],
+                methods: [], // Methods are not currently processed from UniversalModel
             });
         });
 

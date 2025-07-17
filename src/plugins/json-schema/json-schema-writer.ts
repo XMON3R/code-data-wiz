@@ -2,14 +2,25 @@ import { DomainTextWriter } from "../../data-model-api/domain-specific-model-api
 import { JsonSchemaModel, JsonSchemaDefinition, JsonSchemaProperty } from "./json-schema-model";
 
 /**
- * A writer for JsonSchemaModel into a JSON Schema string.
+ * A writer for converting a JsonSchemaModel into a JSON Schema string.
  */
 export class JsonSchemaWriter implements DomainTextWriter<JsonSchemaModel> {
+    /**
+     * Converts a JsonSchemaModel object into a formatted JSON Schema string.
+     * @param model The JsonSchemaModel to convert.
+     * @returns A Promise resolving to the formatted JSON Schema string.
+     */
     async writeText(model: JsonSchemaModel): Promise<string> {
         const schemaObject = this.mapToJsonSchemaObject(model.schema);
         return JSON.stringify(schemaObject, null, 2); // Pretty-print with 2 spaces
     }
 
+    /**
+     * Maps a JsonSchemaDefinition object to a plain JavaScript object suitable for JSON serialization.
+     * This method recursively processes properties and definitions to maintain structure.
+     * @param definition The JsonSchemaDefinition object to map.
+     * @returns A plain JavaScript object representing the JSON Schema.
+     */
     private mapToJsonSchemaObject(definition: JsonSchemaDefinition): any {
         const obj: any = {};
 
@@ -40,6 +51,12 @@ export class JsonSchemaWriter implements DomainTextWriter<JsonSchemaModel> {
         return obj;
     }
 
+    /**
+     * Maps a JsonSchemaProperty object to a plain JavaScript object suitable for JSON serialization.
+     * This method handles nested properties and array items recursively.
+     * @param property The JsonSchemaProperty object to map.
+     * @returns A plain JavaScript object representing the JSON Schema property.
+     */
     private mapToJsonSchemaPropertyObject(property: JsonSchemaProperty): any {
         if (property === null) {
             return null;

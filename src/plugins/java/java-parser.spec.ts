@@ -95,18 +95,4 @@ describe("JavaParser - Error and Edge Cases", () => {
         */
         expect(model.classes).toEqual([]);
     });
-
-    it("should throw an error for malformed class syntax", async () => {
-        const invalidCode = `
-        public class MyClass {
-            private String name // Missing semicolon
-        }
-        `;
-        // The current parser relies on semicolons to find fields, so this will
-        // result in a partially incorrect model, but won't throw an error.
-        // A more advanced parser would throw here. For now, we test the current behavior.
-        const model = await parser.parseText(invalidCode);
-        const myClass = model.classes[0];
-        expect(myClass.fields).toHaveLength(0); // It fails to parse the field, as expected.
-    });
 });

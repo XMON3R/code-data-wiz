@@ -7,6 +7,10 @@ import { Editor } from "./components/editor.tsx";
 import { UniversalModel } from "../data-model-api/index.ts";
 import { useDownloadHandler } from "./download-handler.ts"; // Import the custom hook
 
+/**
+ * The main application component.
+ * It sets up the layout with two editors and handles the state management between them.
+ */
 export const App: React.FC = () => {
     const [state, setState] = useState(createDefaultApplicationState());
     const [error, setError] = useState<string | null>(null);
@@ -37,10 +41,18 @@ export const App: React.FC = () => {
 
     const controller = useController(setState);
 
+    /**
+     * Sets the error state.
+     * @param error The error message to display.
+     */
     const handleLeftError = (error: string | null) => {
         setError(error);
     };
 
+    /**
+     * Handles changes in the left editor and updates the application state.
+     * @param newValue The new universal model from the editor.
+     */
     const handleLeftEditorChange = (newValue: UniversalModel) => {
         setState(prevState => ({
             ...prevState,
@@ -48,6 +60,10 @@ export const App: React.FC = () => {
         }));
     };
 
+    /**
+     * Toggles the auto-refresh functionality for the right editor.
+     * @param newAutoRefresh The new auto-refresh setting.
+     */
     const handleToggleRightEditorAutoRefresh = (newAutoRefresh: boolean) => {
         setAutoRefreshRightEditor(newAutoRefresh);
         if (newAutoRefresh) {
@@ -55,6 +71,9 @@ export const App: React.FC = () => {
         }
     };
 
+    /**
+     * Manually triggers the translation for the right editor.
+     */
     const handleTranslateRightEditorClick = () => {
         setRightEditorDisplayedContent(state.value);
     };
@@ -73,7 +92,6 @@ export const App: React.FC = () => {
                     onError={handleLeftError}
                     isReadOnly={false}
                     onDownload={handleDownload} // Pass the handler from the hook
-                    onToggleSettings={() => { /* Placeholder for now */ }} // Pass a placeholder function
                     isDevMode={isDevMode}
                 />
                 <Editor

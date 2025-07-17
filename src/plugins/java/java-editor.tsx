@@ -8,15 +8,25 @@ import { JavaWriter } from "./java-writer";
 import { JavaAdapter } from "./java-adapter";
 
 /**
+ * Props for the JavaEditor component.
+ */
+interface JavaEditorProps {
+    /** The current value of the editor in UniversalModel format. */
+    value: UniversalModel;
+    /** Callback function when the editor value changes, providing the updated UniversalModel. */
+    onChange: (value: UniversalModel) => void;
+    /** Whether the editor is read-only. */
+    isReadOnly?: boolean;
+    /** Callback function for reporting errors during parsing or conversion. */
+    onError?: (error: string | null) => void;
+}
+
+/**
  * An editor component for Java that handles the full round-trip
  * conversion between text and the UniversalModel.
+ * @param props The props for the JavaEditor component.
  */
-export function JavaEditor(props: {
-    value: UniversalModel;
-    onChange: (value: UniversalModel) => void;
-    isReadOnly?: boolean;
-    onError?: (error: string | null) => void;
-}) {
+export function JavaEditor(props: JavaEditorProps) {
     const [writer] = useState(() => new JavaWriter());
     const [adapter] = useState(() => new JavaAdapter());
     const [parser] = useState(() => new JavaParser());
@@ -24,8 +34,11 @@ export function JavaEditor(props: {
     // This state holds the text currently displayed in the editor.
     const [displayedText, setDisplayedText] = useState<string>("");
 
-    // This debounced function is responsible for parsing the text
-    // and propagating the change to the rest of the application.
+    /**
+     * This debounced function is responsible for parsing the text
+     * and propagating the change to the rest of the application.
+     * It converts the Java text to a UniversalModel.
+     */
     const propagateChange = useCallback(
         debounce(async (text: string) => {
             try {
@@ -50,7 +63,11 @@ export function JavaEditor(props: {
         [parser, adapter, props.onChange, props.onError]
     );
 
-    // This is the immediate handler for when the user types.
+    /**
+     * This is the immediate handler for when the user types in the CodeMirror editor.
+     * It updates the displayed text and triggers the debounced `propagateChange` function.
+     * @param newText The new text content from the editor.
+     */
     const handleEditorChange = (newText: string) => {
         // 1. Immediately update the text the user sees in the editor.
         setDisplayedText(newText);

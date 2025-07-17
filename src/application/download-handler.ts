@@ -14,7 +14,11 @@ import { LinkmlWriter } from '../plugins/linkml/linkml-writer.ts';
 import { JsonSchemaAdapter } from '../plugins/json-schema/json-schema-adapter.ts';
 import { JsonSchemaWriter } from '../plugins/json-schema/json-schema-writer.ts';
 
-// Function to determine file extension based on EditorType
+/**
+ * Determines the file extension based on the editor type.
+ * @param type The type of the editor.
+ * @returns The file extension for the given editor type.
+ */
 const getFileExtension = (type: EditorType): string => {
     switch (type) {
         case EditorType.SQLQuery:
@@ -34,7 +38,11 @@ const getFileExtension = (type: EditorType): string => {
     }
 };
 
-// Function to generate SQL string from SQLDiagram
+/**
+ * Generates a SQL string from a SQLDiagram object.
+ * @param sqlDiagram The SQL diagram to convert.
+ * @returns A string containing the SQL statements.
+ */
 const generateSqlString = (sqlDiagram: SQLDiagram): string => {
     if (!sqlDiagram || !sqlDiagram.tables) {
         return "-- No SQL diagram data available";
@@ -87,9 +95,18 @@ const generateSqlString = (sqlDiagram: SQLDiagram): string => {
 };
 
 
+/**
+ * A React hook for handling file downloads.
+ * @returns An object containing the `handleDownload` function and any `downloadError`.
+ */
 export const useDownloadHandler = () => {
     const [downloadError, setDownloadError] = useState<string | null>(null);
 
+    /**
+     * Handles the download of content in various formats.
+     * @param content The universal model to be downloaded.
+     * @param type The type of editor, determining the download format.
+     */
     const handleDownload = useCallback(async (content: UniversalModel, type: EditorType) => {
         setDownloadError(null); // Reset error on new download attempt
         const fileExtension = getFileExtension(type);

@@ -6,6 +6,12 @@ import yaml from 'js-yaml';
  * A writer that converts a LinkmlModel object into a YAML string.
  */
 export class LinkmlWriter implements DomainTextWriter<LinkmlModel> {
+    /**
+     * Converts a LinkmlModel object into a YAML string.
+     * @param model The LinkmlModel to convert.
+     * @returns A Promise resolving to the YAML string representation of the LinkML schema.
+     * @throws TypeError if the LinkmlModel input is null or undefined.
+     */
     async writeText(model: LinkmlModel): Promise<string> {
         // Handle null or undefined model input by throwing an error
         if (model === null || model === undefined) {

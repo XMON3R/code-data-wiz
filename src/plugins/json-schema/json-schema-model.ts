@@ -1,34 +1,48 @@
 import { DomainSpecificModel } from "../../data-model-api/domain-specific-model-api";
 
 /**
- * Represents a JSON Schema definition.
+ * Represents a JSON Schema property.
  * {@link https://json-schema.org/understanding-json-schema/reference/object}
  */
-
 export interface JsonSchemaProperty {
+    /** The name of the property. */
     name: string;
-    type?: string | string[]; // e.g., "string", "number", "boolean", "array", "object", "null"
+    /** The type of the property (e.g., "string", "number", "boolean", "array", "object", "null"). */
+    type?: string | string[];
+    /** A description of the property. */
     description?: string;
+    /** Indicates if the property is required. */
     required?: boolean;
-    format?: string; // Added format property
+    /** The format of the property (e.g., "date-time", "email", "uri"). */
+    format?: string;
+    /** A JSON Pointer to a definition. */
     $ref?: string;
-    // Add other JSON Schema keywords for properties like 'pattern', 'minLength', 'maxLength', 'enum', 'default', 'examples'
-    // For nested objects or arrays, 'properties' or 'items' would be used, which implies a recursive structure.
-    // For simplicity, this model focuses on basic types and direct properties.
-    properties?: { [key: string]: JsonSchemaProperty }; // For nested objects
-    items?: JsonSchemaProperty; // For array items
+    /** For nested objects, defines the properties of the sub-object. */
+    properties?: { [key: string]: JsonSchemaProperty };
+    /** For arrays, defines the schema for items in the array. */
+    items?: JsonSchemaProperty;
 }
 
+/**
+ * Represents a full JSON Schema definition.
+ */
 export interface JsonSchemaDefinition {
-    $id?: string; // A URI for the schema
-    $schema?: string; // The URI of the JSON Schema dialect used
+    /** A URI for the schema. */
+    $id?: string;
+    /** The URI of the JSON Schema dialect used. */
+    $schema?: string;
+    /** The title of the schema. */
     title?: string;
+    /** A description of the schema. */
     description?: string;
-    type?: string | string[]; // "object", "array", "string", "number", "boolean", "null"
+    /** The type of the schema (e.g., "object", "array", "string", "number", "boolean", "null"). */
+    type?: string | string[];
+    /** Defines the properties of an object. */
     properties?: { [key: string]: JsonSchemaProperty };
-    required?: string[]; // List of required property names
-    definitions?: { [key: string]: JsonSchemaDefinition }; // For reusable definitions
-    // Add other top-level JSON Schema keywords like 'allOf', 'anyOf', 'oneOf', 'not', 'enum', 'const', 'examples'
+    /** A list of property names that are required. */
+    required?: string[];
+    /** For reusable definitions within the schema. */
+    definitions?: { [key: string]: JsonSchemaDefinition };
 }
 
 /**

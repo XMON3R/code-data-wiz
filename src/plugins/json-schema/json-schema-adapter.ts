@@ -3,7 +3,15 @@ import { UniversalModel, Entity, Property, RelationshipType, UniversalFormat } f
 import { JsonSchemaModel, JsonSchemaDefinition, JsonSchemaProperty } from "./json-schema-model";
 import { toUniversalType, fromUniversalType } from "./json-schema-vocabulary";
 
+/**
+ * An adapter to translate between the JsonSchemaModel and the UniversalModel.
+ */
 export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
+  /**
+   * Converts a JsonSchemaModel instance into the application's UniversalModel.
+   * @param jsonSchemaModel The JsonSchemaModel to convert.
+   * @returns A Promise that resolves with the UniversalModel representation.
+   */
   async toUniversalModel(jsonSchemaModel: JsonSchemaModel): Promise<UniversalModel> {
     const universalModel: UniversalModel = {
       entities: [],
@@ -45,6 +53,11 @@ export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
     return universalModel;
   }
 
+  /**
+   * Converts the application's UniversalModel into a JsonSchemaModel.
+   * @param universalModel The UniversalModel to convert.
+   * @returns A Promise that resolves with the JsonSchemaModel representation.
+   */
   async fromUniversalModel(universalModel: UniversalModel): Promise<JsonSchemaModel> {
     const jsonSchemaDefinition: JsonSchemaDefinition = {
       $schema: "http://json-schema.org/draft-07/schema#",

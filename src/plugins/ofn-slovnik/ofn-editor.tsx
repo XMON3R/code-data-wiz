@@ -10,6 +10,14 @@ import { json } from "@codemirror/lang-json"; // Import JSON language support fo
 /**
  * A fully functional OFN editor component that integrates the parser,
  * writer, and adapter to translate between OFN JSON and the UniversalModel.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {UniversalModel} props.value - The current universal model to be displayed in the editor.
+ * @param {(value: UniversalModel) => void} props.onChange - Callback to update the universal model when the editor changes.
+ * @param {boolean} [props.isReadOnly] - Whether the editor should be read-only.
+ * @param {(error: string | null) => void} [props.onError] - Optional callback for reporting parsing errors.
+ * @returns {JSX.Element} The rendered OFN editor component.
  */
 export function OfnEditor(props: {
     value: UniversalModel;
@@ -18,6 +26,7 @@ export function OfnEditor(props: {
     onError?: (error: string | null) => void;
 }) {
     const { onChange, onError } = props;
+
     // Use single instances of the adapter, writer, and parser.
     const [writer] = useState(() => new OfnWriter());
     const [adapter] = useState(() => new OfnAdapter());
@@ -26,8 +35,10 @@ export function OfnEditor(props: {
     // This state holds the text currently displayed in the editor.
     const [displayedText, setDisplayedText] = useState<string>("");
 
-    // This debounced function is responsible for parsing the text
-    // and propagating the change to the rest of the application.
+    /**
+     * Debounced function responsible for parsing the editor text
+     * and updating the universal model. Handles parsing errors safely.
+     */
     const propagateChange = useCallback(
         debounce(async (text: string) => {
             try {
@@ -52,7 +63,10 @@ export function OfnEditor(props: {
         [parser, adapter, onChange, onError]
     );
 
-    // This is the immediate handler for when the user types.
+    /**
+     * Handler for CodeMirror editor change events.
+     * @param {string} newText - New text from the editor.
+     */
     const handleEditorChange = (newText: string) => {
         // 1. Immediately update the text the user sees in the editor.
         setDisplayedText(newText);
@@ -60,8 +74,9 @@ export function OfnEditor(props: {
         propagateChange(newText);
     };
     
-    // This effect listens for changes coming FROM the UniversalModel
-    // (e.g., from the other editor pane) and updates this editor's text.
+    /**
+     * React effect that syncs the editor's text when the universal model changes.
+     */
     useEffect(() => {
         if (props.isReadOnly) {
             // A simple check to prevent overwriting the user's text
@@ -85,8 +100,7 @@ export function OfnEditor(props: {
                 setDisplayedText("");
             }
         }
-    }, [props.value, props.isReadOnly, adapter, writer, displayedText, onError]); // This effect ONLY runs when the universal model changes.
-
+    }, [props.value, props.isReadOnly, adapter, writer, displayedText, onError]);
 
     return (
         <CodeMirrorEditor

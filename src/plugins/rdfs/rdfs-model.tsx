@@ -2,6 +2,9 @@
  * {@link  https://ofn.gov.cz/slovn%C3%ADky/draft/p%C5%99%C3%ADklady/slovn%C3%ADk.ttl}
  */
 
+
+//this model and the whole vocabulary is right now meant for future devolopment
+
 export interface RdfsResource {
     iri: string;
     label?: { [key: string]: string }; // Language-tagged labels

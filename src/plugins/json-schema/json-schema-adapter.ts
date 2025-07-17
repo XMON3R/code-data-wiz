@@ -84,7 +84,7 @@ export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
           jsonSchemaDefinition.properties[prop.label] = jsonSchemaProperty;
         }
         // Assuming all properties are required for simplicity in this mock
-        if (jsonSchemaDefinition.required) {
+        if (jsonSchemaDefinition.required && prop.required) { // Only add to required array if prop.required is true
           jsonSchemaDefinition.required.push(prop.label);
         }
       }

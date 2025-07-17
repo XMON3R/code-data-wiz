@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { JsonSchemaAdapter } from "./json-schema-adapter"; 
 import { JsonSchemaModel } from "./json-schema-model";
-import { UniversalModel, UniversalFormat } from "../../data-model-api/universal-model";
+import { UniversalModel, UniversalFormat, UniversalType } from "../../data-model-api/universal-model";
 
 describe("JsonSchemaAdapter", () => {
   let adapter: JsonSchemaAdapter;
@@ -45,12 +45,13 @@ describe("JsonSchemaAdapter", () => {
         {
           label: "User",
           properties: [
-            { label: "id", type: { domainSpecificType: "integer" } },
-            { label: "name", type: { domainSpecificType: "string" } },
-            { label: "email", type: { domainSpecificType: "string", format: UniversalFormat.Email }},
+            { label: "id", type: { domainSpecificType: "integer", universalType: UniversalType.Number }, required: true },
+            { label: "name", type: { domainSpecificType: "string", universalType: UniversalType.String }, required: true },
+            { label: "email", type: { domainSpecificType: "string", universalType: UniversalType.String, format: UniversalFormat.Email }, required: true },
           ],
         },
       ],
+      relationships: [], // Add relationships array
     };
   });
 
@@ -61,13 +62,14 @@ describe("JsonSchemaAdapter", () => {
 
   it("should correctly convert UniversalModel to JsonSchemaModel", async () => {
     const result = await adapter.fromUniversalModel(mockUniversalModel);
-    // For fromUniversalModel, we might need a more complex mockJsonSchema to ensure all properties are covered
-    // For now, a basic check is sufficient, assuming the adapter will fill in defaults like $schema, title, type, required
     expect(result.schema.title).toEqual(mockJsonSchema.schema.title);
     expect(result.schema.type).toEqual(mockJsonSchema.schema.type);
+    expect(Object.keys(result.schema.properties || {})).toEqual(Object.keys(mockJsonSchema.schema.properties || {}));
     expect(result.schema.properties?.id?.type).toEqual(mockJsonSchema.schema.properties?.id?.type);
     expect(result.schema.properties?.name?.type).toEqual(mockJsonSchema.schema.properties?.name?.type);
     expect(result.schema.properties?.email?.type).toEqual(mockJsonSchema.schema.properties?.email?.type);
+    expect(result.schema.required).toEqual(mockJsonSchema.schema.required);
+    expect(result.schema.properties?.email?.format).toEqual(mockJsonSchema.schema.properties?.email?.format);
   });
 
   it("should maintain data consistency after a full conversion cycle", async () => {
@@ -110,7 +112,7 @@ describe("JsonSchemaAdapter", () => {
         properties: {},
       },
     };
-    const expectedModel: UniversalModel = { entities: [{ label: "Empty", properties: [] }] };
+    const expectedModel: UniversalModel = { entities: [{ label: "Empty", properties: [] }], relationships: [] };
     const result = await adapter.toUniversalModel(emptySchema);
     expect(result).toEqual(expectedModel);
   });

@@ -41,6 +41,9 @@ export class JsonSchemaWriter implements DomainTextWriter<JsonSchemaModel> {
     }
 
     private mapToJsonSchemaPropertyObject(property: JsonSchemaProperty): any {
+        if (property === null) {
+            return null;
+        }
         const obj: any = {};
 
         // Order of properties for consistent output

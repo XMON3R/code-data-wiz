@@ -2,6 +2,8 @@
  * The top-level interface representing the entire data-model.
  */
 export interface UniversalModel {
+    id?: string; // Add id to UniversalModel
+    name?: string; // Add name to UniversalModel
     entities: Entity[];
     relationships?: Relationship[];
 }
@@ -71,6 +73,7 @@ export interface Entity {
 export interface Property {
     label: string;
     type: Type;
+    required?: boolean; // Add required property
     /**
      * Optional field to store the actual value or a JSON string of
      * property-level metadata (e.g., access modifiers, annotations).

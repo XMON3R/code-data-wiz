@@ -31,6 +31,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
               const universalProperty: Property = {
                 label: slotName,
                 type: toUniversalType(slot.range || schema.default_range || "any"),
+                required: slot.required, // Populate required property
               };
               entity.properties.push(universalProperty);
             }
@@ -44,6 +45,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
               const universalProperty: Property = {
                 label: slotName,
                 type: toUniversalType(slot.range || schema.default_range || "any"),
+                required: slot.required, // Populate required property
               };
               entity.properties.push(universalProperty);
 

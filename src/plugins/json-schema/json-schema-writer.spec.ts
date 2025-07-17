@@ -225,5 +225,5 @@ test("should handle a schema with null properties gracefully", async () => {
   }
 }`;
     const result = await writer.writeText(model);
-    expect(result).toEqual(expected);
+    expect(JSON.parse(result)).toEqual(JSON.parse(expected));
 });

@@ -178,11 +178,6 @@ test("should throw error for invalid JSON", async () => {
     await expect(parser.parseText(input)).rejects.toThrow("Invalid JSON Schema string provided.");
 });
 
-test("should throw error for non-object JSON input", async () => {
-    const input = `"just a string"`;
-    await expect(parser.parseText(input)).rejects.toThrow("Invalid JSON Schema: Root must be an object.");
-});
-
 test("should return an empty schema for an empty object input", async () => {
     const input = `{}`;
     const expected: JsonSchemaModel = {

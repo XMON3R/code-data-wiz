@@ -7,7 +7,7 @@ interface JsonSchemaTypeMapping {
 
 /**
  * Translates a JSON Schema type to a universal type.
- * @param linkMLType The JSON Schema type to translate.
+ * @param jsonSchemaType The JSON Schema type to translate.
  * @returns The universal type representation.
  */
 export function toUniversalType(jsonSchemaType: string): Type {
@@ -19,11 +19,12 @@ export function toUniversalType(jsonSchemaType: string): Type {
             mapping.universalType = UniversalType.String;
             break;
         case "number":
+        case "integer": // Map "integer" to UniversalType.Number
             mapping.universalType = UniversalType.Number;
             break;
         case "boolean":
             mapping.universalType = UniversalType.Boolean;
-            break; // Added break statement
+            break;
         default:
             mapping.universalType = UniversalType.Other;
             break;
@@ -37,11 +38,16 @@ export function toUniversalType(jsonSchemaType: string): Type {
  * @returns The JSON Schema type representation.
  */
 export function fromUniversalType(universalType: Type): string {
+    // Prioritize domainSpecificType if it's available and not "any"
+    if (universalType.domainSpecificType && universalType.domainSpecificType !== "any") {
+        return universalType.domainSpecificType;
+    }
+
     switch (universalType.universalType) {
         case UniversalType.String:
             return "string";
         case UniversalType.Number:
-            return "number";
+            return "integer"; // Map UniversalType.Number to "integer" for JSON Schema
         case UniversalType.Boolean:
             return "boolean";
         default:

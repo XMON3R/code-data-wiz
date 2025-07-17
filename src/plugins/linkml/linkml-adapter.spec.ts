@@ -63,16 +63,16 @@ describe("LinkmlAdapter", () => {
           label: "Person",
           description: "A person in the system",
           properties: [
-            { label: "id", type: { domainSpecificType: "string", universalType: UniversalType.String } },
-            { label: "name", type: { domainSpecificType: "string", universalType: UniversalType.String } },
-            { label: "age", type: { domainSpecificType: "integer", universalType: UniversalType.Number } },
+            { label: "id", "required": true, type: { domainSpecificType: "string", universalType: UniversalType.String } },
+            { label: "name", "required": undefined, type: { domainSpecificType: "string", universalType: UniversalType.String } },
+            { label: "age", "required": undefined, type: { domainSpecificType: "integer", universalType: UniversalType.Number } },
           ],
         },
         {
           label: "Organization",
           description: "An organization",
           properties: [
-            { label: "orgId", type: { domainSpecificType: "string", universalType: UniversalType.String } },
+            { label: "orgId", "required": true, type: { domainSpecificType: "string", universalType: UniversalType.String } },
             { label: "orgName", type: { domainSpecificType: "string", universalType: UniversalType.String } },
           ],
         },

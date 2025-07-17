@@ -29,7 +29,7 @@ export interface EditorProps {
  * Editor component that contains a header and the actual editor content.
  * This component itself is now scrollable, and its header will stick to the top.
  */
-export function Editor({ value, onChange, isReadOnly, className, type, onChangeType, error, onError, autoRefresh, onToggleAutoRefresh, onTranslateClick, onDownload, onToggleSettings, isDevMode }: EditorProps) {
+export function Editor({ value, onChange, isReadOnly, className, type, onChangeType, error, onError, autoRefresh, onToggleAutoRefresh, onTranslateClick, onDownload, isDevMode }: EditorProps) {
   const handleDownload = () => {
     if (onDownload) {
       onDownload(value, type);
@@ -48,7 +48,6 @@ export function Editor({ value, onChange, isReadOnly, className, type, onChangeT
         onToggleAutoRefresh={onToggleAutoRefresh || (() => {})}
         onTranslateClick={onTranslateClick || (() => {})}
         onDownload={handleDownload} // Pass the handler
-        onToggleSettings={!isReadOnly ? onToggleSettings : undefined} // Pass for left editor only
         isDevMode={isDevMode || false}
       />
       {/* EditorWrap - takes remaining space and contains the CodeMirror editor */}

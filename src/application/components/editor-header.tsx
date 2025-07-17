@@ -10,20 +10,15 @@ interface EditorHeaderProps {
     onTranslateClick: () => void;
     isReadOnly?: boolean;
     onDownload: () => void; 
-    onToggleSettings?: () => void; // placeholder for toggling settings/config 
     isDevMode: boolean;
 }
 
-export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onToggleAutoRefresh, onTranslateClick, isReadOnly, onDownload, onToggleSettings, isDevMode }) => {
+export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onChangeType, autoRefresh, onTranslateClick, isReadOnly, onDownload, isDevMode }) => {
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newType = event.target.value as EditorType;
         console.log('EditorHeader: newType selected:', newType);
         onChangeType(newType);
-    };
-
-    const handleToggleChange = () => {
-        onToggleAutoRefresh(!autoRefresh);
     };
 
     return (
@@ -48,22 +43,12 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
                         type="checkbox"
                         id="auto-refresh-toggle"
                         checked={autoRefresh}
-                        onChange={handleToggleChange}
                         className="form-checkbox h-4 w-4 text-blue-600"
                     />
                 </div>
             )}
 
             <div className="ml-auto flex items-center"> {/* Added flex items-center to align buttons */}
-                {!isReadOnly && onToggleSettings && ( // Conditionally render for left editor only
-                    <button
-                        onClick={onToggleSettings}
-                        className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded mr-2"
-                        title="Settings"
-                    >
-                        ⚙️
-                    </button>
-                )}
                 {isReadOnly && !autoRefresh && ( // Conditionally render for right editor and autoRefresh is off
                     <button
                         onClick={onTranslateClick}

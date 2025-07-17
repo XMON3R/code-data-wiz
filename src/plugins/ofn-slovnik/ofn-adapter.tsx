@@ -38,12 +38,33 @@ export class OfnAdapter implements DomainModelAdapter<OfnModel> {
                 for (const key in concept) {
                     if (Object.prototype.hasOwnProperty.call(concept, key)) {
                         const value = concept[key as keyof OfnModelConcept];
-                        const czechKey = ofnKeyMap[`concepts.${key}`] || key;
-                        properties.push({
-                            label: czechKey,
-                            type: { domainSpecificType: typeof value },
-                            value: typeof value === 'object' ? JSON.stringify(value) : String(value ?? ''),
-                        });
+
+                        if (key === 'name' || key === 'definition') {
+                            // Handle nested 'name' and 'definition' objects
+                            if (typeof value === 'object' && value !== null) {
+                                for (const langKey in value) {
+                                    if (Object.prototype.hasOwnProperty.call(value, langKey)) {
+                                        const nestedValue = (value as any)[langKey];
+                                        const czechKey = ofnKeyMap[`concepts.${key}.${langKey}`];
+                                        if (czechKey) {
+                                            properties.push({
+                                                label: czechKey,
+                                                type: { domainSpecificType: typeof nestedValue },
+                                                value: String(nestedValue ?? ''),
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            // Handle other direct properties
+                            const czechKey = ofnKeyMap[`concepts.${key}`] || key;
+                            properties.push({
+                                label: czechKey,
+                                type: { domainSpecificType: typeof value },
+                                value: typeof value === 'object' ? JSON.stringify(value) : String(value ?? ''),
+                            });
+                        }
                     }
                 }
                 entities.push({
@@ -124,6 +145,7 @@ export class OfnAdapter implements DomainModelAdapter<OfnModel> {
                         const czechKey = prop.label;
                         let value = (prop as any).value;
                         const englishKey = inverseOfnKeyMap[czechKey];
+
                         if (englishKey) {
                             if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
                                 try {
@@ -132,7 +154,23 @@ export class OfnAdapter implements DomainModelAdapter<OfnModel> {
                                     // Not a JSON string, use as is
                                 }
                             }
-                            (concept as any)[englishKey.replace('concepts.', '')] = value;
+
+                            const parts = englishKey.split('.');
+                            if (parts.length === 3 && parts[0] === 'concepts') {
+                                // Handle nested properties like "concepts.name.cs"
+                                const parentKey = parts[1];
+                                const nestedKey = parts[2];
+                                if (!(concept as any)[parentKey]) {
+                                    (concept as any)[parentKey] = {};
+                                }
+                                (concept as any)[parentKey][nestedKey] = value;
+                            } else if (parts.length === 2 && parts[0] === 'concepts') {
+                                // Handle direct concept properties like "concepts.iri"
+                                (concept as any)[parts[1]] = value;
+                            } else {
+                                // Handle top-level properties if any, though current logic focuses on concepts
+                                (concept as any)[englishKey] = value;
+                            }
                         }
                     });
                 }

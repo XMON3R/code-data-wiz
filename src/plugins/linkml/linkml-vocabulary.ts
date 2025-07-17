@@ -19,6 +19,7 @@ export function toUniversalType(linkMLType: string): Type {
             mapping.universalType = UniversalType.String;
             break;
         case "number":
+        case "integer": // Add integer to map to UniversalType.Number
             mapping.universalType = UniversalType.Number;
             break;
         case "boolean":
@@ -43,11 +44,16 @@ export function toUniversalType(linkMLType: string): Type {
  * @returns The LinkML type representation.
  */
 export function fromUniversalType(universalType: Type): string {
+    // Prioritize domainSpecificType if it's available and not "any"
+    if (universalType.domainSpecificType && universalType.domainSpecificType !== "any") {
+        return universalType.domainSpecificType;
+    }
+
     switch (universalType.universalType) {
         case UniversalType.String:
             return "string";
         case UniversalType.Number:
-            return "number";
+            return "integer"; // Default to "integer" for UniversalType.Number if no specific domain type
         case UniversalType.Boolean:
             return "boolean";
         case UniversalType.Date:

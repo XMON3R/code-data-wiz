@@ -16,11 +16,17 @@ describe("LinkmlWriter", () => {
           Person: {
             description: "A person in the system",
             attributes: {
+              id: { // Add id attribute to match the mockLinkmlModel in adapter.spec.ts
+                range: "string",
+                required: false, // Should be false by default now
+              },
               name: {
                 range: "string",
+                required: false, // Should be false by default now
               },
               age: {
                 range: "integer",
+                required: false, // Should be false by default now
               },
             },
           },
@@ -37,17 +43,23 @@ describe("LinkmlWriter", () => {
           Person: {
             description: "A person in the system",
             attributes: {
+              id: {
+                range: "string",
+                required: false,
+              },
               name: {
                 range: "string",
+                required: false,
               },
               age: {
                 range: "integer",
+                required: false,
               },
             },
           },
         },
       },
-      { indent: 2, replacer: (value) => value === undefined ? null : value }
+      { indent: 2, replacer: (_key: string, value: any) => value === undefined ? null : value }
     );
     const result = await writer.writeText(model);
     expect(result).toEqual(expected);
@@ -57,8 +69,8 @@ describe("LinkmlWriter", () => {
     const model: LinkmlModel = {
       schema: {},
     };
-    // The expected output for an empty object in YAML is typically '{}'
-    const expected = `{}`;
+    // The expected output for an empty object in YAML is typically '{}' followed by a newline
+    const expected = `{}` + '\n';
     const result = await writer.writeText(model);
     expect(result).toEqual(expected);
   });

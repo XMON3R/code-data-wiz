@@ -6,6 +6,8 @@ import { toUniversalType, fromUniversalType } from "./linkml-vocabulary";
 export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
   async toUniversalModel(linkmlModel: LinkmlModel): Promise<UniversalModel> {
     const universalModel: UniversalModel = {
+      id: linkmlModel.schema.id, // Populate id from LinkmlSchema
+      name: linkmlModel.schema.name, // Populate name from LinkmlSchema
       entities: [],
       relationships: [],
     };
@@ -28,7 +30,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
               const slot = linkmlClass.attributes[slotName] || {};
               const universalProperty: Property = {
                 label: slotName,
-                type: toUniversalType(slot.range || "any"),
+                type: toUniversalType(slot.range || schema.default_range || "any"),
               };
               entity.properties.push(universalProperty);
             }
@@ -41,7 +43,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
             if (slot) {
               const universalProperty: Property = {
                 label: slotName,
-                type: toUniversalType(slot.range || "any"),
+                type: toUniversalType(slot.range || schema.default_range || "any"),
               };
               entity.properties.push(universalProperty);
 
@@ -64,44 +66,43 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
 
   async fromUniversalModel(universalModel: UniversalModel): Promise<LinkmlModel> {
     const linkmlSchema: LinkmlSchema = {
-      id: "http://example.com/linkml-schema", // Default ID
-      name: universalModel.entities && universalModel.entities.length > 0 ? "my_schema" : "example_schema",
+      id: universalModel.id || "http://example.com/linkml-schema", // Use id from UniversalModel or default
+      name: universalModel.name || (universalModel.entities && universalModel.entities.length > 0 ? "my_schema" : "example_schema"), // Use name from UniversalModel or default
       classes: {},
     };
 
     if (universalModel.entities.length > 0) {
       for (const entity of universalModel.entities) {
-        const linkmlClass: LinkmlClassDefinition = {
-          description: entity.description || `Class for ${entity.label}`, // Use entity description or fallback
-          attributes: {},
-        };
-        linkmlSchema.classes![entity.label] = linkmlClass;
-
-        for (const prop of entity.properties) {
-          let isMethod = false;
-          if (prop.value) {
-            try {
-              const propMeta = JSON.parse(prop.value);
-              if (propMeta.isMethod) {
-                isMethod = true;
-              }
-            } catch (e) {
-              // Handle potential JSON parsing errors, perhaps log them or treat as not a method
-              console.error(`Failed to parse prop.value for ${prop.label}:`, e);
-            }
-          }
-
-          if (isMethod) {
-            continue; // Skip if it's identified as a method
-          }
-
-          const linkmlSlot: LinkmlSlotDefinition = {
-            description: `Slot for ${prop.label}`,
-            range: fromUniversalType(prop.type),
-            required: true, // Assuming all properties are required for simplicity in this mock
+          const linkmlClass: LinkmlClassDefinition = {
+            description: entity.description || undefined, // Set to undefined if no description
+            attributes: {},
           };
-          linkmlClass.attributes![prop.label] = linkmlSlot;
-        }
+          linkmlSchema.classes![entity.label] = linkmlClass;
+
+          for (const prop of entity.properties) {
+            let isMethod = false;
+            if (prop.value) {
+              try {
+                const propMeta = JSON.parse(prop.value);
+                if (propMeta.isMethod) {
+                  isMethod = true;
+                }
+              } catch (e) {
+                // Handle potential JSON parsing errors, perhaps log them or treat as not a method
+                console.error(`Failed to parse prop.value for ${prop.label}:`, e);
+              }
+            }
+
+            if (isMethod) {
+              continue; // Skip if it's identified as a method
+            }
+
+            const linkmlSlot: LinkmlSlotDefinition = {
+              range: fromUniversalType(prop.type),
+              required: false, // Default to false
+            };
+            linkmlClass.attributes![prop.label] = linkmlSlot;
+          }
       }
     }
 

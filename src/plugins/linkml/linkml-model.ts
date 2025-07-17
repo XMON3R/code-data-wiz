@@ -13,6 +13,7 @@ export interface LinkmlSchema {
   id?: string;
   name?: string;
   description?: string;
+  default_range?: string; // Add default_range to LinkmlSchema
   classes?: { [key: string]: LinkmlClassDefinition };
   slots?: { [key: string]: LinkmlSlotDefinition };
   types?: { [key: string]: LinkmlTypeDefinition };

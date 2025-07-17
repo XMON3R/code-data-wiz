@@ -78,6 +78,23 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
         linkmlSchema.classes![entity.label] = linkmlClass;
 
         for (const prop of entity.properties) {
+          let isMethod = false;
+          if (prop.value) {
+            try {
+              const propMeta = JSON.parse(prop.value);
+              if (propMeta.isMethod) {
+                isMethod = true;
+              }
+            } catch (e) {
+              // Handle potential JSON parsing errors, perhaps log them or treat as not a method
+              console.error(`Failed to parse prop.value for ${prop.label}:`, e);
+            }
+          }
+
+          if (isMethod) {
+            continue; // Skip if it's identified as a method
+          }
+
           const linkmlSlot: LinkmlSlotDefinition = {
             description: `Slot for ${prop.label}`,
             range: fromUniversalType(prop.type),

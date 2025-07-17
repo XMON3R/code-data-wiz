@@ -59,6 +59,22 @@ export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
       jsonSchemaDefinition.title = mainEntity.label;
 
       for (const prop of mainEntity.properties) {
+        let isMethod = false;
+        if (prop.value) {
+          try {
+            const propMeta = JSON.parse(prop.value);
+            if (propMeta.isMethod) {
+              isMethod = true;
+            }
+          } catch (e) {
+            console.error(`Failed to parse prop.value for ${prop.label}:`, e);
+          }
+        }
+
+        if (isMethod) {
+          continue; // Skip if it's identified as a method
+        }
+
         const jsonSchemaProperty: JsonSchemaProperty = {
           name: prop.label,
           type: fromUniversalType(prop.type),

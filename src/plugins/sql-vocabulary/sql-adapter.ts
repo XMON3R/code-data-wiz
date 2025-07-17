@@ -83,11 +83,26 @@ export class SqlAdapter implements DomainModelAdapter<SQLDiagram> {
         const tables: SQLTable[] = universalModel.entities.map((entity): SQLTable => {
             const table: SQLTable = {
                 name: entity.label,
-                columns: entity.properties.map((prop): SQLColumn => {
-                    const sqlColumn: SQLColumn = {
-                        name: prop.label,
-                        type: this.parseDataTypeFromString(fromUniversalType(prop.type))
-                    };
+                columns: entity.properties
+                    .filter(prop => {
+                        let isMethod = false;
+                        if (prop.value) {
+                            try {
+                                const propMeta = JSON.parse(prop.value);
+                                if (propMeta.isMethod) {
+                                    isMethod = true;
+                                }
+                            } catch (e) {
+                                console.error(`Failed to parse prop.value for ${prop.label}:`, e);
+                            }
+                        }
+                        return !isMethod; // Keep if not a method
+                    })
+                    .map((prop): SQLColumn => {
+            const sqlColumn: SQLColumn = {
+                name: prop.label,
+                type: this.parseDataTypeFromString(fromUniversalType(prop.type))
+            };
 
                     // Parse isNullable and defaultValue from the universal model's value field.
                     let propValue = prop.value;

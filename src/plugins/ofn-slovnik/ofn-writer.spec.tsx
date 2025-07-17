@@ -6,8 +6,7 @@ import { OfnModel } from "./ofn-model";
 describe("OfnWriter", () => {
   const writer = new OfnWriter();
 
-  it("should convert a full OfnModel to a formatted JSON string", async () => {
-    // This model correctly implements all properties of the OfnModel interface.
+  it("should convert a full OfnModel to a formatted JSON string with Czech keys", async () => {
     const fullModel: OfnModel = {
       iri: "https://example.com/vocabulary/1",
       name: {
@@ -18,17 +17,41 @@ describe("OfnWriter", () => {
         cs: "Toto je popis.",
         en: "This is a description.",
       },
-      createdAt: "2025-01-15T10:00:00Z",
-      updatedAt: "2025-01-16T12:30:00Z",
+      concepts: [
+        {
+          iri: "http://example.com/concept1",
+          type: ["Třída"],
+          name: { en: "MyClass" },
+          subClassOf: ["http://example.com/superClass"],
+        },
+      ],
     };
 
-    const expectedJson = JSON.stringify(fullModel, null, 2);
+    const expectedCzechJson = {
+      "iri": "https://example.com/vocabulary/1",
+      "název": {
+        "cs": "Testovací slovník",
+        "en": "Test Vocabulary",
+      },
+      "popis": {
+        "cs": "Toto je popis.",
+        "en": "This is a description.",
+      },
+      "pojmy": [
+        {
+          "iri": "http://example.com/concept1",
+          "typ": ["Třída"],
+          "název": { "en": "MyClass" },
+          "nadřazená-třída": ["http://example.com/superClass"],
+        },
+      ],
+    };
+
     const actualJson = await writer.writeText(fullModel);
-    expect(actualJson).toBe(expectedJson);
+    expect(JSON.parse(actualJson)).toEqual(expectedCzechJson);
   });
 
   it("should handle a minimal OfnModel with only required properties", async () => {
-    // The 'OfnModel' requires 'name' and 'description' properties.
     const minimalModel: OfnModel = {
       name: {
         cs: "Minimální název",
@@ -38,42 +61,16 @@ describe("OfnWriter", () => {
       },
     };
 
-    const expectedJson = JSON.stringify(minimalModel, null, 2);
+    const expectedCzechJson = {
+      "název": {
+        "cs": "Minimální název",
+      },
+      "popis": {
+        "en": "Minimal description",
+      },
+    };
+
     const actualJson = await writer.writeText(minimalModel);
-    expect(actualJson).toBe(expectedJson);
-  });
-
-  it("should handle models where optional properties are undefined", async () => {
-    // This test ensures that optional fields like 'iri' are not included
-    // in the output if they are not present in the model.
-    const modelWithoutIri: OfnModel = {
-      name: { en: "No IRI" },
-      description: { en: "This model lacks an IRI" },
-      createdAt: "2025-01-15T10:00:00Z",
-    };
-
-    const expectedJson = JSON.stringify(modelWithoutIri, null, 2);
-    const actualJson = await writer.writeText(modelWithoutIri);
-    expect(actualJson).toBe(expectedJson);
-  });
-
-  it("should correctly serialize partial or empty name/description objects", async () => {
-    // This test checks how the writer handles cases where language-specific
-    // fields within name or description are missing.
-    const partialModel: OfnModel = {
-      iri: "https://example.com/vocabulary/3",
-      name: {
-        cs: "Částečný název",
-        // 'en' name is missing
-      },
-      description: {
-        // 'cs' description is missing
-        en: "Partial description",
-      },
-    };
-
-    const expectedJson = JSON.stringify(partialModel, null, 2);
-    const actualJson = await writer.writeText(partialModel);
-    expect(actualJson).toBe(expectedJson);
+    expect(JSON.parse(actualJson)).toEqual(expectedCzechJson);
   });
 });

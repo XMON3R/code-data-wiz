@@ -1,5 +1,5 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
-import { UniversalModel, Entity, Property } from "../../data-model-api/universal-model";
+import { UniversalModel, Entity, Property, RelationshipType } from "../../data-model-api/universal-model";
 import { LinkmlModel, LinkmlSchema, LinkmlClassDefinition, LinkmlSlotDefinition } from "./linkml-model";
 import { toUniversalType, fromUniversalType } from "./linkml-vocabulary";
 
@@ -7,6 +7,7 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
   async toUniversalModel(linkmlModel: LinkmlModel): Promise<UniversalModel> {
     const universalModel: UniversalModel = {
       entities: [],
+      relationships: [],
     };
 
     const schema = linkmlModel.schema;
@@ -43,6 +44,14 @@ export class LinkmlAdapter implements DomainModelAdapter<LinkmlModel> {
                 type: toUniversalType(slot.range || "any"),
               };
               entity.properties.push(universalProperty);
+
+              if (slot.range && schema.classes && schema.classes[slot.range]) {
+                universalModel.relationships?.push({
+                  sourceEntityLabel: className,
+                  targetEntityLabel: slot.range,
+                  type: RelationshipType.Association,
+                });
+              }
             }
           }
         }

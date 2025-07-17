@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { JavaAdapter } from './java-adapter';
-import { JavaModel } from './java-model';
-import { UniversalModel } from '../../data-model-api';
+import { JavaModel, JavaClassType } from './java-model';
+import { UniversalModel, UniversalType, UniversalFormat } from '../../data-model-api/universal-model';
 
 describe('JavaAdapter', () => {
     let adapter: JavaAdapter;
@@ -12,23 +12,21 @@ describe('JavaAdapter', () => {
         adapter = new JavaAdapter();
 
         mockJavaModel = {
-            packageName: "com.example.models",
-            imports: ["java.util.Date"],
             classes: [
                 {
                     name: "User",
-                    type: "class",
+                    type: JavaClassType.Class,
                     accessModifier: "public",
                     fields: [
                         {
                             name: "id",
-                            type: "Long",
+                            type: "long",
                             accessModifier: "private",
                             annotations: [{ name: "Id" }],
                         },
                         {
                             name: "CREATION_DATE",
-                            type: "Date",
+                            type: "datetime",
                             accessModifier: "public",
                             isStatic: true,
                             isFinal: true,
@@ -43,29 +41,28 @@ describe('JavaAdapter', () => {
         mockUniversalModel = {
             entities: [
                 {
-                    label: "@file",
-                    properties: [
-                        { label: "packageName", value: "com.example.models", type: { domainSpecificType: "string" } },
-                        { label: "imports", value: '["java.util.Date"]', type: { domainSpecificType: "string[]" } }
-                    ]
-                },
-                {
                     label: "User",
                     properties: [
                         {
                             label: "id",
-                            type: { domainSpecificType: "Long" },
+                            type: { domainSpecificType: "long", 
+                            format: UniversalFormat.Long,
+                            universalType: UniversalType.Number,
+                            },
                             value: '{"accessModifier":"private","annotations":[{"name":"Id"}]}'
                         },
                         {
                             label: "CREATION_DATE",
-                            type: { domainSpecificType: "Date" },
+                            type: { domainSpecificType: "datetime",
+                            universalType: UniversalType.Datetime,
+                            },
                             value: '{"accessModifier":"public","isStatic":true,"isFinal":true,"annotations":[]}'
                         }
                     ],
                     value: '{"type":"class","accessModifier":"public"}'
                 }
-            ]
+            ],
+            "relationships": [],
         };
     });
 

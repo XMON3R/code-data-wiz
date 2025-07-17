@@ -1,8 +1,8 @@
-import { Type } from "../../data-model-api/universal-model";
+import { Type, UniversalType, UniversalFormat } from "../../data-model-api/universal-model";
 
 interface CSharpTypeMapping {
-    universalType: "string" | "number" | "boolean" | "datetime" | "other";
-    format?: string;
+    universalType: UniversalType;
+    format?: UniversalFormat | string; // Keep string for now as some formats are not in enum
 }
 
 /**
@@ -10,36 +10,36 @@ interface CSharpTypeMapping {
  */
 export const CSharpVocabulary: Record<string, CSharpTypeMapping> = {
     // String types
-    "string": { universalType: "string" },
-    "char": { universalType: "string" },
+    "string": { universalType: UniversalType.String },
+    "char": { universalType: UniversalType.String },
 
     // Integer types
-    "int": { universalType: "number" },
-    "uint": { universalType: "number" },
-    "long": { universalType: "number", format: "long" },
-    "ulong": { universalType: "number", format: "long" },
-    "short": { universalType: "number" },
-    "ushort": { universalType: "number" },
-    "byte": { universalType: "number" },
-    "sbyte": { universalType: "number" },
+    "int": { universalType: UniversalType.Number },
+    "uint": { universalType: UniversalType.Number },
+    "long": { universalType: UniversalType.Number, format: UniversalFormat.Long },
+    "ulong": { universalType: UniversalType.Number, format: UniversalFormat.Long },
+    "short": { universalType: UniversalType.Number },
+    "ushort": { universalType: UniversalType.Number },
+    "byte": { universalType: UniversalType.Number, format: UniversalFormat.Byte },
+    "sbyte": { universalType: UniversalType.Number },
 
     // Floating-point types
-    "float": { universalType: "number", format: "float" },
-    "double": { universalType: "number", format: "double" },
-    "decimal": { universalType: "number", format: "decimal" },
+    "float": { universalType: UniversalType.Number, format: UniversalFormat.Double }, // Assuming float maps to double for now
+    "double": { universalType: UniversalType.Number, format: UniversalFormat.Double },
+    "decimal": { universalType: UniversalType.Number, format: UniversalFormat.Decimal },
 
     // Boolean type
-    "bool": { universalType: "boolean" },
+    "bool": { universalType: UniversalType.Boolean },
 
     // Date and time types
-    "datetime": { universalType: "datetime" },
-    "datetimeoffset": { universalType: "datetime" },
-    "timespan": { universalType: "string" },
+    "datetime": { universalType: UniversalType.Datetime },
+    "datetimeoffset": { universalType: UniversalType.Datetime },
+    "timespan": { universalType: UniversalType.String },
 
     // Other types
-    "guid": { universalType: "string", format: "uuid" },
-    "byte[]": { universalType: "string", format: "byte" },
-    "object": { universalType: "other" },
+    "guid": { universalType: UniversalType.String, format: UniversalFormat.Uuid },
+    "byte[]": { universalType: UniversalType.String, format: UniversalFormat.Byte },
+    "object": { universalType: UniversalType.Other },
 };
 
 /**
@@ -52,11 +52,11 @@ export function toUniversalType(csharpType: string): Type {
         return {
             domainSpecificType: csharpType,
             universalType: mapping.universalType,
-            ...(mapping.format && { format: mapping.format }),
+            ...(mapping.format && { format: mapping.format as UniversalFormat }), // Cast format to UniversalFormat
         };
     }
     // For any unknown type (like 'List' or a custom class name), preserve it.
-    return { domainSpecificType: csharpType, universalType: "other" };
+    return { domainSpecificType: csharpType, universalType: UniversalType.Other };
 }
 
 /**
@@ -67,7 +67,7 @@ export function fromUniversalType(universalType: Type): string {
 
     // If the type is 'other', it means it's a custom class or a type not in our
     // vocabulary (like 'List'). In this case, we MUST use the original name.
-    if (universalType.universalType === "other") {
+    if (universalType.universalType === UniversalType.Other) {
         return universalType.domainSpecificType || "object";
     }
     

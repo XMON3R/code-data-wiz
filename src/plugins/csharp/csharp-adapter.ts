@@ -2,6 +2,8 @@ import {
     UniversalModel,
     Entity,
     Property,
+    Relationship,
+    RelationshipType,
 } from "../../data-model-api/universal-model";
 import {
     DomainModelAdapter,
@@ -51,7 +53,21 @@ export class CSharpAdapter implements DomainModelAdapter<CSharpModel> {
             };
         });
 
-        return { entities };
+        const relationships: Relationship[] = [];
+        model.classes.forEach(cls => {
+            cls.properties.forEach(prop => {
+                // If a property type is one of the classes in the model, it's a relationship
+                if (model.classes.some(c => c.name === prop.type.name)) {
+                    relationships.push({
+                        sourceEntityLabel: cls.name,
+                        targetEntityLabel: prop.type.name,
+                        type: RelationshipType.Association, // Defaulting to Association
+                    });
+                }
+            });
+        });
+
+        return { entities, relationships };
     }
 
     async fromUniversalModel(model: UniversalModel): Promise<CSharpModel> {

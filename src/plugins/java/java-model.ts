@@ -36,11 +36,20 @@ export interface JavaMethod {
 }
 
 /**
+ * Enum for Java class types.
+ */
+export enum JavaClassType {
+    Class = "class",
+    Interface = "interface",
+    Enum = "enum",
+}
+
+/**
  * Represents a single Java class, interface, or enum.
  */
 export interface JavaClass {
     name:string;
-    type: "class" | "interface" | "enum";
+    type: JavaClassType;
     accessModifier: 'public' | 'private' | 'protected' | 'default';
     fields: JavaField[];
     methods: JavaMethod[];
@@ -52,7 +61,7 @@ export interface JavaClass {
  * Represents the structure of a single .java file.
  */
 export interface JavaModel extends DomainSpecificModel {
-    packageName?: string;
-    imports: string[];
+    //packageName?: string;
+    //imports: string[];
     classes: JavaClass[];
 }

@@ -11,6 +11,7 @@ export interface JsonSchemaProperty {
     description?: string;
     required?: boolean;
     format?: string; // Added format property
+    $ref?: string;
     // Add other JSON Schema keywords for properties like 'pattern', 'minLength', 'maxLength', 'enum', 'default', 'examples'
     // For nested objects or arrays, 'properties' or 'items' would be used, which implies a recursive structure.
     // For simplicity, this model focuses on basic types and direct properties.

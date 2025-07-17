@@ -1,38 +1,34 @@
-import { Type } from "../../data-model-api/universal-model";
+import { Type, UniversalType, UniversalFormat } from "../../data-model-api/universal-model";
 
 interface JsonSchemaTypeMapping {
-    universalType: "string" | "number" | "boolean" | "other";
-    format?: string;
+    universalType: UniversalType;
+    format?: UniversalFormat | string; // Keep string for now as some formats are not in enum
 }
 
 /**
- * A vocabulary of common JSON Schema types.
- */
-export const JsonSchemaVocabulary: Record<string, JsonSchemaTypeMapping> = {
-    "string": { universalType: "string" },
-    "number": { universalType: "number" },
-    "integer": { universalType: "number" },
-    "boolean": { universalType: "boolean" },
-    "object": { universalType: "other" },
-    "array": { universalType: "other" },
-    "null": { universalType: "other" },
-};
-
-/**
  * Translates a JSON Schema type to a universal type.
- * @param jsonType The JSON Schema type to translate.
+ * @param linkMLType The JSON Schema type to translate.
  * @returns The universal type representation.
  */
-export function toUniversalType(jsonType: string): Type {
-    const mapping = JsonSchemaVocabulary[jsonType.toLowerCase()];
-    if (mapping) {
-        return {
-            domainSpecificType: jsonType,
-            universalType: mapping.universalType,
-            ...(mapping.format && { format: mapping.format }),
-        };
+export function toUniversalType(jsonSchemaType: string): Type {
+    const mapping: JsonSchemaTypeMapping = {
+        universalType: UniversalType.String,
+    };
+    switch (jsonSchemaType) {
+        case "string":
+            mapping.universalType = UniversalType.String;
+            break;
+        case "number":
+            mapping.universalType = UniversalType.Number;
+            break;
+        case "boolean":
+            mapping.universalType = UniversalType.Boolean;
+            break; // Added break statement
+        default:
+            mapping.universalType = UniversalType.Other;
+            break;
     }
-    return { domainSpecificType: jsonType, universalType: "other" };
+    return { domainSpecificType: jsonSchemaType, universalType: mapping.universalType };
 }
 
 /**
@@ -41,19 +37,14 @@ export function toUniversalType(jsonType: string): Type {
  * @returns The JSON Schema type representation.
  */
 export function fromUniversalType(universalType: Type): string {
-    // Attempt to use the domainSpecificType directly if it's a known JSON Schema type
-    if (universalType.domainSpecificType && JsonSchemaVocabulary[universalType.domainSpecificType.toLowerCase()]) {
-        return universalType.domainSpecificType;
+    switch (universalType.universalType) {
+        case UniversalType.String:
+            return "string";
+        case UniversalType.Number:
+            return "number";
+        case UniversalType.Boolean:
+            return "boolean";
+        default:
+            return "string";
     }
-
-    // Fallback to universal type mapping
-    if (universalType.universalType) {
-        for (const jsonType in JsonSchemaVocabulary) {
-            const mapping = JsonSchemaVocabulary[jsonType];
-            if (mapping.universalType === universalType.universalType && (!mapping.format || mapping.format === universalType.format)) {
-                return jsonType;
-            }
-        }
-    }
-    return universalType.domainSpecificType || "string";
 }

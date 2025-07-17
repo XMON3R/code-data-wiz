@@ -1,5 +1,5 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
-import { UniversalModel, Entity, Property } from "../../data-model-api/universal-model";
+import { UniversalModel, Entity, Property, RelationshipType, UniversalFormat } from "../../data-model-api/universal-model";
 import { JsonSchemaModel, JsonSchemaDefinition, JsonSchemaProperty } from "./json-schema-model";
 import { toUniversalType, fromUniversalType } from "./json-schema-vocabulary";
 
@@ -7,6 +7,7 @@ export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
   async toUniversalModel(jsonSchemaModel: JsonSchemaModel): Promise<UniversalModel> {
     const universalModel: UniversalModel = {
       entities: [],
+      relationships: [],
     };
 
     const schema = jsonSchemaModel.schema;
@@ -24,9 +25,18 @@ export class JsonSchemaAdapter implements DomainModelAdapter<JsonSchemaModel> {
           type: toUniversalType(Array.isArray(prop.type) ? prop.type.join(" | ") : prop.type || "any"),
         };
         if (prop.format) {
-          universalProperty.type.format = prop.format;
+          universalProperty.type.format = prop.format as UniversalFormat; // Cast to UniversalFormat
         }
         entity.properties.push(universalProperty);
+
+        if (prop.$ref) {
+          const targetEntityLabel = prop.$ref.split('/').pop() || "";
+          universalModel.relationships?.push({
+            sourceEntityLabel: entity.label,
+            targetEntityLabel: targetEntityLabel,
+            type: RelationshipType.Association,
+          });
+        }
       }
       universalModel.entities.push(entity);
     }

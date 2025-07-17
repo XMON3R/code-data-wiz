@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { JsonSchemaAdapter } from "./json-schema-adapter"; 
 import { JsonSchemaModel } from "./json-schema-model";
-import { UniversalModel } from "../../data-model-api/universal-model";
+import { UniversalModel, UniversalFormat } from "../../data-model-api/universal-model";
 
 describe("JsonSchemaAdapter", () => {
   let adapter: JsonSchemaAdapter;
@@ -47,7 +47,7 @@ describe("JsonSchemaAdapter", () => {
           properties: [
             { label: "id", type: { domainSpecificType: "integer" } },
             { label: "name", type: { domainSpecificType: "string" } },
-            { label: "email", type: { domainSpecificType: "string", format: "email" } },
+            { label: "email", type: { domainSpecificType: "string", format: UniversalFormat.Email }},
           ],
         },
       ],

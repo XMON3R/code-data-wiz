@@ -1,8 +1,8 @@
-import { Type } from "../../data-model-api/universal-model";
+import { Type, UniversalType, UniversalFormat } from "../../data-model-api/universal-model";
 
 interface SQLTypeMapping {
-    universalType: "string" | "number" | "boolean" | "date" | "datetime";
-    format?: string;
+    universalType: UniversalType;
+    format?: UniversalFormat | string; // Keep string for now as some formats are not in enum
 }
 
 /**
@@ -10,48 +10,48 @@ interface SQLTypeMapping {
  */
 export const SQLVocabulary: Record<string, SQLTypeMapping> = {
     // Integer types
-    "int": { universalType: "number" },
-    "integer": { universalType: "number" },
-    "tinyint": { universalType: "number" },
-    "smallint": { universalType: "number" },
-    "mediumint": { universalType: "number" },
-    "bigint": { universalType: "number", format: "long" },
-    "unsigned big int": { universalType: "number", format: "long" },
-    "int2": { universalType: "number" },
-    "int8": { universalType: "number" },
+    "int": { universalType: UniversalType.Number },
+    "integer": { universalType: UniversalType.Number },
+    "tinyint": { universalType: UniversalType.Number },
+    "smallint": { universalType: UniversalType.Number },
+    "mediumint": { universalType: UniversalType.Number },
+    "bigint": { universalType: UniversalType.Number, format: UniversalFormat.Long },
+    "unsigned big int": { universalType: UniversalType.Number, format: UniversalFormat.Long },
+    "int2": { universalType: UniversalType.Number },
+    "int8": { universalType: UniversalType.Number },
 
     // Character types
-    "varchar": { universalType: "string" },
-    "character": { universalType: "string" },
-    "varying character": { universalType: "string" },
-    "nchar": { universalType: "string" },
-    "native character": { universalType: "string" },
-    "nvarchar": { universalType: "string" },
-    "text": { universalType: "string" },
-    "clob": { universalType: "string" },
+    "varchar": { universalType: UniversalType.String },
+    "character": { universalType: UniversalType.String },
+    "varying character": { universalType: UniversalType.String },
+    "nchar": { universalType: UniversalType.String },
+    "native character": { universalType: UniversalType.String },
+    "nvarchar": { universalType: UniversalType.String },
+    "text": { universalType: UniversalType.String },
+    "clob": { universalType: UniversalType.String },
 
     // Blob types
-    "blob": { universalType: "string", format: "byte" },
+    "blob": { universalType: UniversalType.String, format: UniversalFormat.Byte },
 
     // Real and double precision types
-    "real": { universalType: "number", format: "float" },
-    "double": { universalType: "number", format: "double" },
-    "double precision": { universalType: "number", format: "double" },
-    "float": { universalType: "number", format: "float" },
+    "real": { universalType: UniversalType.Number, format: UniversalFormat.Double }, // Assuming float maps to double for now
+    "double": { universalType: UniversalType.Number, format: UniversalFormat.Double },
+    "double precision": { universalType: UniversalType.Number, format: UniversalFormat.Double },
+    "float": { universalType: UniversalType.Number, format: UniversalFormat.Double }, // Assuming float maps to double for now
 
     // Numeric types
-    "numeric": { universalType: "number" },
-    "decimal": { universalType: "number" },
+    "numeric": { universalType: UniversalType.Number },
+    "decimal": { universalType: UniversalType.Number, format: UniversalFormat.Decimal },
 
     // Boolean types
-    "boolean": { universalType: "boolean" },
+    "boolean": { universalType: UniversalType.Boolean },
 
     // Date and time types
-    "date": { universalType: "date" },
-    "datetime": { universalType: "datetime" },
-    "timestamp": { universalType: "datetime" },
-    "time": { universalType: "string", format: "time" },
-    "year": { universalType: "number" },
+    "date": { universalType: UniversalType.Date },
+    "datetime": { universalType: UniversalType.Datetime },
+    "timestamp": { universalType: UniversalType.Datetime },
+    "time": { universalType: UniversalType.String, format: UniversalFormat.Time },
+    "year": { universalType: UniversalType.Number },
 };
 
 /**
@@ -66,10 +66,10 @@ export function toUniversalType(sqlType: string): Type {
         return {
             domainSpecificType: sqlType,
             universalType: mapping.universalType,
-            ...(mapping.format && { format: mapping.format }),
+            ...(mapping.format && { format: mapping.format as UniversalFormat }), // Cast format to UniversalFormat
         };
     }
-    return { domainSpecificType: sqlType, universalType: "other" };
+    return { domainSpecificType: sqlType, universalType: UniversalType.Other };
 }
 
 /**

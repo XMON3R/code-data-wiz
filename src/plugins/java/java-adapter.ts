@@ -1,5 +1,5 @@
 import { DomainModelAdapter } from "../../data-model-api/domain-specific-model-api";
-import { UniversalModel, Entity } from "../../data-model-api/universal-model";
+import { UniversalModel, Entity, Relationship, RelationshipType } from "../../data-model-api/universal-model";
 import { JavaModel, JavaClass, JavaField } from "./java-model";
 import { toUniversalType, fromUniversalType } from "./java-vocabulary";
 
@@ -49,16 +49,33 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
             });
         });
 
-        return { entities };
+        const relationships: Relationship[] = [];
+        model.classes.forEach(cls => {
+            cls.fields.forEach(field => {
+                // If a field type is one of the classes in the model, it's a relationship
+                if (model.classes.some(c => c.name === field.type)) {
+                    relationships.push({
+                        sourceEntityLabel: cls.name,
+                        targetEntityLabel: field.type,
+                        type: RelationshipType.Association, // Defaulting to Association
+                    });
+                }
+            });
+        });
+
+        return { entities, relationships };
     }
 
     async fromUniversalModel(model: UniversalModel): Promise<JavaModel> {
+        /*
         let packageName: string | undefined;
         let imports: string[] = [];
+        */
         const classes: JavaClass[] = [];
 
         model.entities.forEach(entity => {
             // Check for the specific @javaFile label --- placeholder for now
+            /*
             if (entity.label === "@javaFile") {
                 packageName = entity.properties.find(p => p.label === "packageName")?.value;
                 const importsProp = entity.properties.find(p => p.label === "imports");
@@ -66,7 +83,7 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
                     imports = JSON.parse(importsProp.value);
                 }
                 return; // Continue to the next entity
-            }
+            }*/
 
             const classMeta = entity.value ? JSON.parse(entity.value) : {};
             const fields: JavaField[] = entity.properties.map(prop => {
@@ -92,6 +109,6 @@ export class JavaAdapter implements DomainModelAdapter<JavaModel> {
             });
         });
 
-        return { packageName, imports, classes };
+        return { /*packageName, imports,*/ classes };
     }
 }

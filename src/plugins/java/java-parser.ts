@@ -1,5 +1,5 @@
 import { DomainTextParser } from "../../data-model-api/domain-specific-model-api";
-import { JavaModel, JavaClass, JavaField, JavaAnnotation } from "./java-model";
+import { JavaModel, JavaClass, JavaField, JavaAnnotation, JavaClassType } from "./java-model";
 
 /**
  * A parser for Java source code that extracts data model information.
@@ -8,11 +8,12 @@ export class JavaParser implements DomainTextParser<JavaModel> {
 
     async parseText(text: string): Promise<JavaModel> {
         try {
+            /*
             const packageName = this.parsePackage(text);
-            const imports = this.parseImports(text);
+            const imports = this.parseImports(text);*/
             const classes = this.parseClasses(text);
 
-            return { packageName, imports, classes };
+            return { classes };
         } catch (e) {
             const error = e as Error;
             console.error("Java Parsing Error:", error.message);
@@ -20,6 +21,7 @@ export class JavaParser implements DomainTextParser<JavaModel> {
         }
     }
 
+    /*
     private parsePackage(text: string): string | undefined {
         const packageLine = text.split(/\r?\n/).find(line => line.trim().startsWith('package'));
         if (!packageLine) return undefined;
@@ -47,7 +49,7 @@ export class JavaParser implements DomainTextParser<JavaModel> {
             }
         }
         return imports;
-    }
+    }*/
 
     private parseClasses(text: string): JavaClass[] {
         const lines = text.split(/\r?\n/);
@@ -78,8 +80,8 @@ export class JavaParser implements DomainTextParser<JavaModel> {
         const matches = text.matchAll(classRegex);
 
         return Array.from(matches, match => {
-            const accessModifier = (match[1] || 'default') as "public" | "private" | "protected" | "default";
-            const type = match[2] as "class" | "interface" | "enum";
+            const accessModifier = (match[1] || 'default') as JavaAccessModifier;
+            const type = match[2] as JavaClassType; // Cast to JavaClassType
             const name = match[3];
             const body = match[4];
 
@@ -126,7 +128,7 @@ export class JavaParser implements DomainTextParser<JavaModel> {
             const modifiers = parts.slice(0, -2);
 
             const accessModifier = 
-                modifiers.find(m => m === 'public' || m === 'private' || m === 'protected') as 'public' | 'private' | 'protected' | 'default'
+                modifiers.find(m => m === 'public' || m === 'private' || m === 'protected') as JavaAccessModifier
                 || 'default';
             
             const isStatic = modifiers.includes('static');
@@ -145,4 +147,11 @@ export class JavaParser implements DomainTextParser<JavaModel> {
         }
         return fields;
     }
+}
+
+export enum JavaAccessModifier {
+    Public = "public",
+    Private = "private",
+    Protected = "protected",
+    Default = "default",
 }

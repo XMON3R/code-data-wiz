@@ -79,6 +79,33 @@ export interface Property {
 }
 
 /**
+ * Enum for universal types.
+ */
+export enum UniversalType {
+    String = "string",
+    Number = "number",
+    Boolean = "boolean",
+    Date = "date",
+    Datetime = "datetime",
+    Other = "other",
+}
+
+/**
+ * Enum for universal type formats.
+ */
+export enum UniversalFormat {
+    Double = "double",
+    Long = "long",
+    Decimal = "decimal",
+    Uuid = "uuid",
+    Byte = "byte",
+    Uri = "uri",
+    Curie = "curie",
+    Time = "time",
+    Email = "email", 
+}
+
+/**
  * The base interface for all type representations.
  */
 export interface Type {
@@ -87,6 +114,6 @@ export interface Type {
      * e.g., "VARCHAR(255)", "string", "Long"
      */
     domainSpecificType: string;
-    universalType?: "string" | "number" | "boolean" | "date" | "datetime" | "other";
-    format?: "double" | "long" | "decimal" | "uuid" | "byte" | "uri" | "curie" | "time" | string;
+    universalType?: UniversalType;
+    format?: UniversalFormat;
 }

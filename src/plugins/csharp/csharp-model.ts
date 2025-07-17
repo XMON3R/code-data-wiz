@@ -28,9 +28,16 @@ export interface CSharpParameter {
     type: CSharpType;
 }
 
+export enum CSharpClassType {
+    Class = "class",
+    Interface = "interface",
+    Struct = "struct",
+    Enum = "enum",
+}
+
 export interface CSharpClass {
     name: string;
-    type: "class" | "interface" | "struct" | "enum";
+    type: CSharpClassType;
     accessModifier: string;
     properties: CSharpProperty[];
     methods: CSharpMethod[];

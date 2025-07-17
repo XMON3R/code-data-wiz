@@ -10,13 +10,14 @@ export class JavaWriter implements DomainTextWriter<JavaModel> {
 
         const parts: string[] = [];
 
+        /*
         if (model.packageName) {
             parts.push(`package ${model.packageName};\n`);
         }
 
         if (model.imports && model.imports.length > 0) {
             parts.push(model.imports.map(i => `import ${i};`).join('\n') + '\n');
-        }
+        }*/
 
         if (model.classes && model.classes.length > 0) {
             parts.push(model.classes.map(c => this.writeClass(c)).join('\n\n'));
@@ -49,7 +50,12 @@ export class JavaWriter implements DomainTextWriter<JavaModel> {
         const staticMod = field.isStatic ? 'static ' : '';
         const finalMod = field.isFinal ? 'final ' : '';
         
-        const line = `    ${modifier}${staticMod}${finalMod}${field.type} ${field.name};`;
+        // Re-applying the fix for static final fields
+        let line = `    ${modifier}${staticMod}${finalMod}${field.type} ${field.name}`;
+        if (field.isStatic && field.isFinal) {
+            line += " = null"; // Initialize static final fields
+        }
+        line += ";";
         fieldParts.push(line);
 
         return fieldParts.join('\n');

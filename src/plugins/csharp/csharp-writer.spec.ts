@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { SimpleCSharpWriter } from "./csharp-writer";
-import { CSharpDiagram } from "./csharp-model";
+import { CSharpDiagram, CSharpClassType } from "./csharp-model";
 
 const writer = new SimpleCSharpWriter();
 
@@ -9,7 +9,7 @@ test("should generate C# for a single class", () => {
         classes: [
             {
                 name: "User",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     { name: "Id", type: { name: "int" }, accessModifier: "public" },
@@ -34,7 +34,7 @@ test("should generate C# for multiple classes", () => {
         classes: [
             {
                 name: "User",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     { name: "Id", type: { name: "int" }, accessModifier: "public" },
@@ -44,7 +44,7 @@ test("should generate C# for multiple classes", () => {
             },
             {
                 name: "Post",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     { name: "PostId", type: { name: "int" }, accessModifier: "public" },
@@ -78,7 +78,7 @@ test("should handle classes with different data types and nullable types", () =>
         classes: [
             {
                 name: "Product",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     { name: "ProductId", type: { name: "int" }, accessModifier: "public" },
@@ -107,7 +107,7 @@ test("should handle classes with no properties", () => {
         classes: [
             {
                 name: "EmptyClass",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [],
                 methods: [],
@@ -125,6 +125,38 @@ test("should handle classes with no properties", () => {
 test("should handle an empty diagram with no classes", () => {
     const diagram: CSharpDiagram = { classes: [] };
     const expected = "";
+    const result = writer.generateCode(diagram);
+    expect(result).toEqual(expected);
+});
+
+test("should generate C# for a class with methods", () => {
+    const diagram: CSharpDiagram = {
+        classes: [
+            {
+                name: "Calculator",
+                type: CSharpClassType.Class,
+                accessModifier: "public",
+                properties: [],
+                methods: [
+                    { name: "Add", returnType: { name: "int" }, accessModifier: "public", parameters: [{ name: "a", type: { name: "int" } }, { name: "b", type: { name: "int" } }] },
+                    { name: "Subtract", returnType: { name: "int" }, accessModifier: "public", parameters: [{ name: "a", type: { name: "int" } }, { name: "b", type: { name: "int" } }] },
+                ],
+            },
+        ],
+    };
+    const expected = `public class Calculator
+{
+    public int Add(int a, int b)
+    {
+        // Method body
+    }
+
+    public int Subtract(int a, int b)
+    {
+        // Method body
+    }
+}
+`;
     const result = writer.generateCode(diagram);
     expect(result).toEqual(expected);
 });

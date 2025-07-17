@@ -1,5 +1,5 @@
 import { DomainTextParser } from "../../data-model-api/domain-specific-model-api";
-import { CSharpModel, CSharpClass, CSharpProperty, CSharpMethod, CSharpParameter } from "./csharp-model";
+import { CSharpModel, CSharpClass, CSharpProperty, CSharpMethod, CSharpParameter, CSharpClassType } from "./csharp-model";
 
 /**
  * A more robust parser for C# code that correctly distinguishes between methods and properties.
@@ -30,7 +30,7 @@ export class CSharpTextParser implements DomainTextParser<CSharpModel> {
 
             classes.push({
                 name: className,
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier,
                 properties,
                 methods,

@@ -1,50 +1,18 @@
-import { Type } from "../../data-model-api/universal-model";
+import { Type, UniversalFormat } from "../../data-model-api/universal-model";
 
-interface JavaTypeMapping {
-    universalType: "string" | "number" | "boolean" | "date" | "datetime" | "other";
-    format?: string;
+enum UniversalType {
+    String = "string",
+    Number = "number",
+    Boolean = "boolean",
+    Date = "date",
+    Datetime = "datetime",
+    Other = "other",
 }
 
-/**
- * A vocabulary of common Java types.
- */
-export const JavaVocabulary: Record<string, JavaTypeMapping> = {
-    // String types
-    "String": { universalType: "string" },
-    "char": { universalType: "string" },
-
-    // Integer types
-    "int": { universalType: "number" },
-    "Integer": { universalType: "number" },
-    "long": { universalType: "number", format: "long" },
-    "Long": { universalType: "number", format: "long" },
-    "short": { universalType: "number" },
-    "Short": { universalType: "number" },
-    "byte": { universalType: "number" },
-    "Byte": { universalType: "number" },
-
-    // Floating-point types
-    "float": { universalType: "number", format: "float" },
-    "Float": { universalType: "number", format: "float" },
-    "double": { universalType: "number", format: "double" },
-    "Double": { universalType: "number", format: "double" },
-    "BigDecimal": { universalType: "number", format: "decimal" },
-
-    // Boolean type
-    "boolean": { universalType: "boolean" },
-    "Boolean": { universalType: "boolean" },
-
-    // Date and time types
-    "Date": { universalType: "datetime" },
-    "LocalDate": { universalType: "date" },
-    "LocalDateTime": { universalType: "datetime" },
-    "ZonedDateTime": { universalType: "datetime" },
-
-    // Other types
-    "UUID": { universalType: "string", format: "uuid" },
-    "byte[]": { universalType: "string", format: "byte" },
-    "Object": { universalType: "other" },
-};
+interface JavaTypeMapping {
+    universalType: UniversalType;
+    format?: UniversalFormat;
+}
 
 /**
  * Translates a Java type to a universal type.
@@ -52,16 +20,39 @@ export const JavaVocabulary: Record<string, JavaTypeMapping> = {
  * @returns The universal type representation.
  */
 export function toUniversalType(javaType: string): Type {
-    const baseType = javaType.split("<")[0].trim();
-    const mapping = JavaVocabulary[baseType];
-    if (mapping) {
-        return {
-            domainSpecificType: javaType,
-            universalType: mapping.universalType,
-            ...(mapping.format && { format: mapping.format }),
-        };
+    const mapping: JavaTypeMapping = {
+        universalType: UniversalType.String,
+    };
+    switch (javaType.toLowerCase()) { // Convert to lowercase for case-insensitive comparison
+        case "string":
+            mapping.universalType = UniversalType.String;
+            break;
+        case "int":
+        case "integer": // Added integer as it's common
+        case "double":
+        case "float":
+            mapping.universalType = UniversalType.Number;
+            break;
+        case "long":
+            mapping.universalType = UniversalType.Number;
+            mapping.format = UniversalFormat.Long; // Set format for long
+            break;
+        case "boolean":
+            mapping.universalType = UniversalType.Boolean;
+            break;
+        case "date":
+            mapping.universalType = UniversalType.Datetime; // Map Java Date to Universal Datetime
+            break;
+        case "datetime":
+        case "timestamp": // Added timestamp as it's common
+            mapping.universalType = UniversalType.Datetime;
+            break;
+        default:
+            // If it's not a primitive type, assume it's a custom class or other type
+            mapping.universalType = UniversalType.Other;
+            break;
     }
-    return { domainSpecificType: javaType, universalType: "other" };
+    return { domainSpecificType: javaType, universalType: mapping.universalType, format: mapping.format };
 }
 
 /**
@@ -70,19 +61,22 @@ export function toUniversalType(javaType: string): Type {
  * @returns The Java type representation.
  */
 export function fromUniversalType(universalType: Type): string {
-    // Attempt to use the domainSpecificType directly if it's a known Java type
-    if (universalType.domainSpecificType && JavaVocabulary[universalType.domainSpecificType]) {
-        return universalType.domainSpecificType;
+    switch (universalType.universalType) {
+        case UniversalType.String:
+            return "String";
+        case UniversalType.Number:
+            // Handle formats for number types
+            if (universalType.format === "long") return "long";
+            if (universalType.format === "double") return "double";
+            if (universalType.format === "decimal") return "decimal";
+            return "int"; // Default to int for numbers
+        case UniversalType.Boolean:
+            return "boolean";
+        case UniversalType.Date:
+            return "date";
+        case UniversalType.Datetime:
+            return "datetime";
+        default:
+            return "string"; // Default to string for other types
     }
-
-    // Fallback to universal type mapping
-    if (universalType.universalType) {
-        for (const javaType in JavaVocabulary) {
-            const mapping = JavaVocabulary[javaType];
-            if (mapping.universalType === universalType.universalType && (!mapping.format || mapping.format === universalType.format)) {
-                return javaType;
-            }
-        }
-    }
-    return universalType.domainSpecificType || "Object";
 }

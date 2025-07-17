@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { CSharpTextParser } from "./csharp-parser";
-import { CSharpDiagram } from "./csharp-model";
+import { CSharpDiagram, CSharpClassType } from "./csharp-model";
 
 const parser = new CSharpTextParser();
 
@@ -14,7 +14,7 @@ test("should parse a single class into a C# class", async () => {
         classes: [
             {
                 name: "User",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     {
@@ -46,7 +46,7 @@ test("should handle read-only properties", async () => {
         classes: [
             {
                 name: "ReadOnlyExample",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     {
@@ -85,7 +85,7 @@ public class Post
         classes: [
             {
                 name: "User",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     { name: "Id", type: { name: "int", isNullable: false }, accessModifier: "public" }, 
@@ -95,7 +95,7 @@ public class Post
             },
             {
                 name: "Post",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     { name: "PostId", type: { name: "int", isNullable: false }, accessModifier: "public" }, 
@@ -122,7 +122,7 @@ test("should handle different data types and nullable types", async () => {
         classes: [
             {
                 name: "Product",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [
                     { name: "ProductId", type: { name: "int", isNullable: false }, accessModifier: "public" }, 
@@ -141,7 +141,7 @@ test("should handle different data types and nullable types", async () => {
 test("should handle empty classes", async () => {
     const input = `public class Empty {}`;
     const expected: CSharpDiagram = {
-        classes: [{ name: "Empty", type: "class", accessModifier: "public", properties: [], methods: [] }],
+        classes: [{ name: "Empty", type: CSharpClassType.Class, accessModifier: "public", properties: [], methods: [] }],
     };
     const result = await parser.parseText(input);
     expect(result).toEqual(expected);
@@ -153,7 +153,7 @@ test("should ignore empty lines and extra whitespace", async () => {
         classes: [
             {
                 name: "Order",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [{ name: "OrderId", type: { name: "int", isNullable: false }, accessModifier: "public" }], 
                 methods: [],
@@ -178,7 +178,7 @@ test("should ignore text outside of class definitions", async () => {
         classes: [
             {
                 name: "MyClass",
-                type: "class",
+                type: CSharpClassType.Class,
                 accessModifier: "public",
                 properties: [{ name: "Id", type: { name: "int", isNullable: false }, accessModifier: "public" }], 
                 methods: [],
@@ -199,7 +199,7 @@ test("should parse a class with a simple method", async () => {
     const expected: CSharpDiagram = {
         classes: [
             {
-                name: "Calculator", type: "class", accessModifier: "public", properties: [],
+                name: "Calculator", type: CSharpClassType.Class, accessModifier: "public", properties: [],
                 methods: [
                     {
                         name: "Add", returnType: { name: "int" },
@@ -222,7 +222,7 @@ test("should parse a class with a static method", async () => {
     const expected: CSharpDiagram = {
         classes: [
             {
-                name: "Utility", type: "class", accessModifier: "public", properties: [],
+                name: "Utility", type: CSharpClassType.Class, accessModifier: "public", properties: [],
                 methods: [
                     {
                         name: "GetCount", returnType: { name: "int" }, parameters: [],

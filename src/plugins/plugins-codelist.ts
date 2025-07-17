@@ -12,5 +12,7 @@ export enum EditorType {
 
     JsonSchema = "JsonSchema",
 
-    PlantUML = "PlantUML"
+    PlantUML = "PlantUML",
+
+    Ofn = "Ofn"
   }

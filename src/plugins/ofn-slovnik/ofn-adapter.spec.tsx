@@ -12,7 +12,9 @@ describe('OfnAdapter', () => {
         adapter = new OfnAdapter();
 
         mockOfnModel = {
+            context: "https://ofn.gov.cz/slovníky/draft/kontexty/slovníky.jsonld",
             iri: "https://example.com/slovnik/1",
+            type: ["Slovník", "Tezaurus"],
             name: { cs: "Testovací Název", en: "Test Name" },
             description: { cs: "Testovací Popis" },
             concepts: [
@@ -37,7 +39,9 @@ describe('OfnAdapter', () => {
                 {
                     label: "OFN Vocabulary",
                     properties: [
+                        { label: "@context", type: { domainSpecificType: "string" }, value: "https://ofn.gov.cz/slovníky/draft/kontexty/slovníky.jsonld" },
                         { label: "iri", type: { domainSpecificType: "string" }, value: "https://example.com/slovnik/1" },
+                        { label: "typ", type: { domainSpecificType: "object" }, value: JSON.stringify(["Slovník", "Tezaurus"]) },
                         { label: "název", type: { domainSpecificType: "object" }, value: JSON.stringify({ cs: "Testovací Název", en: "Test Name" }) },
                         { label: "popis", type: { domainSpecificType: "object" }, value: JSON.stringify({ cs: "Testovací Popis" }) },
                     ],
@@ -86,10 +90,8 @@ describe('OfnAdapter', () => {
 
     it('should correctly adapt from UniversalModel to OfnModel', async () => {
         const result = await adapter.fromUniversalModel(mockUniversalModel);
-        // The fromUniversalModel is simplified and doesn't reconstruct the full original model,
-        // so we check for the presence of concepts.
-        expect(result.concepts).toBeDefined();
-        expect(result.concepts?.length).toBe(2);
+        // This will fail, but the output will show the full structure of the result object for debugging.
+        expect(result).toEqual(mockOfnModel);
     });
 
     it('should handle a minimal OfnModel', async () => {

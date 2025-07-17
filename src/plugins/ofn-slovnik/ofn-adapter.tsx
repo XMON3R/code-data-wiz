@@ -36,9 +36,9 @@ export class OfnAdapter implements DomainModelAdapter<OfnModel> {
             model.concepts.forEach((concept: OfnModelConcept) => {
                 const properties: Property[] = [];
                 for (const key in concept) {
-                    if (Object.prototype.hasOwnProperty.call(concept, key) && ofnKeyMap[`concepts.${key}`]) {
+                    if (Object.prototype.hasOwnProperty.call(concept, key)) {
                         const value = concept[key as keyof OfnModelConcept];
-                        const czechKey = ofnKeyMap[`concepts.${key}`];
+                        const czechKey = ofnKeyMap[`concepts.${key}`] || key;
                         properties.push({
                             label: czechKey,
                             type: { domainSpecificType: typeof value },
@@ -79,53 +79,56 @@ export class OfnAdapter implements DomainModelAdapter<OfnModel> {
      * Converts the UniversalModel back into an OfnModel.
      */
     async fromUniversalModel(mainModel: UniversalModel): Promise<OfnModel> {
-        const ofnData: Partial<OfnModel> = {
-            concepts: [],
-        };
+        const ofnData: Partial<OfnModel> = {};
 
         if (mainModel.entities) {
-            // The first entity is assumed to be the main vocabulary entity
             const vocabularyEntity = mainModel.entities.find(e => e.label === "OFN Vocabulary");
             if (vocabularyEntity && vocabularyEntity.properties) {
-                vocabularyEntity.properties.forEach(prop => {
-                    const czechKey = prop.label;
-                    const value = (prop as any).value;
-                    const englishKey = inverseOfnKeyMap[czechKey];
-
-                    if (englishKey) {
+                const getPropValue = (label: string) => {
+                    const prop = vocabularyEntity.properties.find(p => p.label === label);
+                    if (!prop) return undefined;
+                    let value = (prop as any).value;
+                    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
                         try {
-                            const parsedValue = JSON.parse(value);
-                            (ofnData as any)[englishKey] = parsedValue;
+                            value = JSON.parse(value);
                         } catch (e) {
-                            (ofnData as any)[englishKey] = value;
+                            // Not a JSON string, use as is
                         }
                     }
-                });
+                    return value;
+                };
+
+                ofnData.context = getPropValue("@context");
+                ofnData.iri = getPropValue("iri");
+                ofnData.type = getPropValue("typ");
+                ofnData.name = getPropValue("název");
+                ofnData.description = getPropValue("popis");
+                ofnData.createdAt = getPropValue("vytvořeno");
+                ofnData.updatedAt = getPropValue("aktualizováno");
             }
 
-            // The rest of the entities are concepts
-            ofnData.concepts = mainModel.entities
-                .filter(e => e.label !== "OFN Vocabulary")
-                .map(entity => {
-                    const concept: Partial<OfnModelConcept> = {};
-                    if (entity.properties) {
-                        entity.properties.forEach(prop => {
-                            const czechKey = prop.label;
-                            const value = (prop as any).value;
-                            const englishKey = inverseOfnKeyMap[czechKey];
-
-                            if (englishKey) {
+            const conceptEntities = mainModel.entities.filter(e => e.label !== "OFN Vocabulary");
+            ofnData.concepts = conceptEntities.map(entity => {
+                const concept: Partial<OfnModelConcept> = {};
+                if (entity.properties) {
+                    entity.properties.forEach(prop => {
+                        const czechKey = prop.label;
+                        let value = (prop as any).value;
+                        const englishKey = inverseOfnKeyMap[czechKey];
+                        if (englishKey) {
+                            if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
                                 try {
-                                    const parsedValue = JSON.parse(value);
-                                    (concept as any)[englishKey.replace('concepts.', '')] = parsedValue;
+                                    value = JSON.parse(value);
                                 } catch (e) {
-                                    (concept as any)[englishKey.replace('concepts.', '')] = value;
+                                    // Not a JSON string, use as is
                                 }
                             }
-                        });
-                    }
-                    return concept as OfnModelConcept;
-                });
+                            (concept as any)[englishKey.replace('concepts.', '')] = value;
+                        }
+                    });
+                }
+                return concept as OfnModelConcept;
+            });
         }
 
         return ofnData as OfnModel;

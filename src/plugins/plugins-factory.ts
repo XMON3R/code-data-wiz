@@ -7,6 +7,8 @@ import { LinkmlEditor } from "./linkml/linkml-editor";
 import { JsonSchemaEditor } from "./json-schema/json-schema-editor";
 import { JavaEditor } from "./java/java-editor";
 import { CSharpEditor } from "./csharp/csharp-editor";
+import { OfnEditor } from "./ofn-slovnik/ofn-editor";
+
 
 export function listPluginMetadata() {
     return [
@@ -43,6 +45,8 @@ export function createEditor(type: EditorType) {
             return JsonSchemaEditor;
         case EditorType.PlantUML:
             return PlantUmlEditor;
+        case EditorType.Ofn:
+            return OfnEditor;
         default:
             throw new Error(`Unknown editor type: ${type}`);
     }

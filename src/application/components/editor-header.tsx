@@ -36,7 +36,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({ className, type, onC
                 <option value={EditorType.JsonSchema}>JsonSchema</option>
                 <option value={EditorType.LinkML}>LinkML</option>
                 <option value={EditorType.Ofn}>Ofn</option>
-                <option value={EditorType.PlantUML}>PlantUML Diagram</option>
+                {isReadOnly && <option value={EditorType.PlantUML}>PlantUML Diagram</option>}
                 <option value={EditorType.SQLQuery}>SQL Query</option>
                 
             </select>

@@ -50,7 +50,6 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                 <option value={EditorType.Java}>Java</option>
                 <option value={EditorType.JsonSchema}>JsonSchema</option>
                 <option value={EditorType.LinkML}>LinkML</option>
-                <option value={EditorType.Ofn}>Ofn</option>
                 {isReadOnly && <option value={EditorType.PlantUML}>PlantUML Diagram</option>}
                 <option value={EditorType.SQLQuery}>SQL Query</option>
             </select>

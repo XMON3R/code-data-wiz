@@ -21,6 +21,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
     type,
     onChangeType,
     autoRefresh,
+    onToggleAutoRefresh,
     onTranslateClick,
     isReadOnly,
     onDownload,
@@ -62,6 +63,7 @@ export const EditorHeader: React.FC<EditorHeaderProps> = ({
                         type="checkbox"
                         id="auto-refresh-toggle"
                         checked={autoRefresh}
+                        onChange={(e) => onToggleAutoRefresh(e.target.checked)}
                         className="form-checkbox h-4 w-4 text-blue-600"
                     />
                 </div>
